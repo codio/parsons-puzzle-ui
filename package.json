@@ -1,0 +1,34 @@
+{
+  "name": "parsons-puzzle-ui",
+  "version": "1.0.0",
+  "description": "UI for building parsons puzzle https://js-parsons.github.io/ questions",
+  "main": "index.js",
+  "types": "dist/index.d.ts",
+  "repository": "git@github.com:codio/parsons-puzzle-ui.git",
+  "author": "Mikhail Loginov <mloginov@codio.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "lint": "eslint ./src/**/* --ext .js,.jsx,.ts,.tsx"
+  },
+  "files": [
+    "src/**/*",
+    "LICENSE",
+    "index.js"
+  ],
+  "keywords": ["Parsons Puzzle", "UI"],
+  "dependencies": {},
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "cash-dom": "^6.0.1",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-typescript": "^6.3.1",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "1.7.0",
+    "typescript": "^3.7.5"
+  }
+}
