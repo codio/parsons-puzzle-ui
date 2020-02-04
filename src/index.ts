@@ -1,2 +1,8 @@
-export const Greeter = (name: string) => `Hello ${name}`;
-export default Greeter;
+export const draw = (selector: string, jsonString: string): void => {
+  console.log(selector);
+  console.log(jsonString);
+};
+
+export const getJsonData = (): string => {
+  return '{}';
+}

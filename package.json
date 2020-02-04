@@ -10,6 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
+    "postbuild": "copyfiles -u 1 src/**/*.css dist",
     "lint": "eslint ./src/**/* --ext .js,.jsx,.ts,.tsx"
   },
   "files": [
@@ -17,12 +18,18 @@
     "LICENSE",
     "index.js"
   ],
-  "keywords": ["Parsons Puzzle", "UI"],
-  "dependencies": {},
+  "keywords": [
+    "Parsons Puzzle",
+    "UI"
+  ],
+  "style": "src/style.css",
+  "dependencies": {
+    "cash-dom": "^6.0.1"
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
-    "cash-dom": "^6.0.1",
+    "copyfiles": "^2.2.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-typescript": "^6.3.1",
     "eslint-plugin-import": "^2.20.1",
