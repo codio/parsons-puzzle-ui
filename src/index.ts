@@ -1,13 +1,5 @@
-// @ts-ignore
-import $ from 'cash-dom';
+import ParsonsUI from './lib/ParsonsUI'
 
-export const draw = (selector: string, jsonString: string): void => {
-  const container = $(selector);
-  console.log(container);
-  console.log(selector);
-  console.log(jsonString);
-};
-
-export const getJsonData = (): string => {
-  return '{}';
-};
+export function build (selector: string, jsonData: object): ParsonsUI {
+  return new ParsonsUI(selector, jsonData)
+}

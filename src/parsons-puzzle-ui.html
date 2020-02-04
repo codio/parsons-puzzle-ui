@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Parsons Puzzle UI</title>
-  <script src="/parsons-puzzle-ui/dist/bundle.js" type="text/javascript" />
+  <script src="parsonsUI.js" type="text/javascript"></script>
 </head>
 <body>
   <textarea id="sourceJsonTextarea" placeholder="Place Parsons JSON here"></textarea>
@@ -11,8 +11,9 @@
   <script type="text/javascript">
     function updateParsonsUI() {
       console.log(1);
-      // var ta = document.getElementById('sourceJsonTextarea');
-      // ParsonsUI.draw('#uiContainer', ta.value);
+      var ta = document.getElementById('sourceJsonTextarea')
+      var parsons = ParsonsUI.build('#uiContainer', ta.value)
+      console.log(parsons.export())
     }
   </script>
 </body>

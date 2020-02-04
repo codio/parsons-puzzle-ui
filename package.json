@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
     "postbuild": "lessc ./src/style.less ./dist/style.css && copyfiles -u 1 src/**/*.html dist",
-    "lint": "eslint ./src/**/* --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint ./src/**/* --ext .js,.jsx,.ts,.tsx",
+    "dev": "webpack --watch --progress"
   },
   "files": [
     "src/**/*",
