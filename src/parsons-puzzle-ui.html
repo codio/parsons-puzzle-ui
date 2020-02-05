@@ -4,15 +4,49 @@
   <meta charset="UTF-8">
   <title>Parsons Puzzle UI</title>
   <script src="parsonsUI.js" type="text/javascript"></script>
+  <style>
+    .mainContainer {
+      display: flex;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 auto;
+    }
+
+    .ta {
+      width: 90%;
+      height: 400px;
+    }
+
+    #uiContainer {
+      border: 1px solid;
+      flex: 1 0 auto;
+    }
+  </style>
 </head>
 <body>
-  <textarea id="sourceJsonTextarea" placeholder="Place Parsons JSON here"></textarea>
-  <button type="button" onclick="updateParsonsUI()">Submit</button>
+  <div class="mainContainer">
+    <div class="container">
+      <h4>Source Json</h4>
+      <div >
+        <textarea id="sourceJsonTextarea" placeholder="Place Parsons JSON here" class="ta"></textarea>
+      </div>
+      <button type="button" onclick="updateParsonsUI()">Update UI</button>
+    </div>
+    <div class="container">
+      <h4>Parsons UI</h4>
+      <div id="uiContainer"></div>
+    </div>
+  </div>
   <script type="text/javascript">
     function updateParsonsUI() {
-      console.log(1);
-      var ta = document.getElementById('sourceJsonTextarea')
-      var parsons = ParsonsUI.build('#uiContainer', ta.value)
+      var ta = document.getElementById('sourceJsonTextarea');
+      var options = {}
+      try {
+        options = JSON.parse(ta.value);
+      } catch (e) {}
+      var parsons = ParsonsUI.build('#uiContainer', {initial: 'some code', options: options});
       console.log(parsons.export())
     }
   </script>

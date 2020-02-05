@@ -1,5 +1,5 @@
-import ParsonsUI from './lib/ParsonsUI'
+import ParsonsUI from './lib/ParsonsUI';
 
-export function build (selector: string, jsonData: object): ParsonsUI {
-  return new ParsonsUI(selector, jsonData)
-}
+export const build = (selector: string, settings: ParsonsSettings): ParsonsUI => new ParsonsUI(selector, settings);
+
+export default build;

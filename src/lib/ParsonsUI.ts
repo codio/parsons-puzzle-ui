@@ -1,16 +1,24 @@
-import $ from 'cash-dom'
+import $, { Cash } from 'cash-dom';
+
+import * as render from './render';
 
 export default class ParsonsUI {
-  constructor(selector: string, json: object) {
-    const container = $(selector)
-    console.log(container)
-    console.log(selector)
-    console.log(json)
+  private readonly initialSettings: ParsonsSettings;
+
+  private readonly container: Cash;
+
+  constructor(selector: string, settings: ParsonsSettings) {
+    this.initialSettings = settings;
+    this.container = $(selector);
+
+    this.render();
   }
 
-  export(): any {
-    return {
-      demo: true
-    }
+  private render(): void {
+    render.render(this.container, this.initialSettings);
+  }
+
+  export(): ParsonsSettings {
+    return this.initialSettings;
   }
 }

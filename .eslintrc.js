@@ -1,14 +1,18 @@
 module.exports = {
-  root: true,
-  parser: '@typescript-eslint/parser',
-  plugins: [
+  "root": true,
+  "parser": '@typescript-eslint/parser',
+  "plugins": [
     '@typescript-eslint',
   ],
-  extends: [
-    'airbnb-typescript',
-    'eslint:recommended',
-    'standard',
+  "extends": [
+    'airbnb-typescript/base',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking'
   ],
+  "parserOptions":  {
+    "project": './tsconfig.json'
+  },
   "rules": {
     "guard-for-in": 2,
     "no-invalid-this": 2,
@@ -17,7 +21,7 @@ module.exports = {
       "ignoreEOLComments": true
     }],
     "camelcase": [ 2, {
-      "allow": ["expiry_date", "access_type"]
+      "allow": ["max_wrong_lines", "can_indent", "executable_code", "feedback_cb"]
     }],
     "comma-dangle": [2, "only-multiline"],
     "indent": ["error", 2, {
@@ -41,4 +45,4 @@ module.exports = {
 
     "import/first": 0,
   }
-}
+};
