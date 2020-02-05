@@ -14,6 +14,8 @@ module.exports = {
     "project": './tsconfig.json'
   },
   "rules": {
+    "semi": "off",
+    "@typescript-eslint/semi": ["error", "never"],
     "guard-for-in": 2,
     "no-invalid-this": 2,
     "radix": [2, "always"],
@@ -21,7 +23,7 @@ module.exports = {
       "ignoreEOLComments": true
     }],
     "camelcase": [ 2, {
-      "allow": ["max_wrong_lines", "can_indent", "executable_code", "feedback_cb"]
+      "allow": ["max_wrong_lines", "can_indent", "executable_code", "feedback_cb", "x_indent", "exec_limit"]
     }],
     "comma-dangle": [2, "only-multiline"],
     "indent": ["error", 2, {

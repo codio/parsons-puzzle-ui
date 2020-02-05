@@ -11,7 +11,7 @@ interface ParsonsOptions {
   max_wrong_lines?: number;
   can_indent?: boolean;
   vartests?: VariableTest[];
-  grader?: object;
+  grader?: () => void;
   executable_code?: string;
   programmingLang?: string;
   unittests?: string;
@@ -19,17 +19,19 @@ interface ParsonsOptions {
   turtleModelCode?: string;
   feedback_cb?: boolean | (() => void); // eslint-disable-line  @typescript-eslint/camelcase
   lang?: string;
+  x_indent?: number;
+  exec_limit?: number;
 }
 
 interface ParsonsSettings {
   initial: string;
   options: ParsonsOptions;
 }
-//
-// enum ParsonsGraders {
-//   LineBased,
-//   VariableCheck,
-//   UnitTest,
-//   LanguageTranslation,
-//   Turtle
-// }
+
+declare enum ParsonsGrader {
+  LineBased= 'LineBasedGrader',
+  VariableCheck = 'VariableCheckGrader',
+  UnitTest = 'UnitTestGrader',
+  LanguageTranslation = 'LanguageTranslationGrader',
+  Turtle = 'TurtleGrader'
+}
