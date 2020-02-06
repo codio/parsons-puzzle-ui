@@ -8,12 +8,17 @@
     .mainContainer {
       display: flex;
     }
-    .container {
+    .jsonContainer,
+    .parsonsContainer {
       display: flex;
       flex-direction: column;
+    }
+    .jsonContainer {
+      flex: 0 0 20%;
+    }
+    .parsonsContainer {
       flex: 1 0 auto;
     }
-
     .ta {
       width: 90%;
       height: 400px;
@@ -27,14 +32,14 @@
 </head>
 <body>
   <div class="mainContainer">
-    <div class="container">
+    <div class="jsonContainer">
       <h4>Source Json</h4>
       <div >
         <textarea id="sourceJsonTextarea" placeholder="Place Parsons JSON here" class="ta"></textarea>
       </div>
       <button type="button" onclick="updateParsonsUI()">Update UI</button>
     </div>
-    <div class="container">
+    <div class="parsonsContainer">
       <h4>Parsons UI</h4>
       <div id="uiContainer"></div>
     </div>

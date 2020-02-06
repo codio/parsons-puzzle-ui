@@ -1,4 +1,5 @@
 import $, { Cash } from 'cash-dom'
+import { ParsonsSettings } from 'ParsonsUI'
 
 import * as render from './render'
 

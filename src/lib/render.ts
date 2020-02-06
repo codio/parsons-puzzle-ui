@@ -1,4 +1,8 @@
 import $, { Cash } from 'cash-dom'
+import {
+  ParsonsGrader, ParsonsOptions, ParsonsSettings, VariableTest
+} from 'ParsonsUI'
+
 import { convertParsonsGraderFuncToEnum, convertTestVariablesToString } from './converters'
 
 const renderInitialCodeBlock = (code: string): Cash => {
@@ -96,8 +100,11 @@ const renderCommonSettings = (options: ParsonsOptions): Cash => {
   commonSettingsContainer.append(renderRequireDragging(options.trashId))
   commonSettingsContainer.append(renderIndenting(options.can_indent))
   commonSettingsContainer.append(renderIndentSize(options.x_indent))
-  // todo render exec_limit only if needed
-  commonSettingsContainer.append(renderExecLimit(options.exec_limit))
+
+  const grader: ParsonsGrader = convertParsonsGraderFuncToEnum(options.grader)
+  if (grader !== ParsonsGrader.LineBased) {
+    commonSettingsContainer.append(renderExecLimit(options.exec_limit))
+  }
 
   return commonSettingsContainer
 }
@@ -124,12 +131,29 @@ const renderVarTest = (test?: VariableTest | undefined): Cash => {
 
   const descriptionContainer = $('<div></div>')
   descriptionContainer.append('<label>Test Description*</label>')
-  const taDescription = $(
-    `<textarea rows="2" name="variables">${test ? test.message : ''}</textarea>`
-  )
+  const taDescription = $(`<textarea rows="2" name="description">${test ? test.message : ''}</textarea>`)
+  taDescription.attr('placeholder', 'Description of test that is shown to learner')
   descriptionContainer.append(taDescription)
+  column1.append(descriptionContainer)
+
+  const column2 = $('<div class="column"></div>')
+
+  const preCodeContainer = $('<div></div>')
+  preCodeContainer.append('<label>Pre Code</label>')
+  const taPreCode = $(`<textarea rows="2" name="pre-code">${test ? test.initcode : ''}</textarea>`)
+  taPreCode.attr('placeholder', 'Code prepended before student code')
+  preCodeContainer.append(taPreCode)
+  column2.append(preCodeContainer)
+
+  const postCodeContainer = $('<div></div>')
+  postCodeContainer.append('<label>Post Code</label>')
+  const taPostCode = $(`<textarea rows="2" name="post-code">${test ? test.code : ''}</textarea>`)
+  taPostCode.attr('placeholder', 'Code appended after student code')
+  postCodeContainer.append(taPostCode)
+  column2.append(postCodeContainer)
 
   testInfoContainer.append(column1)
+  testInfoContainer.append(column2)
   testContainer.append(testInfoContainer)
   return testContainer
 }
@@ -152,7 +176,7 @@ const renderVariableCheckGrader = (options?: ParsonsOptions): Cash => {
   return graderContainer
 }
 
-export const renderGrader = (container: Cash, grader: ParsonsGrader, options?: ParsonsOptions): void => {
+export const renderGraderForm = (container: Cash, grader: ParsonsGrader, options?: ParsonsOptions): void => {
   container.remove('.grader-container')
 
   switch (grader) {
@@ -173,12 +197,12 @@ export const render = (container: Cash, settings: ParsonsSettings): void => {
   uiContainer.append(renderDistractorBlocks(settings))
   uiContainer.append(renderCommonSettings(settings.options))
 
-  renderGrader(uiContainer, ParsonsGrader.LineBased, settings.options)
+  renderGraderForm(uiContainer, ParsonsGrader.LineBased, settings.options)
 
   container.append(uiContainer)
 }
 
 export default {
   render,
-  renderGrader
+  renderGraderForm
 }

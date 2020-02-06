@@ -1,3 +1,5 @@
+import { ParsonsGrader } from 'ParsonsUI'
+
 export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | undefined): ParsonsGrader => {
   if (!grader) {
     return ParsonsGrader.LineBased
