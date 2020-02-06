@@ -1,17 +1,13 @@
 import $, { Cash } from 'cash-dom'
-import { ParsonsSettings } from 'ParsonsUI'
 
 import * as render from './render'
+import { ParsonsSettings } from '../@types/ParsonsSettingsInterface'
 
 export default class ParsonsUI {
-  private readonly initialSettings: ParsonsSettings
-
   private readonly container: Cash
 
-  constructor(selector: string, settings: ParsonsSettings) {
-    this.initialSettings = settings
+  constructor(selector: string, private readonly initialSettings: ParsonsSettings) {
     this.container = $(selector)
-
     this.render()
   }
 

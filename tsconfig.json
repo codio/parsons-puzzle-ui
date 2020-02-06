@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["ES6", "DOM", "es2017"],
-    "typeRoots": ["./src/@types"],
     "declaration": true,
     "declarationDir": "./dist",
     "noImplicitAny": true,

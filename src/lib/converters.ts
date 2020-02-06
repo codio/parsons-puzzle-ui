@@ -1,4 +1,4 @@
-import { ParsonsGrader } from 'ParsonsUI'
+import ParsonsGrader from '../@types/GraderEnum'
 
 export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | undefined): ParsonsGrader => {
   if (!grader) {

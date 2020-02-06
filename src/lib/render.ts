@@ -1,9 +1,8 @@
 import $, { Cash } from 'cash-dom'
-import {
-  ParsonsGrader, ParsonsOptions, ParsonsSettings, VariableTest
-} from 'ParsonsUI'
 
 import { convertParsonsGraderFuncToEnum, convertTestVariablesToString } from './converters'
+import { ParsonsOptions, ParsonsSettings, VariableTest } from '../@types/ParsonsSettingsInterface'
+import ParsonsGrader from '../@types/GraderEnum'
 
 const renderInitialCodeBlock = (code: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
@@ -31,7 +30,7 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   distractorBlockContainer.append(taContainer)
 
   const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container"></div>')
-  maxDistractorsContainer.append('<label for="max-distractors">Code to Become Distractor Blocks</label>')
+  maxDistractorsContainer.append('<label for="max-distractors">Max Distractors</label>')
   maxDistractorsContainer.append(`<input id="max-distractors" type="number" value="${distractors}" />`)
   distractorBlockContainer.append(maxDistractorsContainer)
 
