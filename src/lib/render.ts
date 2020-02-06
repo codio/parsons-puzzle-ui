@@ -8,9 +8,11 @@ const renderInitialCodeBlock = (code: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
 
   // todo remove distractors from code
-  const taContainer: Cash = $('<div class="code-blocks-ta-container"></div>')
+  const taContainer: Cash = $('<div class="code-blocks-ta-container fieldset"></div>')
   taContainer.append('<label for="initial">Code to Become Blocks</label>')
-  taContainer.append(`<textarea id="initial" rows="4">${code}</textarea>`)
+  const taCode: Cash = $(`<textarea id="initial" rows="8">${code}</textarea>`)
+  taCode.attr('placeholder', 'Type Solution Here')
+  taContainer.append(taCode)
   codeBlocksContainer.append(taContainer)
 
   const hintText = '$$toggle::value1::value2::valuen$$&nbsp;&nbsp;&nbsp;&nbsp; new line \\n in same block'
@@ -22,14 +24,16 @@ const renderInitialCodeBlock = (code: string): Cash => {
 const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   const distractorBlockContainer: Cash = $('<div class="distractor-blocks-container"></div>')
 
-  const taContainer: Cash = $('<div class="distractor-blocks-ta-container"></div>')
+  const taContainer: Cash = $('<div class="distractor-blocks-ta-container fieldset"></div>')
   // todo extract distractors from code
   const distractors: string = settings.initial
   taContainer.append('<label for="distractors">Code to Become Distractor Blocks</label>')
-  taContainer.append(`<textarea id="distractors" rows="4">${distractors}</textarea>`)
+  const taDistractors: Cash = $(`<textarea id="distractors" rows="4">${distractors}</textarea>`)
+  taDistractors.attr('placeholder', 'Code blocks that serve as distractions (incorrect options)')
+  taContainer.append(taDistractors)
   distractorBlockContainer.append(taContainer)
 
-  const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container"></div>')
+  const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container fieldset"></div>')
   maxDistractorsContainer.append('<label for="max-distractors">Max Distractors</label>')
   maxDistractorsContainer.append(`<input id="max-distractors" type="number" value="${distractors}" />`)
   distractorBlockContainer.append(maxDistractorsContainer)
@@ -38,7 +42,7 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
 }
 
 const renderGraderSelect = (grader?: (() => void) | undefined): Cash => {
-  const graderContainer: Cash = $('<div class="grader-container"></div>')
+  const graderContainer: Cash = $('<div class="grader-container fieldset"></div>')
 
   graderContainer.append('<label for="grader">Grader</label>')
   const graderSelect: Cash = $('<select id="grader"></select>')
@@ -55,7 +59,7 @@ const renderGraderSelect = (grader?: (() => void) | undefined): Cash => {
 }
 
 const renderRequireDragging = (trashId?: string): Cash => {
-  const draggingContainer: Cash = $('<div class="dragging-container"></div>')
+  const draggingContainer: Cash = $('<div class="dragging-container fieldset"></div>')
 
   draggingContainer.append('<label for="require-dragging">Require dragging?</label>')
   draggingContainer.append(`<input id="require-dragging" type="checkbox" ${trashId ? 'checked' : ''} />`)
@@ -64,16 +68,16 @@ const renderRequireDragging = (trashId?: string): Cash => {
 }
 
 const renderIndenting = (canIndent?: boolean): Cash => {
-  const indentingContainer: Cash = $('<div class="indenting-container"></div>')
+  const indentingContainer: Cash = $('<div class="indenting-container fieldset"></div>')
 
-  indentingContainer.append('<label for="can-indent">Require dragging?</label>')
+  indentingContainer.append('<label for="can-indent">Indenting?</label>')
   indentingContainer.append(`<input id="can-indent" type="checkbox" ${canIndent ? 'checked' : ''} />`)
 
   return indentingContainer
 }
 
 const renderIndentSize = (xIndent?: number): Cash => {
-  const indentSizeContainer: Cash = $('<div class="indent-size-container"></div>')
+  const indentSizeContainer: Cash = $('<div class="indent-size-container fieldset"></div>')
 
   indentSizeContainer.append('<label for="indent-size">Indent Size</label>')
   indentSizeContainer.append(`<input id="indent-size" type="text" value="${xIndent !== undefined ? xIndent : 50}" />`)
@@ -82,7 +86,7 @@ const renderIndentSize = (xIndent?: number): Cash => {
 }
 
 const renderExecLimit = (execLimit?: number): Cash => {
-  const draggingContainer: Cash = $('<div class="exec-limit-container"></div>')
+  const draggingContainer: Cash = $('<div class="exec-limit-container fieldset"></div>')
 
   draggingContainer.append('<label for="exec-limit">Exec Limit</label>')
   draggingContainer.append(
@@ -119,7 +123,7 @@ const renderVarTest = (test?: VariableTest | undefined): Cash => {
   const testInfoContainer = $('<div class="test-info-container"></div>')
   const column1 = $('<div class="column"></div>')
 
-  const variablesContainer = $('<div></div>')
+  const variablesContainer = $('<div class="fieldset"></div>')
   variablesContainer.append('<label>Expected variable values*</label>')
   const taVariables = $(
     `<textarea rows="2" name="variables">${test ? convertTestVariablesToString(test.variables) : ''}</textarea>`
@@ -128,7 +132,7 @@ const renderVarTest = (test?: VariableTest | undefined): Cash => {
   variablesContainer.append(taVariables)
   column1.append(variablesContainer)
 
-  const descriptionContainer = $('<div></div>')
+  const descriptionContainer = $('<div class="fieldset"></div>')
   descriptionContainer.append('<label>Test Description*</label>')
   const taDescription = $(`<textarea rows="2" name="description">${test ? test.message : ''}</textarea>`)
   taDescription.attr('placeholder', 'Description of test that is shown to learner')
@@ -137,14 +141,14 @@ const renderVarTest = (test?: VariableTest | undefined): Cash => {
 
   const column2 = $('<div class="column"></div>')
 
-  const preCodeContainer = $('<div></div>')
+  const preCodeContainer = $('<div class="fieldset"></div>')
   preCodeContainer.append('<label>Pre Code</label>')
   const taPreCode = $(`<textarea rows="2" name="pre-code">${test ? test.initcode : ''}</textarea>`)
   taPreCode.attr('placeholder', 'Code prepended before student code')
   preCodeContainer.append(taPreCode)
   column2.append(preCodeContainer)
 
-  const postCodeContainer = $('<div></div>')
+  const postCodeContainer = $('<div class="fieldset"></div>')
   postCodeContainer.append('<label>Post Code</label>')
   const taPostCode = $(`<textarea rows="2" name="post-code">${test ? test.code : ''}</textarea>`)
   taPostCode.attr('placeholder', 'Code appended after student code')

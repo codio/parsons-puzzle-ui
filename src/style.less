@@ -1,6 +1,54 @@
 @import '../node_modules/flex.less/flex';
 
-.myCustomStyle {
-  padding: 10px;
-  .flex(1, 0, auto);
+.ParsonsUI {
+  .display(flex);
+  .flex-direction(column);
+  padding: 20px;
+  font-size: 14px;
+
+  label {
+    padding-bottom: 5px;
+  }
+
+  .fieldset {
+    .display(flex);
+    .flex-direction(column);
+  }
+
+  .code-blocks-hint {
+    padding-top: 5px;
+    text-align: right;
+  }
+
+  .distractor-blocks-container {
+    .display(flex);
+  }
+
+  .distractor-blocks-ta-container {
+    .flex(1, 0, auto);
+    padding-right: 20px;
+  }
+
+  .distractor-blocks-max-container {
+    padding: 20px 40px 0 0;
+    width: 100px;
+  }
+
+  .common-settings-container {
+    .display(flex);
+    padding-top: 10px;
+  }
+
+  .common-settings-container .fieldset {
+    padding-right: 40px;
+  }
+
+  .dragging-container,
+  .indenting-container {
+    .align-items(center);
+  }
+
+  .indent-size-container {
+    width: 70px;
+  }
 }
