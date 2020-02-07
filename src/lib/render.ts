@@ -162,9 +162,11 @@ const renderVarTest = (test?: VariableTest | undefined): Cash => {
 }
 
 const renderVariableCheckGrader = (options?: ParsonsOptions): Cash => {
-  const graderContainer = $('<div class="grader-container variable-check-grader-container"></div>')
+  const graderFormContainer = $('<div class="grader-form-container variable-check-grader-container"></div>')
 
-  graderContainer.append('<div class="add-test-container"><button id="add-test" type="button">New Test</button></div>')
+  graderFormContainer.append(
+    '<div class="add-test-container"><button id="add-test" type="button">New Test</button></div>'
+  )
   const testsContainer: Cash = $('<div class="tests-container"></div>')
   const testsList: Cash = $('<ul class="tests-list"></ul>')
 
@@ -174,13 +176,13 @@ const renderVariableCheckGrader = (options?: ParsonsOptions): Cash => {
     testsList.append(renderVarTest())
   }
   testsContainer.append(testsList)
-  graderContainer.append(testsContainer)
+  graderFormContainer.append(testsContainer)
 
-  return graderContainer
+  return graderFormContainer
 }
 
-export const renderGraderForm = (container: Cash, grader: ParsonsGrader, options?: ParsonsOptions): void => {
-  container.remove('.grader-container')
+const renderGraderForm = (container: Cash, grader: ParsonsGrader, options?: ParsonsOptions): void => {
+  container.find('.grader-form-container').remove()
 
   switch (grader) {
     case ParsonsGrader.VariableCheck:
@@ -189,6 +191,10 @@ export const renderGraderForm = (container: Cash, grader: ParsonsGrader, options
     default:
       break
   }
+}
+
+export const renderGrader = (container: Cash, grader: ParsonsGrader): void => {
+  renderGraderForm(container.find('.ParsonsUI'), grader)
 }
 
 export const render = (container: Cash, settings: ParsonsSettings): void => {
@@ -207,5 +213,5 @@ export const render = (container: Cash, settings: ParsonsSettings): void => {
 
 export default {
   render,
-  renderGraderForm
+  renderGrader
 }

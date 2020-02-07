@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "UI for building parsons puzzle https://js-parsons.github.io/ questions",
   "private": true,
-  "types": "src/types/index.d.ts",
   "repository": "git@github.com:codio/parsons-puzzle-ui.git",
   "author": "Mikhail Loginov <mloginov@codio.com>",
   "license": "MIT",
@@ -11,7 +10,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --env.production",
     "lint": "eslint ./src/**/* --ext .js,.jsx,.ts,.tsx",
-    "dev": "webpack --watch --progress",
     "start": "webpack-dev-server --open"
   },
   "files": [
