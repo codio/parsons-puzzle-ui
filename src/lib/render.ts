@@ -103,11 +103,7 @@ const renderCommonSettings = (options: ParsonsOptions): Cash => {
   commonSettingsContainer.append(renderRequireDragging(options.trashId))
   commonSettingsContainer.append(renderIndenting(options.can_indent))
   commonSettingsContainer.append(renderIndentSize(options.x_indent))
-
-  const grader: ParsonsGrader = convertParsonsGraderFuncToEnum(options.grader)
-  if (grader !== ParsonsGrader.LineBased) {
-    commonSettingsContainer.append(renderExecLimit(options.exec_limit))
-  }
+  commonSettingsContainer.append(renderExecLimit(options.exec_limit))
 
   return commonSettingsContainer
 }
@@ -128,7 +124,7 @@ const renderVarTest = (test?: VariableTest | undefined): Cash => {
   const taVariables = $(
     `<textarea rows="2" name="variables">${test ? convertTestVariablesToString(test.variables) : ''}</textarea>`
   )
-  taVariables.attr('placeholder', '&quot;var_Name_1&quot;: value&#x0a;&quot;var_Name_2&quot;: value')
+  taVariables.attr('placeholder', '"var_Name_1": value\n"var_Name_2": value')
   variablesContainer.append(taVariables)
   column1.append(variablesContainer)
 
@@ -182,6 +178,7 @@ const renderVariableCheckGrader = (options?: ParsonsOptions): Cash => {
 }
 
 const renderGraderForm = (container: Cash, grader: ParsonsGrader, options?: ParsonsOptions): void => {
+  container.closest('.ParsonsUI').removeClass().addClass(`ParsonsUI ${grader.toString()}`)
   container.find('.grader-form-container').remove()
 
   switch (grader) {

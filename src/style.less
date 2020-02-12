@@ -46,7 +46,58 @@
     align-items: center;
   }
 
-  .indent-size-container {
+  .indent-size-container,
+  .exec-limit-container {
     width: 80px;
+  }
+
+  &.LineBasedGrader .exec-limit-container {
+    display: none;
+  }
+
+  .variable-check-grader-container {
+    .add-test-container {
+      padding-top: 20px;
+    }
+
+    .tests-container {
+      padding-top: 10px;
+    }
+
+    .tests-list {
+      list-style: none;
+      margin: 0;
+      padding: 0 0 10px 0;
+    }
+
+    .test-container {
+      display: flex;
+    }
+
+    .action-container {
+      display: flex;
+      flex-direction: column;
+      padding-top: 40px;
+      flex: 0 0 60px;
+    }
+
+    .action {
+      margin-bottom: 10px
+    }
+
+    .test-info-container {
+      display: flex;
+      flex: 1 0 auto;
+      border: 1px solid grey;
+      padding: 10px;
+    }
+
+    .column {
+      flex: 1 0 auto;
+    }
+
+    .column .fieldset {
+      width: 90%;
+    }
   }
 }
