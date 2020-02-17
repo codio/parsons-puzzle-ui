@@ -1,3 +1,11 @@
+export const enum ParsonsGrader {
+  LineBased= 'LineBasedGrader',
+  VariableCheck = 'VariableCheckGrader',
+  UnitTest = 'UnitTestGrader',
+  LanguageTranslation = 'LanguageTranslationGrader',
+  Turtle = 'TurtleGrader'
+}
+
 export interface VariableTest {
   initcode?: string;
   code?: string;
@@ -26,4 +34,10 @@ export interface ParsonsOptions {
 export interface ParsonsSettings {
   initial: string;
   options: ParsonsOptions;
+}
+
+export interface UnitTest {
+  methodCall: string;
+  expectedOutput: string;
+  errorMessage?: string;
 }

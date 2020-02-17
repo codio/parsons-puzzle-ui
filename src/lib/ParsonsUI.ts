@@ -1,8 +1,7 @@
 import $, { Cash } from 'cash-dom'
 
 import * as render from './render'
-import { ParsonsSettings } from '../@types/ParsonsSettingsInterface'
-import ParsonsGrader from '../@types/GraderEnum'
+import { ParsonsSettings, ParsonsGrader } from '../@types/types'
 
 export default class ParsonsUI {
   private readonly container: Cash

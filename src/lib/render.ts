@@ -1,8 +1,12 @@
 import $, { Cash } from 'cash-dom'
 
-import { convertParsonsGraderFuncToEnum, convertTestVariablesToString } from './converters'
-import { ParsonsOptions, ParsonsSettings, VariableTest } from '../@types/ParsonsSettingsInterface'
-import ParsonsGrader from '../@types/GraderEnum'
+import {convertParsonsGraderFuncToEnum, convertTestVariablesToString, convertUnitTestsFromString} from './converters'
+import {
+  ParsonsOptions,
+  ParsonsSettings,
+  VariableTest,
+  ParsonsGrader
+} from '../@types/types'
 
 const renderInitialCodeBlock = (code: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
@@ -177,6 +181,30 @@ const renderVariableCheckGrader = (options?: ParsonsOptions): Cash => {
   return graderFormContainer
 }
 
+const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
+  const graderFormContainer = $('<div class="grader-form-container unit-test-grader-container"></div>')
+
+  // convertUnitTestsFromString('def testOne(self):\\n    self.assertEqual(maxindex([0, 2, 4]),2,"Calling function <code>maxindex([0, 2, 4])</code>.")\\n    self.assertEqual(maxindex([7, 2, 4]),0,"Calling function <code>maxindex([7, 2, 4])</code>.")\\n    self.assertEqual(maxindex([7, 8, 4]),1,"Calling function <code>maxindex([7, 8, 4])</code>.")\\n  def testTwo(self):\\n    self.assertEqual(maxindex([0, 2, 4]),2,"Calling function <code>maxindex([0, 2, 4])</code>.")\\n    self.assertEqual(maxindex([7, 2, 4]),0,"Calling function <code>maxindex([7, 2, 4])</code>.")\\n    self.assertEqual(maxindex([7, 8, 4]),1,"Calling function <code>maxindex([7, 8, 4])</code>.")\\n')
+
+  // graderFormContainer.append(
+  //   '<div class="add-test-container"><button id="add-test" type="button">New Test</button></div>'
+  // )
+  // const testsContainer: Cash = $('<div class="tests-container"></div>')
+  // const testsList: Cash = $('<ul class="tests-list"></ul>')
+  //
+  //
+  //
+  // if (options && options.vartests) {
+  //   options.vartests.forEach((test: VariableTest) => testsList.append(renderVarTest(test)))
+  // } else {
+  //   testsList.append(renderVarTest())
+  // }
+  // testsContainer.append(testsList)
+  // graderFormContainer.append(testsContainer)
+
+  return graderFormContainer
+}
+
 const renderGraderForm = (container: Cash, grader: ParsonsGrader, options?: ParsonsOptions): void => {
   container.closest('.ParsonsUI').removeClass().addClass(`ParsonsUI ${grader.toString()}`)
   container.find('.grader-form-container').remove()
@@ -184,6 +212,9 @@ const renderGraderForm = (container: Cash, grader: ParsonsGrader, options?: Pars
   switch (grader) {
     case ParsonsGrader.VariableCheck:
       container.append(renderVariableCheckGrader(options))
+      break
+    case ParsonsGrader.UnitTest:
+      container.append(renderUnitTestGrader(options))
       break
     default:
       break

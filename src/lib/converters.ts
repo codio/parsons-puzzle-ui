@@ -1,4 +1,4 @@
-import ParsonsGrader from '../@types/GraderEnum'
+import { ParsonsGrader, UnitTest } from '../@types/types'
 
 export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | undefined): ParsonsGrader => {
   if (!grader) {
@@ -24,6 +24,11 @@ export const convertTestVariablesToString = (variables: object): string => {
     lines.push(`"${key}": ${value}`)
   })
   return lines.join('\n')
+}
+
+export const convertUnitTestsFromString = (/* unitTests: string */): UnitTest[] => {
+  const test: UnitTest = { methodCall: '', expectedOutput: '', errorMessage: '' }
+  return [test]
 }
 
 export default {
