@@ -1,7 +1,8 @@
 import $, { Cash } from 'cash-dom'
 
-import * as render from './render'
 import { ParsonsSettings, ParsonsGrader } from '../@types/types'
+import * as render from './render'
+import { collectData } from './data-helper'
 
 export default class ParsonsUI {
   private readonly container: Cash
@@ -52,6 +53,6 @@ export default class ParsonsUI {
   }
 
   export(): ParsonsSettings {
-    return this.initialSettings
+    return collectData(this.container, this.initialSettings.options)
   }
 }
