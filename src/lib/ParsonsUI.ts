@@ -22,6 +22,33 @@ export default class ParsonsUI {
       const grader: string | string[] = $(event.currentTarget as HTMLElement).val()
       render.renderGrader(this.container, grader as ParsonsGrader)
     })
+    this.container.on('click', '#add-test', (event: Event) => {
+      event.preventDefault()
+      const graderContainer: Cash = $(event.currentTarget as HTMLElement).closest('.grader-form-container')
+      const isVarTests: boolean = graderContainer.hasClass('variable-check-grader-container')
+      const testList: Cash = graderContainer.find('.tests-list')
+      testList.append(isVarTests ? render.renderVarTest() : render.renderUnitTest())
+    })
+    this.container.on('click', '.action.duplicate', (event: Event) => {
+      event.preventDefault()
+      const currentTest: Cash = $(event.currentTarget as HTMLElement).closest('.test-container')
+      currentTest.clone().insertAfter(currentTest)
+    })
+    this.container.on('click', '.action.remove', (event: Event) => {
+      event.preventDefault()
+      $(event.currentTarget as HTMLElement).closest('.test-container').remove()
+    })
+    this.container.on('change', '#can-indent', (event: Event) => {
+      event.preventDefault()
+      const $this: Cash = $(event.currentTarget as HTMLElement)
+      const isIndentingEnabled: boolean = $this.is(':checked')
+      const commonSettingsContainer: Cash = $this.closest('.common-settings-container')
+      if (isIndentingEnabled) {
+        commonSettingsContainer.find('#indent-size').removeAttr('disabled')
+      } else {
+        commonSettingsContainer.find('#indent-size').attr('disabled', 'disabled')
+      }
+    })
   }
 
   export(): ParsonsSettings {

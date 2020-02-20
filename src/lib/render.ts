@@ -85,11 +85,15 @@ const renderIndenting = (canIndent?: boolean): Cash => {
   return indentingContainer
 }
 
-const renderIndentSize = (xIndent?: number): Cash => {
+const renderIndentSize = (canIndent?: boolean, xIndent?: number): Cash => {
   const indentSizeContainer: Cash = $('<div class="indent-size-container fieldset"></div>')
 
   indentSizeContainer.append('<label for="indent-size">Indent Size</label>')
-  indentSizeContainer.append(`<input id="indent-size" type="text" value="${xIndent !== undefined ? xIndent : 50}" />`)
+  indentSizeContainer.append(
+    `<input id="indent-size" type="text" value="${
+      xIndent !== undefined ? xIndent : 50
+    }" ${!canIndent ? 'disabled' : ''} />`
+  )
 
   return indentSizeContainer
 }
@@ -111,18 +115,18 @@ const renderCommonSettings = (options: ParsonsOptions): Cash => {
   commonSettingsContainer.append(renderGraderSelect(options.grader))
   commonSettingsContainer.append(renderRequireDragging(options.trashId))
   commonSettingsContainer.append(renderIndenting(options.can_indent))
-  commonSettingsContainer.append(renderIndentSize(options.x_indent))
+  commonSettingsContainer.append(renderIndentSize(options.can_indent, options.x_indent))
   commonSettingsContainer.append(renderExecLimit(options.exec_limit))
 
   return commonSettingsContainer
 }
 
-const renderVarTest = (test?: VariableTest | undefined): Cash => {
+export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   const testContainer: Cash = $('<li class="test-container"></li>')
 
   const actionsContainer = $('<div class="action-container"></div>')
-  actionsContainer.append('<button type="button" class="action duplicate">++</button>')
-  actionsContainer.append('<button type="button" class="action small remove">-</button>')
+  actionsContainer.append('<button type="button" class="action duplicate">clone</button>')
+  actionsContainer.append('<button type="button" class="action small remove">remove</button>')
   testContainer.append(actionsContainer)
 
   const testInfoContainer = $('<div class="test-info-container"></div>')
@@ -204,12 +208,12 @@ const renderUnitTestCodePrepend = (code?: string): Cash => {
   return codePrependContainer
 }
 
-const renderUnitTest = (test?: UnitTest | undefined): Cash => {
+export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
   const testContainer: Cash = $('<li class="test-container"></li>')
 
   const actionsContainer = $('<div class="action-container"></div>')
-  actionsContainer.append('<button type="button" class="action duplicate">++</button>')
-  actionsContainer.append('<button type="button" class="action small remove">-</button>')
+  actionsContainer.append('<button type="button" class="action duplicate">clone</button>')
+  actionsContainer.append('<button type="button" class="action small remove">remove</button>')
   testContainer.append(actionsContainer)
 
   const testInfoContainer = $('<div class="test-info-container"></div>')
@@ -356,6 +360,5 @@ export const render = (container: Cash, settings: ParsonsSettings): void => {
 }
 
 export default {
-  render,
-  renderGrader
+  render
 }
