@@ -29,6 +29,7 @@ export interface ParsonsOptions {
   lang?: string;
   x_indent?: number;
   exec_limit?: number;
+  unittest_code_prepend?: string;
 }
 
 export interface ParsonsSettings {

@@ -23,7 +23,15 @@ module.exports = {
       "ignoreEOLComments": true
     }],
     "camelcase": [ 2, {
-      "allow": ["max_wrong_lines", "can_indent", "executable_code", "feedback_cb", "x_indent", "exec_limit"]
+      "allow": [
+        "max_wrong_lines",
+        "can_indent",
+        "executable_code",
+        "feedback_cb",
+        "x_indent",
+        "exec_limit",
+        "unittest_code_prepend"
+      ]
     }],
     "comma-dangle": [2, "only-multiline"],
     "indent": ["error", 2, {

@@ -1,11 +1,16 @@
 import $, { Cash } from 'cash-dom'
 
-import {convertParsonsGraderFuncToEnum, convertTestVariablesToString, convertUnitTestsFromString} from './converters'
 import {
+  convertParsonsGraderFuncToEnum,
+  convertTestVariablesToString,
+  convertUnitTestsFromString
+} from './converters'
+import {
+  ParsonsGrader,
   ParsonsOptions,
   ParsonsSettings,
-  VariableTest,
-  ParsonsGrader
+  UnitTest,
+  VariableTest
 } from '../@types/types'
 
 const renderInitialCodeBlock = (code: string): Cash => {
@@ -161,8 +166,13 @@ const renderVarTest = (test?: VariableTest | undefined): Cash => {
   return testContainer
 }
 
-const renderVariableCheckGrader = (options?: ParsonsOptions): Cash => {
-  const graderFormContainer = $('<div class="grader-form-container variable-check-grader-container"></div>')
+const renderVariableCheckGrader = (options?: ParsonsOptions, additionalGraderClass?: string): Cash => {
+  const classes: string[] = [
+    'grader-form-container',
+    'variable-check-grader-container',
+    additionalGraderClass || ''
+  ]
+  const graderFormContainer = $(`<div class="${classes.join(' ')}"></div>`)
 
   graderFormContainer.append(
     '<div class="add-test-container"><button id="add-test" type="button">New Test</button></div>'
@@ -181,27 +191,127 @@ const renderVariableCheckGrader = (options?: ParsonsOptions): Cash => {
   return graderFormContainer
 }
 
+const renderUnitTestCodePrepend = (code?: string): Cash => {
+  const codePrependContainer: Cash = $('<div class="code-prepend-container"></div>')
+
+  const taContainer: Cash = $('<div class="code-prepend-ta-container fieldset"></div>')
+  taContainer.append('<label for="code-prepend">Code prepended before student code</label>')
+  const taCode: Cash = $(`<textarea id="code-prepend" rows="4">${code || ''}</textarea>`)
+  taCode.attr('placeholder', 'Code prepended before student code')
+  taContainer.append(taCode)
+  codePrependContainer.append(taContainer)
+
+  return codePrependContainer
+}
+
+const renderUnitTest = (test?: UnitTest | undefined): Cash => {
+  const testContainer: Cash = $('<li class="test-container"></li>')
+
+  const actionsContainer = $('<div class="action-container"></div>')
+  actionsContainer.append('<button type="button" class="action duplicate">++</button>')
+  actionsContainer.append('<button type="button" class="action small remove">-</button>')
+  testContainer.append(actionsContainer)
+
+  const testInfoContainer = $('<div class="test-info-container"></div>')
+  const column1 = $('<div class="column"></div>')
+
+  const methodsContainer = $('<div class="fieldset"></div>')
+  methodsContainer.append('<label>Method Call(s)*</label>')
+  const taMethods = $(
+    `<textarea rows="2" name="method-call">${test ? test.methodCall : ''}</textarea>`
+  )
+  taMethods.attr('placeholder', 'Write method call with arguments')
+  methodsContainer.append(taMethods)
+  column1.append(methodsContainer)
+
+  const messageContainer = $('<div class="fieldset"></div>')
+  messageContainer.append('<label>Error Message (optional)</label>')
+  const taMessage = $(`<textarea rows="2" name="error-message">${test ? test.errorMessage : ''}</textarea>`)
+  taMessage.attr('placeholder', 'What student sees if this test fails')
+  messageContainer.append(taMessage)
+  column1.append(messageContainer)
+
+  const column2 = $('<div class="column"></div>')
+
+  const expectedOutputContainer = $('<div class="fieldset"></div>')
+  expectedOutputContainer.append('<label>Expected Output(s)*</label>')
+  const taExpectedOutput = $(`<textarea rows="2" name="expected-output">${test ? test.expectedOutput : ''}</textarea>`)
+  taExpectedOutput.attr('placeholder', 'Expected output of method call')
+  expectedOutputContainer.append(taExpectedOutput)
+  column2.append(expectedOutputContainer)
+
+  testInfoContainer.append(column1)
+  testInfoContainer.append(column2)
+  testContainer.append(testInfoContainer)
+  return testContainer
+}
+
 const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
   const graderFormContainer = $('<div class="grader-form-container unit-test-grader-container"></div>')
 
-  // convertUnitTestsFromString('def testOne(self):\\n    self.assertEqual(maxindex([0, 2, 4]),2,"Calling function <code>maxindex([0, 2, 4])</code>.")\\n    self.assertEqual(maxindex([7, 2, 4]),0,"Calling function <code>maxindex([7, 2, 4])</code>.")\\n    self.assertEqual(maxindex([7, 8, 4]),1,"Calling function <code>maxindex([7, 8, 4])</code>.")\\n  def testTwo(self):\\n    self.assertEqual(maxindex([0, 2, 4]),2,"Calling function <code>maxindex([0, 2, 4])</code>.")\\n    self.assertEqual(maxindex([7, 2, 4]),0,"Calling function <code>maxindex([7, 2, 4])</code>.")\\n    self.assertEqual(maxindex([7, 8, 4]),1,"Calling function <code>maxindex([7, 8, 4])</code>.")\\n')
+  graderFormContainer.append(renderUnitTestCodePrepend(options ? options.unittest_code_prepend : ''))
 
-  // graderFormContainer.append(
-  //   '<div class="add-test-container"><button id="add-test" type="button">New Test</button></div>'
-  // )
-  // const testsContainer: Cash = $('<div class="tests-container"></div>')
-  // const testsList: Cash = $('<ul class="tests-list"></ul>')
-  //
-  //
-  //
-  // if (options && options.vartests) {
-  //   options.vartests.forEach((test: VariableTest) => testsList.append(renderVarTest(test)))
-  // } else {
-  //   testsList.append(renderVarTest())
-  // }
-  // testsContainer.append(testsList)
-  // graderFormContainer.append(testsContainer)
+  const tests: UnitTest[] | null = options ? convertUnitTestsFromString(/* options.unittests */) : null
 
+  graderFormContainer.append(
+    '<div class="add-test-container"><button id="add-test" type="button">New Test</button></div>'
+  )
+  const testsContainer: Cash = $('<div class="tests-container"></div>')
+  const testsList: Cash = $('<ul class="tests-list"></ul>')
+
+  if (tests) {
+    tests.forEach((test: UnitTest) => testsList.append(renderUnitTest(test)))
+  } else {
+    testsList.append(renderUnitTest())
+  }
+  testsContainer.append(testsList)
+  graderFormContainer.append(testsContainer)
+
+  return graderFormContainer
+}
+
+const renderProgrammingLang = (lang?: string): Cash => {
+  const programmingLangContainer: Cash = $('<div class="programming-lang-container fieldset"></div>')
+
+  programmingLangContainer.append('<label for="programming-lang">Programming Language</label>')
+  const programmingLangSelect: Cash = $('<select id="programming-lang"></select>')
+  programmingLangSelect.append('<option value="pseudo">pseudocode</option>')
+  programmingLangSelect.append('<option value="java">java</option>')
+  programmingLangSelect.append('<option value="python">python</option>')
+
+  if (lang) {
+    programmingLangSelect.val(lang)
+  }
+  programmingLangContainer.append(programmingLangSelect)
+
+  return programmingLangContainer
+}
+
+const renderExecutableCode = (code?: string): Cash => {
+  const executableCodeContainer: Cash = $('<div class="executable-code-container"></div>')
+
+  const taContainer: Cash = $('<div class="executable-code-ta-container fieldset"></div>')
+  taContainer.append('<label for="code-prepend">Executable code</label>')
+  const taCode: Cash = $(`<textarea id="executable-code" rows="4">${code || ''}</textarea>`)
+  taCode.attr('placeholder', 'Executable code')
+  taContainer.append(taCode)
+  executableCodeContainer.append(taContainer)
+
+  return executableCodeContainer
+}
+
+const renderLanguageTranslationGrader = (options?: ParsonsOptions): Cash => {
+  const grader: Cash = renderVariableCheckGrader(options, 'language-translation-grader-container')
+  grader.prepend(renderExecutableCode(options ? options.executable_code : ''))
+  grader.prepend(renderProgrammingLang(options ? options.programmingLang : ''))
+  return grader
+}
+
+const renderTurtleGrader = (options?: ParsonsOptions): Cash => {
+  const graderFormContainer = $('<div class="grader-form-container turtle-grader-container"></div>')
+
+  graderFormContainer.append(renderProgrammingLang(options ? options.programmingLang : ''))
+  graderFormContainer.append(renderExecutableCode(options ? options.executable_code : ''))
   return graderFormContainer
 }
 
@@ -215,6 +325,12 @@ const renderGraderForm = (container: Cash, grader: ParsonsGrader, options?: Pars
       break
     case ParsonsGrader.UnitTest:
       container.append(renderUnitTestGrader(options))
+      break
+    case ParsonsGrader.LanguageTranslation:
+      container.append(renderLanguageTranslationGrader(options))
+      break
+    case ParsonsGrader.Turtle:
+      container.append(renderTurtleGrader(options))
       break
     default:
       break
