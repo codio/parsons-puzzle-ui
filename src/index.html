@@ -18,14 +18,14 @@
       flex-direction: column;
     }
     .jsonContainer {
-      flex: 0 0 20%;
+      flex: 0 0 40%;
     }
     .parsonsContainer {
       flex: 1 0 auto;
     }
     .ta {
       width: 90%;
-      height: 400px;
+      height: 200px;
     }
 
     #uiContainer {
@@ -81,9 +81,14 @@
 <!-- parsons puzzle libs -->
   <div class="mainContainer">
     <div class="jsonContainer">
-      <h4>Source Json</h4>
+      <h4>Parsons puzzle initial settings</h4>
       <div>
-        <textarea id="sourceJsonTextarea" placeholder="Place Parsons JSON here" class="ta">{}</textarea>
+        <label for="initialTextarea">Parsons puzzle initial code</label>
+        <textarea id="initialTextarea" placeholder="Place Parsons puzzle initial code here" class="ta"></textarea>
+      </div>
+      <div>
+        <label for="optionsTextarea">Parsons puzzle options</label>
+        <textarea id="optionsTextarea" placeholder="Place Parsons puzzle JSON options here" class="ta">{}</textarea>
       </div>
       <button type="button" onclick="updateParsonsUI()">Update UI</button><br/>
       <button type="button" onclick="exportParsonsSettings()">Apply options(export to console also)</button>
@@ -101,13 +106,15 @@
   <script type="text/javascript">
     var parsons = null;
     var parsonsPuzzle = null;
+    updateParsonsUI();
     function updateParsonsUI() {
-      var ta = document.getElementById('sourceJsonTextarea');
+      var initialTa = document.getElementById('initialTextarea');
+      var optionsTa = document.getElementById('optionsTextarea');
       var options = {}
       try {
-        options = JSON.parse(ta.value);
+        options = JSON.parse(optionsTa.value);
       } catch (e) {}
-      parsons = ParsonsUI.build('#uiContainer', {initial: 'some code', options: options});
+      parsons = ParsonsUI.build('#uiContainer', {initial: initialTa.value, options: options});
     }
     function exportParsonsSettings() {
       if (parsons) {

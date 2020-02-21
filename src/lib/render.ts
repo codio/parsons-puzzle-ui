@@ -81,7 +81,9 @@ const renderIndenting = (canIndent?: boolean): Cash => {
   const indentingContainer: Cash = $('<div class="indenting-container fieldset"></div>')
 
   indentingContainer.append('<label for="can-indent">Indenting?</label>')
-  indentingContainer.append(`<input id="can-indent" type="checkbox" ${canIndent ? 'checked' : ''} />`)
+  indentingContainer.append(
+    `<input id="can-indent" type="checkbox" ${canIndent || canIndent === undefined ? 'checked' : ''} />`
+  )
 
   return indentingContainer
 }
@@ -93,7 +95,7 @@ const renderIndentSize = (canIndent?: boolean, xIndent?: number): Cash => {
   indentSizeContainer.append(
     `<input id="indent-size" type="text" value="${
       xIndent !== undefined ? xIndent : 50
-    }" ${!canIndent ? 'disabled' : ''} />`
+    }" ${canIndent === false ? 'disabled' : ''} />`
   )
 
   return indentSizeContainer
