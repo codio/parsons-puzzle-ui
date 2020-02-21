@@ -1,10 +1,13 @@
 import { ParsonsGrader, UnitTest } from '../@types/types'
 
-export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | undefined): ParsonsGrader => {
+export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | string | undefined): ParsonsGrader => {
   if (!grader) {
     return ParsonsGrader.LineBased
   }
-  switch (grader.name) {
+
+  const graderName: string = typeof grader === 'string' ? grader : grader.name
+
+  switch (graderName) {
     case 'VariableCheckGrader':
       return ParsonsGrader.VariableCheck
     case 'TurtleGrader':

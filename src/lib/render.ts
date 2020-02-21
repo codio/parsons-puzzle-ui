@@ -51,7 +51,7 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   return distractorBlockContainer
 }
 
-const renderGraderSelect = (grader?: (() => void) | undefined): Cash => {
+const renderGraderSelect = (grader?: (() => void) | string | undefined): Cash => {
   const graderContainer: Cash = $('<div class="grader-container fieldset"></div>')
 
   graderContainer.append('<label for="grader">Grader</label>')
@@ -305,6 +305,19 @@ const renderExecutableCode = (code?: string): Cash => {
   return executableCodeContainer
 }
 
+const renderTurtleModelCode = (code?: string): Cash => {
+  const turtleModelCodeContainer: Cash = $('<div class="turtle-model-code-container"></div>')
+
+  const taContainer: Cash = $('<div class="turtle-model-code-ta-container fieldset"></div>')
+  taContainer.append('<label for="turtle-model-code">Turtle Model Code</label>')
+  const taCode: Cash = $(`<textarea id="turtle-model-code" rows="4">${code || ''}</textarea>`)
+  taCode.attr('placeholder', 'Turtle Model Code')
+  taContainer.append(taCode)
+  turtleModelCodeContainer.append(taContainer)
+
+  return turtleModelCodeContainer
+}
+
 const renderLanguageTranslationGrader = (options?: ParsonsOptions): Cash => {
   const grader: Cash = renderVariableCheckGrader(options, 'language-translation-grader-container')
   grader.prepend(renderExecutableCode(options ? options.executable_code : ''))
@@ -317,6 +330,8 @@ const renderTurtleGrader = (options?: ParsonsOptions): Cash => {
 
   graderFormContainer.append(renderProgrammingLang(options ? options.programmingLang : ''))
   graderFormContainer.append(renderExecutableCode(options ? options.executable_code : ''))
+  graderFormContainer.append(renderTurtleModelCode(options ? options.turtleModelCode : ''))
+
   return graderFormContainer
 }
 

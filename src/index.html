@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Parsons Puzzle UI</title>
+  <!-- parsons puzzle libs/styles -->
+  <link href="https://js-parsons.github.io/js/js-parsons/parsons.css" rel="stylesheet" />
+  <!-- parsons puzzle libs -->
   <script src="parsonsUI.js" type="text/javascript"></script>
   <style>
     .mainContainer {
       display: flex;
+      padding-bottom: 40px;
     }
     .jsonContainer,
     .parsonsContainer {
@@ -27,26 +31,76 @@
     #uiContainer {
       border: 1px solid;
       flex: 1 0 auto;
+      max-height: 600px;
+      overflow: auto;
     }
   </style>
 </head>
 <body>
+<!-- parsons puzzle libs -->
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/underscore-min.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/jquery.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/jquery-ui.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/lis.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/jquery.sound.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/jquery.ui.touch-punch.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autorun=false"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/skulpt.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/skulpt-stdlib.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/parsons.js"
+></script>
+<!-- parsons puzzle libs -->
   <div class="mainContainer">
     <div class="jsonContainer">
       <h4>Source Json</h4>
-      <div >
+      <div>
         <textarea id="sourceJsonTextarea" placeholder="Place Parsons JSON here" class="ta">{}</textarea>
       </div>
       <button type="button" onclick="updateParsonsUI()">Update UI</button><br/>
-      <button type="button" onclick="exportParsonsOptions()">Export options to console</button>
+      <button type="button" onclick="exportParsonsSettings()">Apply options(export to console also)</button>
     </div>
     <div class="parsonsContainer">
       <h4>Parsons UI</h4>
       <div id="uiContainer"></div>
     </div>
   </div>
+  <div class="parsonsPuzzleContainer">
+    <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
+    <div id="sortable" class="sortable-code"><p>Solution</p></div>
+    <button type="button" onclick="getFeedback()">Get Feedback</button>
+  </div>
   <script type="text/javascript">
     var parsons = null;
+    var parsonsPuzzle = null;
     function updateParsonsUI() {
       var ta = document.getElementById('sourceJsonTextarea');
       var options = {}
@@ -55,8 +109,27 @@
       } catch (e) {}
       parsons = ParsonsUI.build('#uiContainer', {initial: 'some code', options: options});
     }
-    function exportParsonsOptions() {
-      parsons && console.log(parsons.export())
+    function exportParsonsSettings() {
+      if (parsons) {
+        var settings = parsons.export()
+        console.log(settings)
+
+        parsonsPuzzle = new ParsonsWidget(settings.options);
+        parsonsPuzzle.init(settings.initial);
+        parsonsPuzzle.shuffleLines();
+      }
+
+    }
+    function getFeedback() {
+      if (parsonsPuzzle) {
+        var feedback = parsonsPuzzle.getFeedback();
+
+        var message = feedback.join('\n')
+        message = message || 'Congratulations on solving your Parsons Problem!'
+
+        console.log(feedback)
+        alert(message)
+      }
     }
   </script>
 </body>

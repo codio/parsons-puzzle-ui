@@ -26,6 +26,18 @@ interface UnitTestGraderOptions {
   unitTests: string;
 }
 
+interface LanguageTranslationGraderOptions {
+  programmingLang: string;
+  executableCode: string;
+  vartests: VariableTest[];
+}
+
+interface TurtleGraderOptions {
+  programmingLang: string;
+  executableCode: string;
+  turtleModelCode: string;
+}
+
 const collectCommonSettings = (container: Cash): CommonSettings => {
   const codeBlocks: string = (container.find('#initial').val() as string)
   const distractors: string = (container.find('#distractors').val() as string)
@@ -52,7 +64,7 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
   }
 }
 
-const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGraderOptions => {
+const collectVariableTests = (container: Cash): VariableTest[] => {
   const tests: VariableTest[] = []
 
   container.find('.test-container').each((index: number, el: HTMLElement) => {
@@ -81,8 +93,12 @@ const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGrader
     })
   })
 
+  return tests
+}
+
+const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGraderOptions => {
   return {
-    vartests: tests
+    vartests: collectVariableTests(container)
   }
 }
 
@@ -116,6 +132,22 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
   }
 }
 
+const collectLanguageTranslationGraderOptions = (container: Cash): LanguageTranslationGraderOptions => {
+  return {
+    programmingLang: container.find('#programming-lang').val() as string,
+    executableCode: container.find('#executable-code').val() as string,
+    vartests: collectVariableTests(container)
+  }
+}
+
+const collectTurtleGraderOptions = (container: Cash): TurtleGraderOptions => {
+  return {
+    programmingLang: container.find('#programming-lang').val() as string,
+    executableCode: container.find('#executable-code').val() as string,
+    turtleModelCode: container.find('#turtle-model-code').val() as string,
+  }
+}
+
 export const collectData = (container: Cash, initialOptions: ParsonsOptions): ParsonsSettings => {
   const common: CommonSettings = collectCommonSettings(container)
 
@@ -131,10 +163,7 @@ export const collectData = (container: Cash, initialOptions: ParsonsOptions): Pa
     x_indent: common.indentSize,
     lang: initialOptions.lang || 'en',
     toggleTypeHandlers: initialOptions.toggleTypeHandlers,
-    programmingLang: '',
-    executable_code: '',
-    feedback_cb: initialOptions.feedback_cb,
-    turtleModelCode: ''
+    feedback_cb: initialOptions.feedback_cb
   }
 
   if (common.requireDragging) {
@@ -153,10 +182,20 @@ export const collectData = (container: Cash, initialOptions: ParsonsOptions): Pa
       options.unittests = graderOptions.unitTests
       break
     }
-    case ParsonsGrader.LanguageTranslation:
+    case ParsonsGrader.LanguageTranslation: {
+      const graderOptions: LanguageTranslationGraderOptions = collectLanguageTranslationGraderOptions(container)
+      options.executable_code = graderOptions.executableCode
+      options.programmingLang = graderOptions.programmingLang
+      options.vartests = graderOptions.vartests
       break
-    case ParsonsGrader.Turtle:
+    }
+    case ParsonsGrader.Turtle: {
+      const graderOptions: TurtleGraderOptions = collectTurtleGraderOptions(container)
+      options.executable_code = graderOptions.executableCode
+      options.programmingLang = graderOptions.programmingLang
+      options.turtleModelCode = graderOptions.turtleModelCode
       break
+    }
     default:
       break
   }
