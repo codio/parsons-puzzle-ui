@@ -20,7 +20,7 @@ export default class ParsonsUI {
   private bindEvents(): void {
     this.container.on('change', '#grader', (event: Event) => {
       event.preventDefault()
-      const grader: string | string[] = $(event.currentTarget as HTMLElement).val()
+      const grader: string = ($(event.currentTarget as HTMLElement).val() as string)
       render.renderGrader(this.container, grader as ParsonsGrader)
     })
     this.container.on('click', '#add-test', (event: Event) => {

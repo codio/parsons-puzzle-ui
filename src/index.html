@@ -37,7 +37,8 @@
       <div >
         <textarea id="sourceJsonTextarea" placeholder="Place Parsons JSON here" class="ta">{}</textarea>
       </div>
-      <button type="button" onclick="updateParsonsUI()">Update UI</button>
+      <button type="button" onclick="updateParsonsUI()">Update UI</button><br/>
+      <button type="button" onclick="exportParsonsOptions()">Export options to console</button>
     </div>
     <div class="parsonsContainer">
       <h4>Parsons UI</h4>
@@ -45,14 +46,17 @@
     </div>
   </div>
   <script type="text/javascript">
+    var parsons = null;
     function updateParsonsUI() {
       var ta = document.getElementById('sourceJsonTextarea');
       var options = {}
       try {
         options = JSON.parse(ta.value);
       } catch (e) {}
-      var parsons = ParsonsUI.build('#uiContainer', {initial: 'some code', options: options});
-      console.log(parsons.export())
+      parsons = ParsonsUI.build('#uiContainer', {initial: 'some code', options: options});
+    }
+    function exportParsonsOptions() {
+      parsons && console.log(parsons.export())
     }
   </script>
 </body>

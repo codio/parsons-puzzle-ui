@@ -1,3 +1,7 @@
+export interface Dictionary<T> {
+  [key: string]: T;
+}
+
 export const enum ParsonsGrader {
   LineBased= 'LineBasedGrader',
   VariableCheck = 'VariableCheckGrader',
@@ -9,8 +13,20 @@ export const enum ParsonsGrader {
 export interface VariableTest {
   initcode?: string;
   code?: string;
-  message?: string;
-  variables: object; // todo
+  message: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  variables: Dictionary<any>;
+  variable?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  expected?: any;
+}
+
+export interface ToggleTypeHandler {
+  'boolean'?: string[];
+  compop?: string[];
+  mathop?: string[];
+  boolop?: string[];
+  range?: () => string[];
 }
 
 export interface ParsonsOptions {
@@ -19,11 +35,11 @@ export interface ParsonsOptions {
   max_wrong_lines?: number;
   can_indent?: boolean;
   vartests?: VariableTest[];
-  grader?: () => void;
+  grader?: (() => void) | string;
   executable_code?: string;
   programmingLang?: string;
   unittests?: string;
-  toggleTypeHandlers? : object; // todo
+  toggleTypeHandlers? : ToggleTypeHandler[];
   turtleModelCode?: string;
   feedback_cb?: boolean | (() => void); // eslint-disable-line  @typescript-eslint/camelcase
   lang?: string;

@@ -42,9 +42,10 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   taContainer.append(taDistractors)
   distractorBlockContainer.append(taContainer)
 
+  const maxDistractors: number = settings.options.max_wrong_lines || 10
   const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container fieldset"></div>')
   maxDistractorsContainer.append('<label for="max-distractors">Max Distractors</label>')
-  maxDistractorsContainer.append(`<input id="max-distractors" type="number" value="${distractors}" />`)
+  maxDistractorsContainer.append(`<input id="max-distractors" type="number" value="${maxDistractors}" />`)
   distractorBlockContainer.append(maxDistractorsContainer)
 
   return distractorBlockContainer
@@ -103,7 +104,7 @@ const renderExecLimit = (execLimit?: number): Cash => {
 
   draggingContainer.append('<label for="exec-limit">Exec Limit</label>')
   draggingContainer.append(
-    `<input id="can-indent" type="text" value="${execLimit !== undefined ? execLimit : 2500}" />`
+    `<input id="exec-limit" type="text" value="${execLimit !== undefined ? execLimit : 2500}" />`
   )
 
   return draggingContainer
