@@ -34,6 +34,9 @@
       max-height: 600px;
       overflow: auto;
     }
+    .feedbackFieldset {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -103,6 +106,10 @@
     <div id="sortable" class="sortable-code"><p>Solution</p></div>
     <button type="button" onclick="getFeedback()">Get Feedback</button>
   </div>
+  <fieldset class="feedbackFieldset">
+    <legend>Feedback: </legend>
+    <div id="feedback"/>
+  </fieldset>
   <script type="text/javascript">
     var parsons = null;
     var parsonsPuzzle = null;
@@ -110,16 +117,33 @@
     function updateParsonsUI() {
       var initialTa = document.getElementById('initialTextarea');
       var optionsTa = document.getElementById('optionsTextarea');
-      var options = {}
+      var options = {};
       try {
         options = JSON.parse(optionsTa.value);
       } catch (e) {}
       parsons = ParsonsUI.build('#uiContainer', {initial: initialTa.value, options: options});
     }
+    function convertGraderToParsonFormat(grader) {
+      switch (grader) {
+        case 'VariableCheckGrader':
+          return ParsonsWidget._graders.VariableCheckGrader;
+        case 'TurtleGrader':
+          return ParsonsWidget._graders.TurtleGrader;
+        case 'UnitTestGrader':
+          return ParsonsWidget._graders.UnitTestGrader;
+        case 'LanguageTranslationGrader':
+          return ParsonsWidget._graders.LanguageTranslationGrader;
+        case 'LineBasedGrader':
+          return ParsonsWidget._graders.LineBasedGrader;
+        default:
+          return undefined
+      }
+    }
     function exportParsonsSettings() {
       if (parsons) {
-        var settings = parsons.export()
+        var settings = parsons.export();
         console.log(settings)
+        settings.options.grader = convertGraderToParsonFormat(settings.options.grader);
 
         parsonsPuzzle = new ParsonsWidget(settings.options);
         parsonsPuzzle.init(settings.initial);
@@ -131,11 +155,16 @@
       if (parsonsPuzzle) {
         var feedback = parsonsPuzzle.getFeedback();
 
-        var message = feedback.join('\n')
-        message = message || 'Congratulations on solving your Parsons Problem!'
+        var message = feedback.html || feedback.feedback;
+        if (!message && feedback.length) {
+          message = feedback.join('\n')
+        }
+        message = message && !feedback.success ? message : 'Congratulations on solving your Parsons Problem!';
 
-        console.log(feedback)
-        alert(message)
+        console.log(feedback);
+
+        var feedbackContainer = document.getElementById('feedback');
+        feedbackContainer.innerHTML = message;
       }
     }
   </script>

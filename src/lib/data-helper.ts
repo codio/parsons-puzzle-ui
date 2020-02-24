@@ -45,7 +45,10 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
 
   const initialWithDistractors: string = [
     codeBlocks,
-    distractors.split('\n').map((line: string) => `${line} #distractor`).join('\n')
+    distractors.split('\n')
+      .filter((line: string) => !!line)
+      .map((line: string) => `${line} #distractor`)
+      .join('\n')
   ].join('\n')
 
   const grader: ParsonsGrader = (container.find('#grader').val() as string) as ParsonsGrader
@@ -81,7 +84,7 @@ const collectVariableTests = (container: Cash): VariableTest[] => {
         const [, key, value] = params
         const trimmedValue: string = value.trim()
         const isNumber: boolean = /^[0-9]*$/.test(trimmedValue)
-        variables[key] = isNumber ? parseInt(value, 10) : value
+        variables[key] = isNumber ? parseInt(value, 10) : value.replace(/^"(.*)"$/, '$1')
       }
     })
 
