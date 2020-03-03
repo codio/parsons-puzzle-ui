@@ -1,0 +1,113 @@
+.ParsonsUI {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  font-size: 16px;
+
+  label {
+    padding-bottom: 5px;
+  }
+
+  .fieldset {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .code-blocks-hint {
+    padding-top: 5px;
+    text-align: right;
+  }
+
+  .distractor-blocks-container {
+    display: flex;
+  }
+
+  .distractor-blocks-ta-container {
+    flex: 1 0 auto;
+    padding-right: 20px;
+  }
+
+  .distractor-blocks-max-container {
+    padding: 20px 40px 0 0;
+    width: 110px;
+  }
+
+  .common-settings-container {
+    display: flex;
+    padding-top: 10px;
+  }
+
+  .common-settings-container .fieldset {
+    padding-right: 40px;
+  }
+
+  .dragging-container,
+  .indenting-container {
+    align-items: center;
+  }
+
+  .indent-size-container,
+  .exec-limit-container {
+    width: 80px;
+  }
+
+  .grader-form-container {
+    padding-top: 20px;
+  }
+
+  &.LineBasedGrader .exec-limit-container {
+    display: none;
+  }
+
+  .unit-test-grader-container .add-test-container {
+    padding-top: 20px;
+  }
+
+  .variable-check-grader-container,
+  .unit-test-grader-container {
+    .tests-container {
+      padding-top: 10px;
+    }
+
+    .tests-list {
+      list-style: none;
+      margin: 0;
+      padding: 0 0 10px 0;
+    }
+
+    .test-container {
+      display: flex;
+      padding-bottom: 20px;
+    }
+
+    .action-container {
+      display: flex;
+      flex-direction: column;
+      padding-top: 40px;
+      flex: 0 0 60px;
+    }
+
+    .action {
+      margin-bottom: 10px
+    }
+
+    .test-info-container {
+      display: flex;
+      flex: 1 0 auto;
+      border: 1px solid grey;
+      padding: 10px;
+    }
+
+    .column {
+      flex: 1 0 auto;
+    }
+
+    .column .fieldset {
+      width: 90%;
+    }
+  }
+
+  .executable-code-container {
+    padding: 10px 0 20px;
+  }
+}

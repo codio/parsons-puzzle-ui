@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Parsons Puzzle UI</title>
+  <!-- parsons puzzle libs/styles -->
+  <link href="https://js-parsons.github.io/js/js-parsons/parsons.css" rel="stylesheet" />
+  <!-- parsons puzzle libs -->
+  <script src="parsonsUI.js" type="text/javascript"></script>
+  <style>
+    .mainContainer {
+      display: flex;
+      padding-bottom: 40px;
+    }
+    .jsonContainer,
+    .parsonsContainer {
+      display: flex;
+      flex-direction: column;
+    }
+    .jsonContainer {
+      flex: 0 0 40%;
+    }
+    .parsonsContainer {
+      flex: 1 0 auto;
+    }
+    .ta {
+      width: 90%;
+      height: 200px;
+    }
+
+    #uiContainer {
+      border: 1px solid;
+      flex: 1 0 auto;
+      max-height: 600px;
+      overflow: auto;
+    }
+    .feedbackFieldset {
+      margin-top: 20px;
+    }
+    .sortable-code {
+      width: 50% !important;
+      float: none;
+    }
+  </style>
+</head>
+<body>
+<!-- parsons puzzle libs -->
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/underscore-min.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/jquery.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/jquery-ui.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/lis.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/jquery.sound.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/jquery.ui.touch-punch.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autorun=false"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/skulpt.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/skulpt-stdlib.js"
+></script>
+<script
+  type="text/javascript"
+  src="//static-assets.codio.com/guides/parsons/parsons.js"
+></script>
+<!-- parsons puzzle libs -->
+  <div class="mainContainer">
+    <div class="jsonContainer">
+      <h4>Parsons puzzle initial settings</h4>
+      <div>
+        <label for="initialTextarea">Parsons puzzle initial code</label>
+        <textarea id="initialTextarea" placeholder="Place Parsons puzzle initial code here" class="ta"></textarea>
+      </div>
+      <div>
+        <label for="optionsTextarea">Parsons puzzle options</label>
+        <textarea id="optionsTextarea" placeholder="Place Parsons puzzle JSON options here" class="ta">{}</textarea>
+      </div>
+      <button type="button" onclick="updateParsonsUI()">Convert old UI data to new UI</button><br/>
+      <button type="button" onclick="exportParsonsSettings()">Create ParsonsPuzzle from new UI</button>
+    </div>
+    <div class="parsonsContainer">
+      <h4>Parsons UI</h4>
+      <div id="uiContainer"></div>
+    </div>
+  </div>
+  <div class="parsonsPuzzleContainer">
+    <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
+    <div id="sortable" class="sortable-code"><p>Solution</p></div>
+  </div>
+  <div>
+    <button type="button" onclick="getFeedback()">Check Solution</button>
+    <fieldset class="feedbackFieldset">
+      <legend>Feedback: </legend>
+      <div id="feedback"/>
+    </fieldset>
+  </div>
+  <script type="text/javascript">
+    var parsons = null;
+    var parsonsPuzzle = null;
+    updateParsonsUI();
+    function updateParsonsUI() {
+      var initialTa = document.getElementById('initialTextarea');
+      var optionsTa = document.getElementById('optionsTextarea');
+      var options = {};
+      try {
+        options = JSON.parse(optionsTa.value);
+      } catch (e) {}
+      parsons = ParsonsUI.build('#uiContainer', {initial: initialTa.value, options: options});
+    }
+    function convertGraderToParsonFormat(grader) {
+      switch (grader) {
+        case 'VariableCheckGrader':
+          return ParsonsWidget._graders.VariableCheckGrader;
+        case 'TurtleGrader':
+          return ParsonsWidget._graders.TurtleGrader;
+        case 'UnitTestGrader':
+          return ParsonsWidget._graders.UnitTestGrader;
+        case 'LanguageTranslationGrader':
+          return ParsonsWidget._graders.LanguageTranslationGrader;
+        case 'LineBasedGrader':
+          return ParsonsWidget._graders.LineBasedGrader;
+        default:
+          return undefined
+      }
+    }
+    function exportParsonsSettings() {
+      document.getElementById('sortableTrash').innerHTML = '';
+      document.getElementById('sortable').innerHTML = '';
+      document.getElementById('feedback').innerHTML = '';
+
+      if (parsons) {
+        var settings = parsons.export();
+        console.log(settings)
+        settings.options.grader = convertGraderToParsonFormat(settings.options.grader);
+
+        parsonsPuzzle = new ParsonsWidget(settings.options);
+        parsonsPuzzle.init(settings.initial);
+        parsonsPuzzle.shuffleLines();
+      }
+
+    }
+    function getFeedback() {
+      if (parsonsPuzzle) {
+        var feedback = parsonsPuzzle.getFeedback();
+
+        var message = feedback.html || feedback.feedback;
+        if (!message && feedback.length) {
+          message = feedback.join('\n')
+        }
+        message = message && !feedback.success ? message : 'Congratulations on solving your Parsons Problem!';
+
+        console.log(feedback);
+
+        var feedbackContainer = document.getElementById('feedback');
+        feedbackContainer.innerHTML = message;
+      }
+    }
+  </script>
+</body>
+</html>
