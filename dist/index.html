@@ -7,31 +7,66 @@
   <link href="https://js-parsons.github.io/js/js-parsons/parsons.css" rel="stylesheet" />
   <!-- parsons puzzle libs -->
   <script src="parsonsUI.js" type="text/javascript"></script>
+  <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
   <style>
-    .mainContainer {
-      display: flex;
-      padding-bottom: 40px;
+    .parsonsSettingsOverlay {
+      z-index: 1000;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      left: 10px;
+      bottom: 10px;
+      border: 1px solid black;
+      background-color: white;
+      display: none;
+      flex-direction: column;
+      padding: 20px;
     }
-    .jsonContainer,
-    .parsonsContainer {
+    .parsonsSettingsOverlay.is-opened {
+      display: flex;
+    }
+    .parsonsSettingsContainer {
+      display: flex;
+      height: 100%;
+    }
+    .parsonsSettingsOverlay .actions {
+      flex: 0 0 40px;
+    }
+    .editor {
+      flex: 1 0 auto;
+      border: 1px solid;
+    }
+    .editorContainer {
+      flex: 1 0 auto;
       display: flex;
       flex-direction: column;
     }
-    .jsonContainer {
-      flex: 0 0 40%;
+    .initialContainer {
+      padding-right: 20px;
+    }
+    .mainContainer {
+      display: flex;
     }
     .parsonsContainer {
       flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      padding-right: 20px;
     }
-    .ta {
-      width: 90%;
-      height: 200px;
+    .parsonsPuzzleWidgetContainer {
+      display: none;
     }
-
+    .parsonsPuzzleWidgetContainer.is-opened {
+      display: block;
+    }
+    .parsonsPuzzleContainer {
+      flex: 1 0 auto;
+    }
     #uiContainer {
       border: 1px solid;
       flex: 1 0 auto;
-      max-height: 600px;
+      min-height: 400px;
+      max-height: 800px;
       overflow: auto;
     }
     .feedbackFieldset {
@@ -44,82 +79,128 @@
   </style>
 <link href="main.css" rel="stylesheet"></head>
 <body>
-<!-- parsons puzzle libs -->
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/underscore-min.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/jquery.min.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/jquery-ui.min.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/lis.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/jquery.sound.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/jquery.ui.touch-punch.min.js"
-></script>
-<script
-  type="text/javascript"
-  src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autorun=false"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/skulpt.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/skulpt-stdlib.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/parsons.js"
-></script>
-<!-- parsons puzzle libs -->
-  <div class="mainContainer">
-    <div class="jsonContainer">
-      <h4>Parsons puzzle initial settings</h4>
-      <div>
-        <label for="initialTextarea">Parsons puzzle initial code</label>
-        <textarea id="initialTextarea" placeholder="Place Parsons puzzle initial code here" class="ta"></textarea>
+  <!-- parsons puzzle libs -->
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/underscore-min.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery.min.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/lis.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery.sound.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery.ui.touch-punch.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autorun=false"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/skulpt.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/skulpt-stdlib.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/parsons.js"></script>
+  <!-- parsons puzzle libs -->
+  <div id="parsonsSettingsOverlay" class="parsonsSettingsOverlay">
+    <h2><span id="overlayPrefix"></span> Parsons Puzzle Settings</h2>
+    <div class="parsonsSettingsContainer">
+      <div class="editorContainer initialContainer">
+        <label for="initialEditor">Parsons puzzle initial code</label>
+        <div id="initialEditor" class="editor"></div>
       </div>
-      <div>
-        <label for="optionsTextarea">Parsons puzzle options</label>
-        <textarea id="optionsTextarea" placeholder="Place Parsons puzzle JSON options here" class="ta">{}</textarea>
+      <div class="editorContainer optionsContainer">
+        <label for="optionsEditor">Parsons puzzle options</label>
+        <div id="optionsEditor" class="editor">{}</div>
       </div>
-      <button type="button" onclick="updateParsonsUI()">Convert old UI data to new UI</button><br/>
-      <button type="button" onclick="exportParsonsSettings()">Create ParsonsPuzzle from new UI</button>
     </div>
+    <div class="actions">
+      <button class="btn" type="button" onclick="closeModal()">Cancel</button>
+      <button class="btn applyOptions" type="button" onclick="applySettings()">Apply</button>
+    </div>
+  </div>
+  <button class="btn" type="button" onclick="importToParsonsUI()">Import</button>
+  <button class="btn" type="button" onclick="exportFromParsonsUI()">Export</button>
+  <div class="mainContainer">
     <div class="parsonsContainer">
       <h4>Parsons UI</h4>
       <div id="uiContainer"></div>
     </div>
-  </div>
-  <div class="parsonsPuzzleContainer">
-    <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
-    <div id="sortable" class="sortable-code"><p>Solution</p></div>
-  </div>
-  <div>
-    <button type="button" onclick="getFeedback()">Check Solution</button>
-    <fieldset class="feedbackFieldset">
-      <legend>Feedback: </legend>
-      <div id="feedback"/>
-    </fieldset>
+    <div class="parsonsPuzzleContainer">
+      <h4>Parsons Puzzle Widget</h4>
+      <div id="parsonsPuzzleWidgetContainer" class="parsonsPuzzleWidgetContainer">
+        <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
+        <div id="sortable" class="sortable-code"><p>Solution</p></div>
+        <div>
+          <button type="button" onclick="getFeedback()">Check Solution</button>
+          <fieldset class="feedbackFieldset">
+            <legend>Feedback: </legend>
+            <div id="feedback"/>
+          </fieldset>
+        </div>
+      </div>
+    </div>
   </div>
   <script type="text/javascript">
     var parsons = null;
     var parsonsPuzzle = null;
-    updateParsonsUI();
+    var initialEditor = null;
+    var optionsEditor = null;
+
+    var graders = [
+      'ParsonsWidget._graders.LineBasedGrader',
+      'ParsonsWidget._graders.VariableCheckGrader',
+      'ParsonsWidget._graders.UnitTestGrader',
+      'ParsonsWidget._graders.LanguageTranslationGrader',
+      'ParsonsWidget._graders.TurtleGrader'
+    ];
+    function addQuotesToGrader(jsonString) {
+      var resultString = jsonString;
+      for (var i = 0; i < graders.length; i++) {
+        resultString = jsonString.replace(graders[i], '"' + graders[i] + '"');
+        if (resultString !== jsonString) {
+          break;
+        }
+      }
+      return resultString;
+    }
+    function removeGraderQuotes() {
+
+    }
+
+    initEditors();
+
+    function initEditors() {
+      initialEditor = ace.edit('initialEditor', {useWorker: false});
+      optionsEditor = ace.edit('optionsEditor', {useWorker: false});
+    }
+    function openModal(isImport) {
+      document.getElementById('overlayPrefix').innerHTML = isImport ? 'Import' : 'Export';
+      var actionTypeCls = isImport ? 'import' : 'export';
+      document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay is-opened ' + actionTypeCls;
+    }
+    function closeModal() {
+      document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay';
+    }
+    function importToParsonsUI() {
+      // todo clear editors?
+      openModal(true);
+    }
+    function exportFromParsonsUI() {
+      // todo apply data from UI to editors
+      openModal(false);
+    }
+    function getSettingsFromEditors() {
+      return {
+        initial: initialEditor.getValue(),
+        options: optionsEditor.getValue()
+      }
+    }
+    function applySettings() {
+      var isImport = /import/.test(document.getElementById('parsonsSettingsOverlay').className);
+      closeModal();
+      isImport ? applyDataToParsonsUI() : applyDataFromParsonsUI();
+    }
+    function applyDataToParsonsUI() {
+      var data = getSettingsFromEditors();
+      var options = addQuotesToGrader(data.options);
+      console.log(data);
+      console.log(JSON.parse(options));
+    }
+    function applyDataFromParsonsUI() {
+      // todo get data from editors and apply to UI
+      document.getElementById('parsonsPuzzleWidgetContainer').className =
+        'parsonsPuzzleWidgetContainer is-opened';
+    }
     function updateParsonsUI() {
       var initialTa = document.getElementById('initialTextarea');
       var optionsTa = document.getElementById('optionsTextarea');
