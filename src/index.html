@@ -9,18 +9,65 @@
   <script src="parsonsUI.js" type="text/javascript"></script>
   <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
   <style>
-    .parsonsSettingsOverlay {
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #F7F9FC;
+      font-family: open-sans, arial, sans-serif;
+      color: #414852;
+    }
+    .header {
+      height: 75px;
+      padding-left: 90px;
+      border-bottom: 1px solid #EAECF2;
+      display: flex;
+      align-items: center;
+      background-color: #FFF;
+    }
+    .btn {
+      padding: 10px 30px;
+      background-color: #8D97B1;
+      color: #FFF;
+      border-radius: 2px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: background-color 0.4s;
+    }
+    .firstBtn {
+      margin-right: 10px;
+    }
+    .btn:hover {
+      background-color: #7a8399;
+      transition: background-color 0.4s;
+    }
+    #blockOverlay {
       z-index: 1000;
       position: absolute;
-      top: 10px;
-      right: 10px;
-      left: 10px;
-      bottom: 10px;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      background-color: #FFF;
+      opacity: 0.6;
+    }
+    .hide {
+      display: none;
+    }
+    .parsonsSettingsOverlay {
+      z-index: 1001;
+      position: absolute;
+      top: 150px;
+      right: 150px;
+      left: 150px;
+      bottom: 150px;
       border: 1px solid black;
       background-color: white;
       display: none;
       flex-direction: column;
       padding: 20px;
+    }
+    .overlayTitle {
+      text-align: center;
     }
     .parsonsSettingsOverlay.is-opened {
       display: flex;
@@ -46,6 +93,10 @@
     }
     .mainContainer {
       display: flex;
+      padding: 0 30px;
+    }
+    .containerTitle {
+      margin: 10px 0 15px 60px;
     }
     .parsonsContainer {
       flex: 1 0 auto;
@@ -60,11 +111,12 @@
       flex: 1 0 auto;
     }
     #uiContainer {
-      border: 1px solid;
+      border: 1px solid #EAECF2;
       flex: 1 0 auto;
       min-height: 400px;
       max-height: 800px;
       overflow: auto;
+      background-color: #FFF;
     }
     .feedbackFieldset {
       margin-top: 20px;
@@ -88,8 +140,9 @@
   <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/skulpt-stdlib.js"></script>
   <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/parsons.js"></script>
   <!-- parsons puzzle libs -->
+  <div id="blockOverlay" class="hide" onclick="stopEvent()"></div>
   <div id="parsonsSettingsOverlay" class="parsonsSettingsOverlay">
-    <h2><span id="overlayPrefix"></span> Parsons Puzzle Settings</h2>
+    <h2 id="overlayTitle"></h2>
     <div class="parsonsSettingsContainer">
       <div class="editorContainer initialContainer">
         <label for="initialEditor">Parsons puzzle initial code</label>
@@ -101,24 +154,26 @@
       </div>
     </div>
     <div class="actions">
-      <button class="btn" type="button" onclick="closeModal()">Cancel</button>
-      <button class="btn applyOptions" type="button" onclick="applySettings()">Apply</button>
+      <a class="btn firstBtn" onclick="closeModal()">Cancel</a>
+      <a class="btn applyOptions" onclick="applySettings()">Apply</a>
     </div>
   </div>
-  <button class="btn" type="button" onclick="importToParsonsUI()">Import</button>
-  <button class="btn" type="button" onclick="exportFromParsonsUI()">Export</button>
+  <div class="header">
+    <a class="btn firstBtn" onclick="importToParsonsUI()">Import</a>
+    <a class="btn" onclick="exportFromParsonsUI()">Export</a>
+  </div>
   <div class="mainContainer">
     <div class="parsonsContainer">
-      <h4>Parsons UI</h4>
+      <h4 class="containerTitle">Parsons UI</h4>
       <div id="uiContainer"></div>
     </div>
     <div class="parsonsPuzzleContainer">
-      <h4>Parsons Puzzle Widget</h4>
+      <h4 class="containerTitle">Parsons Puzzle Widget</h4>
       <div id="parsonsPuzzleWidgetContainer" class="parsonsPuzzleWidgetContainer is-hide">
         <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
         <div id="sortable" class="sortable-code"><p>Solution</p></div>
         <div>
-          <button type="button" onclick="getFeedback()">Check Solution</button>
+          <a class="btn" onclick="getFeedback()">Check Solution</a>
           <fieldset class="feedbackFieldset">
             <legend>Feedback: </legend>
             <div id="feedback"/>
@@ -128,6 +183,7 @@
     </div>
   </div>
   <script type="text/javascript">
+    function stopEvent(ev) { ev.stopPropagation(); }
     var parsons = null;
     var parsonsPuzzle = null;
     var initialEditor = null;
@@ -168,12 +224,14 @@
       optionsEditor = ace.edit('optionsEditor', {useWorker: false});
     }
     function openModal(isImport) {
-      document.getElementById('overlayPrefix').innerHTML = isImport ? 'Import' : 'Export';
+      document.getElementById('overlayTitle').innerHTML = isImport ? 'Import' : 'Export';
       var actionTypeCls = isImport ? 'import' : 'export';
+      document.getElementById('blockOverlay').className = '';
       document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay is-opened ' + actionTypeCls;
     }
     function closeModal() {
       document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay';
+      document.getElementById('blockOverlay').className = 'hide';
     }
     function importToParsonsUI() {
       // todo clear editors?
