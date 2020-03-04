@@ -15,8 +15,6 @@ import {
 
 const renderInitialCodeBlock = (code: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
-
-  // todo remove distractors from code
   const codeBlock = getCodeBlocks(code, false)
 
   const taContainer: Cash = $('<div class="code-blocks-ta-container fieldset"></div>')
@@ -35,8 +33,6 @@ const renderInitialCodeBlock = (code: string): Cash => {
 const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   const distractorBlockContainer: Cash = $('<div class="distractor-blocks-container"></div>')
   const taContainer: Cash = $('<div class="distractor-blocks-ta-container fieldset"></div>')
-
-  // todo extract distractors from code
   const distractors = getCodeBlocks(settings.initial, true)
 
   taContainer.append('<label for="distractors">Code to Become Distractor Blocks</label>')
@@ -59,10 +55,10 @@ const getCodeBlocks = (code: string, isDistractors: boolean): string => {
   const regex = /(.*?)\s*#distractor\s*$/;
   if (isDistractors) {
     return lines.filter(line => !line.search(regex))
-        .map(item => item.replace('#distractor','').trim())
+        .map(item => item.replace('#distractor',''))
         .join('\n')
   }
-  return lines.filter(line => line.search(regex) && line.trim()).join('\n')
+  return lines.filter(line => line.search(regex)).join('\n')
 }
 
 const renderGraderSelect = (grader?: (() => void) | string | undefined): Cash => {
