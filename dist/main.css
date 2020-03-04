@@ -1,0 +1,97 @@
+.ParsonsUI {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  font-size: 16px;
+}
+.ParsonsUI label {
+  padding-bottom: 5px;
+}
+.ParsonsUI .fieldset {
+  display: flex;
+  flex-direction: column;
+}
+.ParsonsUI .code-blocks-hint {
+  padding-top: 5px;
+  text-align: right;
+}
+.ParsonsUI .distractor-blocks-container {
+  display: flex;
+}
+.ParsonsUI .distractor-blocks-ta-container {
+  flex: 1 0 auto;
+  padding-right: 20px;
+}
+.ParsonsUI .distractor-blocks-max-container {
+  padding: 20px 40px 0 0;
+  width: 110px;
+}
+.ParsonsUI .common-settings-container {
+  display: flex;
+  padding-top: 10px;
+}
+.ParsonsUI .common-settings-container .fieldset {
+  padding-right: 40px;
+}
+.ParsonsUI .dragging-container,
+.ParsonsUI .indenting-container {
+  align-items: center;
+}
+.ParsonsUI .indent-size-container,
+.ParsonsUI .exec-limit-container {
+  width: 80px;
+}
+.ParsonsUI .grader-form-container {
+  padding-top: 20px;
+}
+.ParsonsUI.LineBasedGrader .exec-limit-container {
+  display: none;
+}
+.ParsonsUI .unit-test-grader-container .add-test-container {
+  padding-top: 20px;
+}
+.ParsonsUI .variable-check-grader-container .tests-container,
+.ParsonsUI .unit-test-grader-container .tests-container {
+  padding-top: 10px;
+}
+.ParsonsUI .variable-check-grader-container .tests-list,
+.ParsonsUI .unit-test-grader-container .tests-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 10px 0;
+}
+.ParsonsUI .variable-check-grader-container .test-container,
+.ParsonsUI .unit-test-grader-container .test-container {
+  display: flex;
+  padding-bottom: 20px;
+}
+.ParsonsUI .variable-check-grader-container .action-container,
+.ParsonsUI .unit-test-grader-container .action-container {
+  display: flex;
+  flex-direction: column;
+  padding-top: 40px;
+  flex: 0 0 60px;
+}
+.ParsonsUI .variable-check-grader-container .action,
+.ParsonsUI .unit-test-grader-container .action {
+  margin-bottom: 10px;
+}
+.ParsonsUI .variable-check-grader-container .test-info-container,
+.ParsonsUI .unit-test-grader-container .test-info-container {
+  display: flex;
+  flex: 1 0 auto;
+  border: 1px solid grey;
+  padding: 10px;
+}
+.ParsonsUI .variable-check-grader-container .column,
+.ParsonsUI .unit-test-grader-container .column {
+  flex: 1 0 auto;
+}
+.ParsonsUI .variable-check-grader-container .column .fieldset,
+.ParsonsUI .unit-test-grader-container .column .fieldset {
+  width: 90%;
+}
+.ParsonsUI .executable-code-container {
+  padding: 10px 0 20px;
+}
+
