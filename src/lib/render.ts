@@ -52,13 +52,13 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
 
 const getCodeBlocks = (code: string, isDistractors: boolean): string => {
   const lines = code.split('\n')
-  const regex = /(.*?)\s*#distractor\s*$/;
+  const pattern = /(.*?)\s*#distractor\s*$/;
   if (isDistractors) {
-    return lines.filter(line => !line.search(regex))
-        .map(item => item.replace('#distractor',''))
+    return lines.filter(line => !line.search(pattern))
+        .map(item => item.replace(/#distractor\s*$/,''))
         .join('\n')
   }
-  return lines.filter(line => line.search(regex)).join('\n')
+  return lines.filter(line => line.search(pattern)).join('\n')
 }
 
 const renderGraderSelect = (grader?: (() => void) | string | undefined): Cash => {
