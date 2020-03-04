@@ -15,11 +15,11 @@ import {
 
 const renderInitialCodeBlock = (code: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
+  const codeBlock = getCodeBlocks(code, false)
 
-  // todo remove distractors from code
   const taContainer: Cash = $('<div class="code-blocks-ta-container fieldset"></div>')
   taContainer.append('<label for="initial">Code to Become Blocks</label>')
-  const taCode: Cash = $(`<textarea id="initial" rows="8">${code}</textarea>`)
+  const taCode: Cash = $(`<textarea id="initial" rows="8">${codeBlock}</textarea>`)
   taCode.attr('placeholder', 'Type Solution Here')
   taContainer.append(taCode)
   codeBlocksContainer.append(taContainer)
@@ -32,10 +32,9 @@ const renderInitialCodeBlock = (code: string): Cash => {
 
 const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   const distractorBlockContainer: Cash = $('<div class="distractor-blocks-container"></div>')
-
   const taContainer: Cash = $('<div class="distractor-blocks-ta-container fieldset"></div>')
-  // todo extract distractors from code
-  const distractors: string = settings.initial
+  const distractors = getCodeBlocks(settings.initial, true)
+
   taContainer.append('<label for="distractors">Code to Become Distractor Blocks</label>')
   const taDistractors: Cash = $(`<textarea id="distractors" rows="4">${distractors}</textarea>`)
   taDistractors.attr('placeholder', 'Code blocks that serve as distractions (incorrect options)')
@@ -49,6 +48,17 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   distractorBlockContainer.append(maxDistractorsContainer)
 
   return distractorBlockContainer
+}
+
+const getCodeBlocks = (code: string, isDistractors: boolean): string => {
+  const lines = code.split('\n')
+  const pattern = /(.*?)\s*#distractor\s*$/;
+  if (isDistractors) {
+    return lines.filter(line => !line.search(pattern))
+        .map(item => item.replace(/#distractor\s*$/,''))
+        .join('\n')
+  }
+  return lines.filter(line => line.search(pattern)).join('\n')
 }
 
 const renderGraderSelect = (grader?: (() => void) | string | undefined): Cash => {
@@ -372,7 +382,7 @@ export const render = (container: Cash, settings: ParsonsSettings): void => {
   uiContainer.append(renderDistractorBlocks(settings))
   uiContainer.append(renderCommonSettings(settings.options))
 
-  renderGraderForm(uiContainer, ParsonsGrader.LineBased, settings.options)
+  renderGraderForm(uiContainer, convertParsonsGraderFuncToEnum(settings.options.grader), settings.options)
 
   container.append(uiContainer)
 }
