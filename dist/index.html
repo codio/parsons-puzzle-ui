@@ -53,11 +53,8 @@
       flex-direction: column;
       padding-right: 20px;
     }
-    .parsonsPuzzleWidgetContainer {
+    .parsonsPuzzleWidgetContainer.is-hide {
       display: none;
-    }
-    .parsonsPuzzleWidgetContainer.is-opened {
-      display: block;
     }
     .parsonsPuzzleContainer {
       flex: 1 0 auto;
@@ -77,7 +74,7 @@
       float: none;
     }
   </style>
-<link href="main.css" rel="stylesheet"></head>
+<link href="main.b9ef3df31693551807d9.css" rel="stylesheet"></head>
 <body>
   <!-- parsons puzzle libs -->
   <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/underscore-min.js"></script>
@@ -117,7 +114,7 @@
     </div>
     <div class="parsonsPuzzleContainer">
       <h4>Parsons Puzzle Widget</h4>
-      <div id="parsonsPuzzleWidgetContainer" class="parsonsPuzzleWidgetContainer">
+      <div id="parsonsPuzzleWidgetContainer" class="parsonsPuzzleWidgetContainer is-hide">
         <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
         <div id="sortable" class="sortable-code"><p>Solution</p></div>
         <div>
@@ -153,8 +150,15 @@
       }
       return resultString;
     }
-    function removeGraderQuotes() {
-
+    function removeGraderQuotes(jsonString) {
+      var resultString = jsonString;
+      for (var i = 0; i < graders.length; i++) {
+        resultString = jsonString.replace('"' + graders[i] + '"', graders[i]);
+        if (resultString !== jsonString) {
+          break;
+        }
+      }
+      return resultString;
     }
 
     initEditors();
@@ -176,7 +180,13 @@
       openModal(true);
     }
     function exportFromParsonsUI() {
-      // todo apply data from UI to editors
+      // todo what to do if Parsons UI not created yet?
+      if (parsons) {
+        var settings = parsons.export();
+        var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
+        initialEditor.setValue(settings.initial);
+        optionsEditor.setValue(options);
+      }
       openModal(false);
     }
     function getSettingsFromEditors() {
@@ -188,45 +198,14 @@
     function applySettings() {
       var isImport = /import/.test(document.getElementById('parsonsSettingsOverlay').className);
       closeModal();
-      isImport ? applyDataToParsonsUI() : applyDataFromParsonsUI();
+      isImport ? applyEditorsDataToParsonsUI() : applyEditorsDataToParsonsWidget();
     }
-    function applyDataToParsonsUI() {
+    function applyEditorsDataToParsonsUI() {
       var data = getSettingsFromEditors();
       var options = addQuotesToGrader(data.options);
-      console.log(data);
-      console.log(JSON.parse(options));
+      parsons = ParsonsUI.build('#uiContainer', {initial: data.initial, options: options});
     }
-    function applyDataFromParsonsUI() {
-      // todo get data from editors and apply to UI
-      document.getElementById('parsonsPuzzleWidgetContainer').className =
-        'parsonsPuzzleWidgetContainer is-opened';
-    }
-    function updateParsonsUI() {
-      var initialTa = document.getElementById('initialTextarea');
-      var optionsTa = document.getElementById('optionsTextarea');
-      var options = {};
-      try {
-        options = JSON.parse(optionsTa.value);
-      } catch (e) {}
-      parsons = ParsonsUI.build('#uiContainer', {initial: initialTa.value, options: options});
-    }
-    function convertGraderToParsonFormat(grader) {
-      switch (grader) {
-        case 'VariableCheckGrader':
-          return ParsonsWidget._graders.VariableCheckGrader;
-        case 'TurtleGrader':
-          return ParsonsWidget._graders.TurtleGrader;
-        case 'UnitTestGrader':
-          return ParsonsWidget._graders.UnitTestGrader;
-        case 'LanguageTranslationGrader':
-          return ParsonsWidget._graders.LanguageTranslationGrader;
-        case 'LineBasedGrader':
-          return ParsonsWidget._graders.LineBasedGrader;
-        default:
-          return undefined
-      }
-    }
-    function exportParsonsSettings() {
+    function applyEditorsDataToParsonsWidget() {
       document.getElementById('sortableTrash').innerHTML = '';
       document.getElementById('sortable').innerHTML = '';
       document.getElementById('feedback').innerHTML = '';
@@ -241,6 +220,24 @@
         parsonsPuzzle.shuffleLines();
       }
 
+      document.getElementById('parsonsPuzzleWidgetContainer').className = 'parsonsPuzzleWidgetContainer';
+    }
+
+    function convertGraderToParsonFormat(grader) {
+      switch (grader) {
+        case 'ParsonsWidget._graders.VariableCheckGrader':
+          return ParsonsWidget._graders.VariableCheckGrader;
+        case 'ParsonsWidget._graders.TurtleGrader':
+          return ParsonsWidget._graders.TurtleGrader;
+        case 'ParsonsWidget._graders.UnitTestGrader':
+          return ParsonsWidget._graders.UnitTestGrader;
+        case 'ParsonsWidget._graders.LanguageTranslationGrader':
+          return ParsonsWidget._graders.LanguageTranslationGrader;
+        case 'ParsonsWidget._graders.LineBasedGrader':
+          return ParsonsWidget._graders.LineBasedGrader;
+        default:
+          return undefined
+      }
     }
     function getFeedback() {
       if (parsonsPuzzle) {
