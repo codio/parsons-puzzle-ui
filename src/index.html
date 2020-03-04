@@ -127,7 +127,10 @@
       try {
         options = JSON.parse(optionsTa.value);
       } catch (e) {}
-      parsons = ParsonsUI.build('#uiContainer', {initial: initialTa.value, options: options});
+      if (options.grader) {
+        options.grader = convertGraderToParsonFormat(options.grader)
+      }
+      parsons = ParsonsUI.build('#uiContainer', {initial: initialTa.value, options: options})
     }
     function convertGraderToParsonFormat(grader) {
       switch (grader) {

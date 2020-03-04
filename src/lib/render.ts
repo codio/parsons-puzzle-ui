@@ -386,7 +386,7 @@ export const render = (container: Cash, settings: ParsonsSettings): void => {
   uiContainer.append(renderDistractorBlocks(settings))
   uiContainer.append(renderCommonSettings(settings.options))
 
-  renderGraderForm(uiContainer, ParsonsGrader.LineBased, settings.options)
+  renderGraderForm(uiContainer, convertParsonsGraderFuncToEnum(settings.options.grader), settings.options)
 
   container.append(uiContainer)
 }
