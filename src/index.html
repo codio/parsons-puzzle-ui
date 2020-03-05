@@ -26,19 +26,25 @@
     }
     .btn {
       padding: 10px 30px;
-      background-color: #8D97B1;
+      background-color: #8c97b2;
       color: #FFF;
       border-radius: 2px;
       font-size: 11px;
       cursor: pointer;
       transition: background-color 0.4s;
     }
+    .btn:hover {
+      background-color: #6d7b9e;
+      transition: background-color 0.4s;
+    }
     .firstBtn {
       margin-right: 10px;
     }
-    .btn:hover {
-      background-color: #7a8399;
-      transition: background-color 0.4s;
+    .btn--primary {
+      background-color: #15a4fa;
+    }
+    .btn--primary:hover {
+      background-color: #069efa;
     }
     #blockOverlay {
       z-index: 1000;
@@ -66,7 +72,7 @@
       flex-direction: column;
       padding: 20px;
     }
-    .overlayTitle {
+    #overlayTitle {
       text-align: center;
     }
     .parsonsSettingsOverlay.is-opened {
@@ -75,18 +81,26 @@
     .parsonsSettingsContainer {
       display: flex;
       height: 100%;
+      padding: 20px 0 40px;
     }
     .parsonsSettingsOverlay .actions {
       flex: 0 0 40px;
+      align-self: center;
+      display: flex;
+      align-items: center;
     }
     .editor {
       flex: 1 0 auto;
-      border: 1px solid;
+      border: 1px solid #EAECF2;
     }
     .editorContainer {
-      flex: 1 0 auto;
+      width: 50%;
       display: flex;
       flex-direction: column;
+    }
+    .editorContainer label {
+      padding: 0 0 20px 40px;
+      font-size: 18px;
     }
     .initialContainer {
       padding-right: 20px;
@@ -99,16 +113,23 @@
       margin: 10px 0 15px 60px;
     }
     .parsonsContainer {
-      flex: 1 0 auto;
+      flex: 1 1 auto;
       display: flex;
       flex-direction: column;
       padding-right: 20px;
+    }
+    .parsonsPuzzleWidgetContainer {
+      border: 1px solid #EAECF2;
+      background-color: #FFF;
+      padding: 20px;
+      min-height: 400px;
     }
     .parsonsPuzzleWidgetContainer.is-hide {
       display: none;
     }
     .parsonsPuzzleContainer {
-      flex: 1 0 auto;
+      flex: 1 1 auto;
+      min-width: 600px;
     }
     #uiContainer {
       border: 1px solid #EAECF2;
@@ -117,12 +138,13 @@
       max-height: 800px;
       overflow: auto;
       background-color: #FFF;
+      padding: 20px 60px;
     }
     .feedbackFieldset {
       margin-top: 20px;
     }
     .sortable-code {
-      width: 50% !important;
+      width: 95% !important;
       float: none;
     }
   </style>
@@ -155,7 +177,7 @@
     </div>
     <div class="actions">
       <a class="btn firstBtn" onclick="closeModal()">Cancel</a>
-      <a class="btn applyOptions" onclick="applySettings()">Apply</a>
+      <a class="btn btn--primary applyOptions" onclick="applySettings()">Apply</a>
     </div>
   </div>
   <div class="header">
@@ -242,8 +264,8 @@
       if (parsons) {
         var settings = parsons.export();
         var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
-        initialEditor.setValue(settings.initial);
-        optionsEditor.setValue(options);
+        initialEditor.setValue(settings.initial, -1);
+        optionsEditor.setValue(options, -1);
       }
       openModal(false);
     }
