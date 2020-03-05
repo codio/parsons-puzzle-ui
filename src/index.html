@@ -7,155 +7,291 @@
   <link href="https://js-parsons.github.io/js/js-parsons/parsons.css" rel="stylesheet" />
   <!-- parsons puzzle libs -->
   <script src="parsonsUI.js" type="text/javascript"></script>
+  <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
   <style>
-    .mainContainer {
-      display: flex;
-      padding-bottom: 40px;
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #F7F9FC;
+      font-family: open-sans, arial, sans-serif;
+      color: #414852;
     }
-    .jsonContainer,
-    .parsonsContainer {
+    .header {
+      height: 75px;
+      padding-left: 90px;
+      border-bottom: 1px solid #EAECF2;
+      display: flex;
+      align-items: center;
+      background-color: #FFF;
+    }
+    .btn {
+      padding: 10px 30px;
+      background-color: #8c97b2;
+      color: #FFF;
+      border-radius: 2px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: background-color 0.4s;
+    }
+    .btn:hover {
+      background-color: #6d7b9e;
+      transition: background-color 0.4s;
+    }
+    .firstBtn {
+      margin-right: 10px;
+    }
+    .btn--primary {
+      background-color: #15a4fa;
+    }
+    .btn--primary:hover {
+      background-color: #069efa;
+    }
+    #blockOverlay {
+      z-index: 1000;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      background-color: #FFF;
+      opacity: 0.6;
+    }
+    .hide {
+      display: none;
+    }
+    .parsonsSettingsOverlay {
+      z-index: 1001;
+      position: absolute;
+      top: 150px;
+      right: 150px;
+      left: 150px;
+      bottom: 150px;
+      border: 1px solid black;
+      background-color: white;
+      display: none;
+      flex-direction: column;
+      padding: 20px;
+    }
+    #overlayTitle {
+      text-align: center;
+    }
+    .parsonsSettingsOverlay.is-opened {
+      display: flex;
+    }
+    .parsonsSettingsContainer {
+      display: flex;
+      height: 100%;
+      padding: 20px 0 40px;
+    }
+    .parsonsSettingsOverlay .actions {
+      flex: 0 0 40px;
+      align-self: center;
+      display: flex;
+      align-items: center;
+    }
+    .editor {
+      flex: 1 0 auto;
+      border: 1px solid #EAECF2;
+    }
+    .editorContainer {
+      width: 50%;
       display: flex;
       flex-direction: column;
     }
-    .jsonContainer {
-      flex: 0 0 40%;
+    .editorContainer label {
+      padding: 0 0 20px 40px;
+      font-size: 18px;
+    }
+    .initialContainer {
+      padding-right: 20px;
+    }
+    .mainContainer {
+      display: flex;
+      padding: 0 30px;
+    }
+    .containerTitle {
+      margin: 10px 0 15px 60px;
     }
     .parsonsContainer {
-      flex: 1 0 auto;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      padding-right: 20px;
     }
-    .ta {
-      width: 90%;
-      height: 200px;
+    .parsonsPuzzleWidgetContainer {
+      border: 1px solid #EAECF2;
+      background-color: #FFF;
+      padding: 20px;
+      min-height: 400px;
     }
-
+    .parsonsPuzzleWidgetContainer.is-hide {
+      display: none;
+    }
+    .parsonsPuzzleContainer {
+      flex: 1 1 auto;
+      min-width: 600px;
+    }
     #uiContainer {
-      border: 1px solid;
+      border: 1px solid #EAECF2;
       flex: 1 0 auto;
-      max-height: 600px;
+      min-height: 400px;
+      max-height: 800px;
       overflow: auto;
+      background-color: #FFF;
+      padding: 20px 60px;
     }
     .feedbackFieldset {
       margin-top: 20px;
     }
     .sortable-code {
-      width: 50% !important;
+      width: 95% !important;
       float: none;
     }
   </style>
 </head>
 <body>
-<!-- parsons puzzle libs -->
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/underscore-min.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/jquery.min.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/jquery-ui.min.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/lis.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/jquery.sound.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/jquery.ui.touch-punch.min.js"
-></script>
-<script
-  type="text/javascript"
-  src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autorun=false"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/skulpt.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/skulpt-stdlib.js"
-></script>
-<script
-  type="text/javascript"
-  src="//static-assets.codio.com/guides/parsons/parsons.js"
-></script>
-<!-- parsons puzzle libs -->
-  <div class="mainContainer">
-    <div class="jsonContainer">
-      <h4>Parsons puzzle initial settings</h4>
-      <div>
-        <label for="initialTextarea">Parsons puzzle initial code</label>
-        <textarea id="initialTextarea" placeholder="Place Parsons puzzle initial code here" class="ta"></textarea>
+  <!-- parsons puzzle libs -->
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/underscore-min.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery.min.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/lis.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery.sound.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery.ui.touch-punch.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autorun=false"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/skulpt.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/skulpt-stdlib.js"></script>
+  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/parsons.js"></script>
+  <!-- parsons puzzle libs -->
+  <div id="blockOverlay" class="hide" onclick="stopEvent()"></div>
+  <div id="parsonsSettingsOverlay" class="parsonsSettingsOverlay">
+    <h2 id="overlayTitle"></h2>
+    <div class="parsonsSettingsContainer">
+      <div class="editorContainer initialContainer">
+        <label for="initialEditor">Parsons puzzle initial code</label>
+        <div id="initialEditor" class="editor"></div>
       </div>
-      <div>
-        <label for="optionsTextarea">Parsons puzzle options</label>
-        <textarea id="optionsTextarea" placeholder="Place Parsons puzzle JSON options here" class="ta">{}</textarea>
+      <div class="editorContainer optionsContainer">
+        <label for="optionsEditor">Parsons puzzle options</label>
+        <div id="optionsEditor" class="editor">{}</div>
       </div>
-      <button type="button" onclick="updateParsonsUI()">Convert old UI data to new UI</button><br/>
-      <button type="button" onclick="exportParsonsSettings()">Create ParsonsPuzzle from new UI</button>
     </div>
+    <div class="actions">
+      <a class="btn firstBtn" onclick="closeModal()">Cancel</a>
+      <a class="btn btn--primary applyOptions" onclick="applySettings()">Apply</a>
+    </div>
+  </div>
+  <div class="header">
+    <a class="btn firstBtn" onclick="importToParsonsUI()">Import</a>
+    <a class="btn" onclick="exportFromParsonsUI()">Export</a>
+  </div>
+  <div class="mainContainer">
     <div class="parsonsContainer">
-      <h4>Parsons UI</h4>
+      <h4 class="containerTitle">Parsons UI</h4>
       <div id="uiContainer"></div>
     </div>
-  </div>
-  <div class="parsonsPuzzleContainer">
-    <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
-    <div id="sortable" class="sortable-code"><p>Solution</p></div>
-  </div>
-  <div>
-    <button type="button" onclick="getFeedback()">Check Solution</button>
-    <fieldset class="feedbackFieldset">
-      <legend>Feedback: </legend>
-      <div id="feedback"/>
-    </fieldset>
+    <div class="parsonsPuzzleContainer">
+      <h4 class="containerTitle">Parsons Puzzle Widget</h4>
+      <div id="parsonsPuzzleWidgetContainer" class="parsonsPuzzleWidgetContainer is-hide">
+        <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
+        <div id="sortable" class="sortable-code"><p>Solution</p></div>
+        <div>
+          <a class="btn" onclick="getFeedback()">Check Solution</a>
+          <fieldset class="feedbackFieldset">
+            <legend>Feedback: </legend>
+            <div id="feedback"/>
+          </fieldset>
+        </div>
+      </div>
+    </div>
   </div>
   <script type="text/javascript">
+    function stopEvent(ev) { ev.stopPropagation(); }
     var parsons = null;
     var parsonsPuzzle = null;
-    updateParsonsUI();
-    function updateParsonsUI() {
-      var initialTa = document.getElementById('initialTextarea');
-      var optionsTa = document.getElementById('optionsTextarea');
-      var options = {};
-      try {
-        options = JSON.parse(optionsTa.value);
-      } catch (e) {}
-      if (options.grader) {
-        options.grader = convertGraderToParsonFormat(options.grader)
+    var initialEditor = null;
+    var optionsEditor = null;
+
+    var graders = [
+      'ParsonsWidget._graders.LineBasedGrader',
+      'ParsonsWidget._graders.VariableCheckGrader',
+      'ParsonsWidget._graders.UnitTestGrader',
+      'ParsonsWidget._graders.LanguageTranslationGrader',
+      'ParsonsWidget._graders.TurtleGrader'
+    ];
+    function addQuotesToGrader(jsonString) {
+      var resultString = jsonString;
+      for (var i = 0; i < graders.length; i++) {
+        resultString = jsonString.replace(graders[i], '"' + graders[i] + '"');
+        if (resultString !== jsonString) {
+          break;
+        }
       }
-      parsons = ParsonsUI.build('#uiContainer', {initial: initialTa.value, options: options})
+      return resultString;
     }
-    function convertGraderToParsonFormat(grader) {
-      switch (grader) {
-        case 'VariableCheckGrader':
-          return ParsonsWidget._graders.VariableCheckGrader;
-        case 'TurtleGrader':
-          return ParsonsWidget._graders.TurtleGrader;
-        case 'UnitTestGrader':
-          return ParsonsWidget._graders.UnitTestGrader;
-        case 'LanguageTranslationGrader':
-          return ParsonsWidget._graders.LanguageTranslationGrader;
-        case 'LineBasedGrader':
-          return ParsonsWidget._graders.LineBasedGrader;
-        default:
-          return undefined
+    function removeGraderQuotes(jsonString) {
+      var resultString = jsonString;
+      for (var i = 0; i < graders.length; i++) {
+        resultString = jsonString.replace('"' + graders[i] + '"', graders[i]);
+        if (resultString !== jsonString) {
+          break;
+        }
+      }
+      return resultString;
+    }
+
+    initEditors();
+
+    function initEditors() {
+      initialEditor = ace.edit('initialEditor', {useWorker: false});
+      optionsEditor = ace.edit('optionsEditor', {useWorker: false});
+    }
+    function openModal(isImport) {
+      document.getElementById('overlayTitle').innerHTML = isImport ? 'Import' : 'Export';
+      var actionTypeCls = isImport ? 'import' : 'export';
+      document.getElementById('blockOverlay').className = '';
+      document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay is-opened ' + actionTypeCls;
+    }
+    function closeModal() {
+      document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay';
+      document.getElementById('blockOverlay').className = 'hide';
+    }
+    function importToParsonsUI() {
+      // todo clear editors?
+      openModal(true);
+    }
+    function exportFromParsonsUI() {
+      // todo what to do if Parsons UI not created yet?
+      if (parsons) {
+        var settings = parsons.export();
+        var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
+        initialEditor.setValue(settings.initial, -1);
+        optionsEditor.setValue(options, -1);
+      }
+      openModal(false);
+    }
+    function getSettingsFromEditors() {
+      return {
+        initial: initialEditor.getValue(),
+        options: optionsEditor.getValue()
       }
     }
-    function exportParsonsSettings() {
+    function applySettings() {
+      var isImport = /import/.test(document.getElementById('parsonsSettingsOverlay').className);
+      closeModal();
+      isImport ? applyEditorsDataToParsonsUI() : applyEditorsDataToParsonsWidget();
+    }
+    function applyEditorsDataToParsonsUI() {
+      var data = getSettingsFromEditors();
+      var options = addQuotesToGrader(data.options);
+      parsons = ParsonsUI.build('#uiContainer', {initial: data.initial, options: options});
+    }
+    function applyEditorsDataToParsonsWidget() {
       document.getElementById('sortableTrash').innerHTML = '';
       document.getElementById('sortable').innerHTML = '';
       document.getElementById('feedback').innerHTML = '';
 
       if (parsons) {
         var settings = parsons.export();
-        console.log(settings)
         settings.options.grader = convertGraderToParsonFormat(settings.options.grader);
 
         parsonsPuzzle = new ParsonsWidget(settings.options);
@@ -163,6 +299,24 @@
         parsonsPuzzle.shuffleLines();
       }
 
+      document.getElementById('parsonsPuzzleWidgetContainer').className = 'parsonsPuzzleWidgetContainer';
+    }
+
+    function convertGraderToParsonFormat(grader) {
+      switch (grader) {
+        case 'ParsonsWidget._graders.VariableCheckGrader':
+          return ParsonsWidget._graders.VariableCheckGrader;
+        case 'ParsonsWidget._graders.TurtleGrader':
+          return ParsonsWidget._graders.TurtleGrader;
+        case 'ParsonsWidget._graders.UnitTestGrader':
+          return ParsonsWidget._graders.UnitTestGrader;
+        case 'ParsonsWidget._graders.LanguageTranslationGrader':
+          return ParsonsWidget._graders.LanguageTranslationGrader;
+        case 'ParsonsWidget._graders.LineBasedGrader':
+          return ParsonsWidget._graders.LineBasedGrader;
+        default:
+          return undefined
+      }
     }
     function getFeedback() {
       if (parsonsPuzzle) {
@@ -173,8 +327,6 @@
           message = feedback.join('\n')
         }
         message = message && !feedback.success ? message : 'Congratulations on solving your Parsons Problem!';
-
-        console.log(feedback);
 
         var feedbackContainer = document.getElementById('feedback');
         feedbackContainer.innerHTML = message;

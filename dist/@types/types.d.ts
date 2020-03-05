@@ -2,11 +2,11 @@ export interface Dictionary<T> {
     [key: string]: T;
 }
 export declare const enum ParsonsGrader {
-    LineBased = "LineBasedGrader",
-    VariableCheck = "VariableCheckGrader",
-    UnitTest = "UnitTestGrader",
-    LanguageTranslation = "LanguageTranslationGrader",
-    Turtle = "TurtleGrader"
+    LineBased = "ParsonsWidget._graders.LineBasedGrader",
+    VariableCheck = "ParsonsWidget._graders.VariableCheckGrader",
+    UnitTest = "ParsonsWidget._graders.UnitTestGrader",
+    LanguageTranslation = "ParsonsWidget._graders.LanguageTranslationGrader",
+    Turtle = "ParsonsWidget._graders.TurtleGrader"
 }
 export interface VariableTest {
     initcode?: string;

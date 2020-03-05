@@ -17,11 +17,11 @@ const getCodeBlocks = (code: string, isDistractors: boolean): string => {
   const lines = code.split('\n')
   const pattern = /(.*?)\s*#distractor\s*$/
   if (isDistractors) {
-    return lines.filter((line) => !line.search(pattern))
-      .map((item) => item.replace(/#distractor\s*$/, ''))
+    return lines.filter((line: string) => !line.search(pattern))
+      .map((line: string) => line.replace(/#distractor\s*$/, ''))
       .join('\n')
   }
-  return lines.filter((line) => line.search(pattern)).join('\n')
+  return lines.filter((line: string) => line.search(pattern)).join('\n')
 }
 
 const renderInitialCodeBlock = (code: string): Cash => {
@@ -30,8 +30,8 @@ const renderInitialCodeBlock = (code: string): Cash => {
 
   const taContainer: Cash = $('<div class="code-blocks-ta-container fieldset"></div>')
   taContainer.append('<label for="initial">Code to Become Blocks</label>')
-  const taCode: Cash = $(`<textarea id="initial" rows="8">${codeBlock}</textarea>`)
-  taCode.attr('placeholder', 'Type Solution Here')
+  const taCode: Cash = $(`<textarea id="initial" rows="7">${codeBlock}</textarea>`)
+  taCode.attr('placeholder', 'Type solution here')
   taContainer.append(taCode)
   codeBlocksContainer.append(taContainer)
 
@@ -47,7 +47,7 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   const distractors = getCodeBlocks(settings.initial, true)
 
   taContainer.append('<label for="distractors">Code to Become Distractor Blocks</label>')
-  const taDistractors: Cash = $(`<textarea id="distractors" rows="4">${distractors}</textarea>`)
+  const taDistractors: Cash = $(`<textarea id="distractors" rows="6">${distractors}</textarea>`)
   taDistractors.attr('placeholder', 'Code blocks that serve as distractions (incorrect options)')
   taContainer.append(taDistractors)
   distractorBlockContainer.append(taContainer)
@@ -138,8 +138,8 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   const testContainer: Cash = $('<li class="test-container"></li>')
 
   const actionsContainer = $('<div class="action-container"></div>')
-  actionsContainer.append('<button type="button" class="action duplicate">clone</button>')
-  actionsContainer.append('<button type="button" class="action small remove">remove</button>')
+  actionsContainer.append('<a class="btn action duplicate">clone</a>')
+  actionsContainer.append('<a class="btn action remove">remove</a>')
   testContainer.append(actionsContainer)
 
   const testInfoContainer = $('<div class="test-info-container"></div>')
@@ -192,7 +192,7 @@ const renderVariableCheckGrader = (options?: ParsonsOptions, additionalGraderCla
   const graderFormContainer = $(`<div class="${classes.join(' ')}"></div>`)
 
   graderFormContainer.append(
-    '<div class="add-test-container"><button id="add-test" type="button">New Test</button></div>'
+    '<div class="add-test-container"><a id="add-test" class="btn btn--primary">New Test</a></div>'
   )
   const testsContainer: Cash = $('<div class="tests-container"></div>')
   const testsList: Cash = $('<ul class="tests-list"></ul>')
@@ -225,8 +225,8 @@ export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
   const testContainer: Cash = $('<li class="test-container"></li>')
 
   const actionsContainer = $('<div class="action-container"></div>')
-  actionsContainer.append('<button type="button" class="action duplicate">clone</button>')
-  actionsContainer.append('<button type="button" class="action small remove">remove</button>')
+  actionsContainer.append('<a class="btn action duplicate">clone</a>')
+  actionsContainer.append('<a class="btn action remove">remove</a>')
   testContainer.append(actionsContainer)
 
   const testInfoContainer = $('<div class="test-info-container"></div>')
@@ -271,7 +271,7 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
   const tests: UnitTest[] | null = options ? convertUnitTestsFromString(options.unittests) : null
 
   graderFormContainer.append(
-    '<div class="add-test-container"><button id="add-test" type="button">New Test</button></div>'
+    '<div class="add-test-container"><a id="add-test" class="btn btn--primary">New Test</a></div>'
   )
   const testsContainer: Cash = $('<div class="tests-container"></div>')
   const testsList: Cash = $('<ul class="tests-list"></ul>')
@@ -294,7 +294,6 @@ const renderProgrammingLang = (lang?: string): Cash => {
   const programmingLangSelect: Cash = $('<select id="programming-lang"></select>')
   programmingLangSelect.append('<option value="pseudo">pseudocode</option>')
   programmingLangSelect.append('<option value="java">java</option>')
-  programmingLangSelect.append('<option value="python">python</option>')
 
   if (lang) {
     programmingLangSelect.val(lang)
@@ -348,7 +347,8 @@ const renderTurtleGrader = (options?: ParsonsOptions): Cash => {
 }
 
 const renderGraderForm = (container: Cash, grader: ParsonsGrader, options?: ParsonsOptions): void => {
-  container.closest('.ParsonsUI').removeClass().addClass(`ParsonsUI ${grader.toString()}`)
+  container.closest('.ParsonsUI').removeClass()
+    .addClass(`ParsonsUI ${grader.toString().replace('ParsonsWidget._graders.', '')}`)
   container.find('.grader-form-container').remove()
 
   switch (grader) {
