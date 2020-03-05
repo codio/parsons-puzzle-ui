@@ -13,6 +13,17 @@ import {
   VariableTest
 } from '../@types/types'
 
+const getCodeBlocks = (code: string, isDistractors: boolean): string => {
+  const lines = code.split('\n')
+  const pattern = /(.*?)\s*#distractor\s*$/
+  if (isDistractors) {
+    return lines.filter((line) => !line.search(pattern))
+      .map((item) => item.replace(/#distractor\s*$/, ''))
+      .join('\n')
+  }
+  return lines.filter((line) => line.search(pattern)).join('\n')
+}
+
 const renderInitialCodeBlock = (code: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
   const codeBlock = getCodeBlocks(code, false)
@@ -48,17 +59,6 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   distractorBlockContainer.append(maxDistractorsContainer)
 
   return distractorBlockContainer
-}
-
-const getCodeBlocks = (code: string, isDistractors: boolean): string => {
-  const lines = code.split('\n')
-  const pattern = /(.*?)\s*#distractor\s*$/;
-  if (isDistractors) {
-    return lines.filter(line => !line.search(pattern))
-        .map(item => item.replace(/#distractor\s*$/,''))
-        .join('\n')
-  }
-  return lines.filter(line => line.search(pattern)).join('\n')
 }
 
 const renderGraderSelect = (grader?: (() => void) | string | undefined): Cash => {
@@ -268,7 +268,7 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
 
   graderFormContainer.append(renderUnitTestCodePrepend(options ? options.unittest_code_prepend : ''))
 
-  const tests: UnitTest[] | null = options ? convertUnitTestsFromString(/* options.unittests */) : null
+  const tests: UnitTest[] | null = options ? convertUnitTestsFromString(options.unittests) : null
 
   graderFormContainer.append(
     '<div class="add-test-container"><button id="add-test" type="button">New Test</button></div>'

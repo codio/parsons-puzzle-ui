@@ -29,9 +29,47 @@ export const convertTestVariablesToString = (variables: object): string => {
   return lines.join('\n')
 }
 
-export const convertUnitTestsFromString = (/* unitTests: string */): UnitTest[] => {
-  const test: UnitTest = { methodCall: '', expectedOutput: '', errorMessage: '' }
-  return [test]
+const unitTestParse = (str: string): UnitTest => {
+  const startpos = str.lastIndexOf('")')
+  const pos1 = str.lastIndexOf('"', startpos - 1)
+  const pos2 = str.lastIndexOf(',', pos1 - 1)
+  const pos3 = str.lastIndexOf(',', pos2 - 1)
+
+  const substr1 = str.slice(pos2 + 1, startpos + 1)
+  let substr2 = str.slice(pos3 + 1, pos2)
+  let substr3
+  const posArr = substr2.lastIndexOf(']')
+  const posObj = substr2.lastIndexOf('}')
+
+  if (posArr !== -1) {
+    const pos4 = str.lastIndexOf('[', pos2)
+    const pos5 = str.lastIndexOf(',', pos4)
+    substr2 = str.slice(pos4, pos2)
+    substr3 = str.slice(1, pos5)
+  } else if (posObj !== -1) {
+    const pos4 = str.lastIndexOf('{', pos2)
+    const pos5 = str.lastIndexOf(',', pos4)
+    substr2 = str.slice(pos4, pos2)
+    substr3 = str.slice(1, pos5)
+  } else {
+    substr3 = str.slice(1, pos3)
+  }
+  return { methodCall: substr3.trim(), expectedOutput: substr2.trim(), errorMessage: substr1.trim() }
+}
+
+export const convertUnitTestsFromString = (unitTests: string | undefined): UnitTest[] => {
+  if (!unitTests) {
+    return []
+  }
+  let result: RegExpExecArray | null
+  const test: UnitTest[] = []
+  const re = /^\s*self\.assertEqual(\(.*?\))\s*$/gm
+
+  // eslint-disable-next-line no-cond-assign
+  while ((result = re.exec(unitTests)) != null) {
+    test.push(unitTestParse(result[1]))
+  }
+  return test
 }
 
 export default {
