@@ -8,9 +8,9 @@
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --env.production",
+    "build": "webpack --config webpack.prod.js",
     "lint": "eslint ./src/**/* --ext .js,.jsx,.ts,.tsx",
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open --config webpack.dev.js"
   },
   "files": [
     "src/**/*",
@@ -44,6 +44,7 @@
     "typescript": "^3.7.5",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "webpack-merge": "^4.2.2"
   }
 }
