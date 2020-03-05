@@ -148,7 +148,7 @@
       float: none;
     }
   </style>
-<link href="main.76515385aff219bf444b.css" rel="stylesheet"></head>
+<link href="main.5170b31108fa2dc4364a.css" rel="stylesheet"></head>
 <body>
   <!-- parsons puzzle libs -->
   <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/underscore-min.js"></script>
@@ -292,7 +292,6 @@
 
       if (parsons) {
         var settings = parsons.export();
-        console.log(settings)
         settings.options.grader = convertGraderToParsonFormat(settings.options.grader);
 
         parsonsPuzzle = new ParsonsWidget(settings.options);
@@ -328,8 +327,6 @@
           message = feedback.join('\n')
         }
         message = message && !feedback.success ? message : 'Congratulations on solving your Parsons Problem!';
-
-        console.log(feedback);
 
         var feedbackContainer = document.getElementById('feedback');
         feedbackContainer.innerHTML = message;
