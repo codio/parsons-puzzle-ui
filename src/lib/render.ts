@@ -169,12 +169,16 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   variablesContainer.append(taVariables)
   column1.append(variablesContainer)
 
+  tryToCreateEditorFromTextarea(taVariables)
+
   const descriptionContainer = $('<div class="fieldset"></div>')
   descriptionContainer.append('<label>Test Description*</label>')
   const taDescription = $(`<textarea rows="2" name="description">${test ? test.message : ''}</textarea>`)
   taDescription.attr('placeholder', 'Description of test that is shown to learner')
   descriptionContainer.append(taDescription)
   column1.append(descriptionContainer)
+
+  tryToCreateEditorFromTextarea(taDescription)
 
   const column2 = $('<div class="column"></div>')
 
@@ -185,12 +189,16 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   preCodeContainer.append(taPreCode)
   column2.append(preCodeContainer)
 
+  tryToCreateEditorFromTextarea(taPreCode)
+
   const postCodeContainer = $('<div class="fieldset"></div>')
   postCodeContainer.append('<label>Post Code</label>')
   const taPostCode = $(`<textarea rows="2" name="post-code">${test ? test.code : ''}</textarea>`)
   taPostCode.attr('placeholder', 'Code appended after student code')
   postCodeContainer.append(taPostCode)
   column2.append(postCodeContainer)
+
+  tryToCreateEditorFromTextarea(taPostCode)
 
   testInfoContainer.append(column1)
   testInfoContainer.append(column2)
@@ -233,6 +241,8 @@ const renderUnitTestCodePrepend = (code?: string): Cash => {
   taContainer.append(taCode)
   codePrependContainer.append(taContainer)
 
+  tryToCreateEditorFromTextarea(taCode)
+
   return codePrependContainer
 }
 
@@ -256,12 +266,16 @@ export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
   methodsContainer.append(taMethods)
   column1.append(methodsContainer)
 
+  tryToCreateEditorFromTextarea(taMethods)
+
   const messageContainer = $('<div class="fieldset"></div>')
   messageContainer.append('<label>Error Message (optional)</label>')
   const taMessage = $(`<textarea rows="2" name="error-message">${test ? test.errorMessage : ''}</textarea>`)
   taMessage.attr('placeholder', 'What student sees if this test fails')
   messageContainer.append(taMessage)
   column1.append(messageContainer)
+
+  tryToCreateEditorFromTextarea(taMessage)
 
   const column2 = $('<div class="column"></div>')
 
@@ -271,6 +285,8 @@ export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
   taExpectedOutput.attr('placeholder', 'Expected output of method call')
   expectedOutputContainer.append(taExpectedOutput)
   column2.append(expectedOutputContainer)
+
+  tryToCreateEditorFromTextarea(taExpectedOutput)
 
   testInfoContainer.append(column1)
   testInfoContainer.append(column2)
@@ -322,11 +338,13 @@ const renderExecutableCode = (code?: string): Cash => {
   const executableCodeContainer: Cash = $('<div class="executable-code-container"></div>')
 
   const taContainer: Cash = $('<div class="executable-code-ta-container fieldset"></div>')
-  taContainer.append('<label for="code-prepend">Executable code</label>')
+  taContainer.append('<label for="executable-code">Executable code</label>')
   const taCode: Cash = $(`<textarea id="executable-code" rows="4">${code || ''}</textarea>`)
   taCode.attr('placeholder', 'Executable code')
   taContainer.append(taCode)
   executableCodeContainer.append(taContainer)
+
+  tryToCreateEditorFromTextarea(taCode)
 
   return executableCodeContainer
 }
@@ -340,6 +358,8 @@ const renderTurtleModelCode = (code?: string): Cash => {
   taCode.attr('placeholder', 'Turtle Model Code')
   taContainer.append(taCode)
   turtleModelCodeContainer.append(taContainer)
+
+  tryToCreateEditorFromTextarea(taCode)
 
   return turtleModelCodeContainer
 }

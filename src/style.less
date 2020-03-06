@@ -12,7 +12,7 @@
   }
 
   .CodeMirror {
-    height: 100px;
+    height: 80px;
     resize: vertical;
   }
   .CodeMirror-empty.CodeMirror-focused {
@@ -119,6 +119,9 @@
     padding-top: 20px;
   }
 
+  .tests-container .CodeMirror {
+    height: 60px;
+  }
   .variable-check-grader-container,
   .unit-test-grader-container {
     .tests-container {
@@ -157,10 +160,11 @@
       border: 1px solid #c7d3e5;
       padding: 10px;
       background-color: #FFF;
+      width: 0;
     }
 
     .column {
-      flex: 1 0 auto;
+      width: 50%;
     }
 
     .column .fieldset {
