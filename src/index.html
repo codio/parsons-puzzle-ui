@@ -94,6 +94,9 @@
       display: flex;
       align-items: center;
     }
+    .parsonsSettingsOverlay.export .applyOptions {
+      display: none;
+    }
     .editor {
       flex: 1 0 auto;
       border: 1px solid #EAECF2;
@@ -123,8 +126,16 @@
       display: flex;
       padding: 0 30px;
     }
-    .containerTitle {
+    .containerTitle,
+    .parsonUIContainerTitle {
       margin: 10px 0 15px 60px;
+    }
+    .parsonUIContainerTitle {
+      display: inline-block;
+    }
+    .tryBtn {
+      float: right;
+      margin-top: 6px;
     }
     .parsonsContainer {
       display: flex;
@@ -190,7 +201,7 @@
     </div>
     <div class="actions">
       <a class="btn firstBtn" onclick="closeModal()">Cancel</a>
-      <a class="btn btn--primary applyOptions" onclick="applySettings()">Apply</a>
+      <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a>
     </div>
   </div>
   <div class="header">
@@ -199,7 +210,10 @@
   </div>
   <div class="mainContainer">
     <div class="parsonsContainer">
-      <h4 class="containerTitle">Parsons UI</h4>
+      <div>
+        <h4 class="parsonUIContainerTitle">Parsons UI</h4>
+        <a class="btn btn--primary tryBtn" onclick="previewParsonsPuzzle()">Try</a>
+      </div>
       <div id="uiContainer"></div>
     </div>
     <div class="parsonsPuzzleContainer">
@@ -223,6 +237,8 @@
     var parsonsPuzzle = null;
     var initialEditor = null;
     var optionsEditor = null;
+
+    parsons = ParsonsUI.build('#uiContainer', {initial: '', options: {}});
 
     var graders = [
       'ParsonsWidget._graders.LineBasedGrader',
@@ -295,17 +311,18 @@
         options: optionsEditor.getValue()
       }
     }
-    function applySettings() {
-      var isImport = /import/.test(document.getElementById('parsonsSettingsOverlay').className);
-      closeModal();
-      isImport ? applyEditorsDataToParsonsUI() : applyEditorsDataToParsonsWidget();
-    }
     function applyEditorsDataToParsonsUI() {
       var data = getSettingsFromEditors();
       var options = addQuotesToGrader(data.options);
-      parsons = ParsonsUI.build('#uiContainer', {initial: data.initial, options: options});
+      try {
+        var jsonOptions = JSON.parse(options);
+        closeModal();
+        parsons = ParsonsUI.build('#uiContainer', {initial: data.initial, options: jsonOptions});
+      } catch (e) {
+        alert(e.message);
+      }
     }
-    function applyEditorsDataToParsonsWidget() {
+    function previewParsonsPuzzle() {
       document.getElementById('sortableTrash').innerHTML = '';
       document.getElementById('sortable').innerHTML = '';
       document.getElementById('feedback').innerHTML = '';
