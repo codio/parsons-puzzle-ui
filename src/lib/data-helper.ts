@@ -38,9 +38,22 @@ interface TurtleGraderOptions {
   turtleModelCode: string;
 }
 
+interface HTMLElementWithCodeMirror extends HTMLElement {
+  // eslint-disable-next-line
+  CodeMirror?: any;
+}
+
+const getValueFromEditor = (el: Cash): string => {
+  const codeMirrorEl: HTMLElementWithCodeMirror = el.siblings('.CodeMirror').get(0) as HTMLElement
+  if (codeMirrorEl && codeMirrorEl.CodeMirror) {
+    return codeMirrorEl.CodeMirror.getValue()
+  }
+  return (el.val() as string)
+}
+
 const collectCommonSettings = (container: Cash): CommonSettings => {
-  const codeBlocks: string = (container.find('#initial').val() as string)
-  const distractors: string = (container.find('#distractors').val() as string)
+  const codeBlocks: string = getValueFromEditor(container.find('#initial'))
+  const distractors: string = getValueFromEditor(container.find('#distractors'))
   const maxDistractors: number = parseInt(container.find('#max-distractors').val() as string, 10)
 
   const initialWithDistractors: string = [
@@ -73,10 +86,10 @@ const collectVariableTests = (container: Cash): VariableTest[] => {
   container.find('.test-container').each((index: number, el: HTMLElement) => {
     const $this: Cash = $(el)
     const variables: Dictionary<number | string> = {}
-    const variablesStr: string = $this.find('[name="variables"]').val() as string
-    const description: string = $this.find('[name="description"]').val() as string
-    const preCode: string = $this.find('[name="pre-code"]').val() as string
-    const postCode: string = $this.find('[name="post-code"]').val() as string
+    const variablesStr: string = getValueFromEditor($this.find('[name="variables"]'))
+    const description: string = getValueFromEditor($this.find('[name="description"]'))
+    const preCode: string = getValueFromEditor($this.find('[name="pre-code"]'))
+    const postCode: string = getValueFromEditor($this.find('[name="post-code"]'))
 
     variablesStr.split('\n').forEach((line: string) => {
       const params: RegExpExecArray | null = /^\s*"(.*)":\s*(.*)\s*$/.exec(line)
@@ -108,13 +121,13 @@ const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGrader
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
   const unitTests: UnitTest[] = []
 
-  const codePrepend: string = container.find('[name="code-prepend"]').val() as string
+  const codePrepend: string = getValueFromEditor(container.find('[name="code-prepend"]'))
 
   container.find('.test-container').each((index: number, el: HTMLElement) => {
     const $this: Cash = $(el)
-    const methodCall: string = $this.find('[name="method-call"]').val() as string
-    const errorMessage: string = $this.find('[name="error-message"]').val() as string
-    const expectedOutput: string = $this.find('[name="expected-output"]').val() as string
+    const methodCall: string = getValueFromEditor($this.find('[name="method-call"]'))
+    const errorMessage: string = getValueFromEditor($this.find('[name="error-message"]'))
+    const expectedOutput: string = getValueFromEditor($this.find('[name="expected-output"]'))
 
     unitTests.push({ methodCall, errorMessage, expectedOutput })
   })
@@ -138,7 +151,7 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
 const collectLanguageTranslationGraderOptions = (container: Cash): LanguageTranslationGraderOptions => {
   return {
     programmingLang: container.find('#programming-lang').val() as string,
-    executableCode: container.find('#executable-code').val() as string,
+    executableCode: getValueFromEditor(container.find('#executable-code')),
     vartests: collectVariableTests(container)
   }
 }
@@ -146,8 +159,8 @@ const collectLanguageTranslationGraderOptions = (container: Cash): LanguageTrans
 const collectTurtleGraderOptions = (container: Cash): TurtleGraderOptions => {
   return {
     programmingLang: container.find('#programming-lang').val() as string,
-    executableCode: container.find('#executable-code').val() as string,
-    turtleModelCode: container.find('#turtle-model-code').val() as string,
+    executableCode: getValueFromEditor(container.find('#executable-code')),
+    turtleModelCode: getValueFromEditor(container.find('#turtle-model-code'))
   }
 }
 
