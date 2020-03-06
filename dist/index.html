@@ -12,6 +12,7 @@
   <!-- codemirror -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.css" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/addon/display/placeholder.min.js" type="text/javascript" charset="utf-8"></script>
   <!-- codemirror end -->
   <style>
     body {
@@ -110,6 +111,12 @@
     .CodeMirror {
       border: 1px solid #EAECF2;
     }
+    .CodeMirror-empty.CodeMirror-focused {
+      outline: none;
+    }
+    .CodeMirror pre.CodeMirror-placeholder {
+      color: #999;
+    }
     .initialContainer {
       padding-right: 20px;
     }
@@ -155,7 +162,7 @@
       float: none;
     }
   </style>
-<link href="main.f0c496abb56eedf14627.css" rel="stylesheet"></head>
+<link href="main.921c855e20914f6dbbe0.css" rel="stylesheet"></head>
 <body>
   <!-- parsons puzzle libs -->
   <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/underscore-min.js"></script>

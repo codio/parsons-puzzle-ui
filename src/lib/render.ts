@@ -27,6 +27,14 @@ const getCodeBlocks = (code: string, isDistractors: boolean): string => {
   return lines.filter((line: string) => line.search(pattern)).join('\n')
 }
 
+const tryToCreateEditorFromTextarea = (ta: Cash): void => {
+  try {
+    const editor = CodeMirror.fromTextArea(ta.get(0) as HTMLTextAreaElement, { lineNumbers: true })
+    setTimeout(() => { editor.refresh() }, 0)
+  // eslint-disable-next-line no-empty
+  } catch (e) {}
+}
+
 const renderInitialCodeBlock = (code: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
   const codeBlock = getCodeBlocks(code, false)
@@ -38,11 +46,7 @@ const renderInitialCodeBlock = (code: string): Cash => {
   taContainer.append(taCode)
   codeBlocksContainer.append(taContainer)
 
-  try {
-    const editor = CodeMirror.fromTextArea(taCode.get(0) as HTMLTextAreaElement, { lineNumbers: true })
-    setTimeout(() => { editor.refresh() }, 0)
-    // eslint-disable-next-line no-empty
-  } catch (e) {}
+  tryToCreateEditorFromTextarea(taCode)
 
   const hintText = '$$toggle::value1::value2::valuen$$&nbsp;&nbsp;&nbsp;&nbsp; new line \\n in same block'
   codeBlocksContainer.append(`<div class="code-blocks-hint">${hintText}</div>`)
@@ -61,11 +65,7 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   taContainer.append(taDistractors)
   distractorBlockContainer.append(taContainer)
 
-  try {
-    const editor = CodeMirror.fromTextArea(taDistractors.get(0) as HTMLTextAreaElement, { lineNumbers: true })
-    setTimeout(() => { editor.refresh() }, 0)
-    // eslint-disable-next-line no-empty
-  } catch (e) {}
+  tryToCreateEditorFromTextarea(taDistractors)
 
   const maxDistractors: number = settings.options.max_wrong_lines || 10
   const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container fieldset"></div>')

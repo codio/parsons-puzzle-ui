@@ -14,6 +14,13 @@
   .CodeMirror {
     height: 100px;
   }
+  .CodeMirror-empty.CodeMirror-focused {
+    outline: none;
+  }
+  .CodeMirror pre.CodeMirror-placeholder {
+    color: #999;
+  }
+
   textarea,
   input[type='text'],
   input[type='number'],
@@ -23,6 +30,7 @@
     padding: 7px 10px;
     font-size: 12px;
   }
+
   .fieldset {
     display: flex;
     flex-direction: column;
@@ -44,6 +52,7 @@
 
   .distractor-blocks-ta-container {
     width: 60%;
+    min-width: 60%;
     padding-right: 80px;
   }
 

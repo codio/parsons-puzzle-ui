@@ -13,6 +13,12 @@
 .ParsonsUI .CodeMirror {
   height: 100px;
 }
+.ParsonsUI .CodeMirror-empty.CodeMirror-focused {
+  outline: none;
+}
+.ParsonsUI .CodeMirror pre.CodeMirror-placeholder {
+  color: #999;
+}
 .ParsonsUI textarea,
 .ParsonsUI input[type='text'],
 .ParsonsUI input[type='number'],
@@ -40,6 +46,7 @@
 }
 .ParsonsUI .distractor-blocks-ta-container {
   width: 60%;
+  min-width: 60%;
   padding-right: 80px;
 }
 .ParsonsUI .distractor-blocks-max-container {
