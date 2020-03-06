@@ -56,13 +56,12 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
   const distractors: string = getValueFromEditor(container.find('#distractors'))
   const maxDistractors: number = parseInt(container.find('#max-distractors').val() as string, 10)
 
-  const initialWithDistractors: string = [
-    codeBlocks,
-    distractors.split('\n')
-      .filter((line: string) => !!line)
-      .map((line: string) => `${line} #distractor`)
-      .join('\n')
-  ].join('\n')
+  const codeArr: string[] = codeBlocks.split('\n')
+  const disrtactorsArr: string[] = distractors.split('\n')
+    .map((line: string) => (line ? `${line} #distractor` : ''))
+  const initialWithDistractors: string = codeArr.concat(disrtactorsArr)
+    .filter((line: string) => !!line)
+    .join('\n')
 
   const grader: ParsonsGrader = (container.find('#grader').val() as string) as ParsonsGrader
 

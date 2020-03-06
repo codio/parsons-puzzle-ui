@@ -5,6 +5,7 @@
   <title>Parsons Puzzle UI</title>
   <!-- parsons puzzle libs/styles -->
   <link href="https://js-parsons.github.io/js/js-parsons/parsons.css" rel="stylesheet" />
+  <link href="https://js-parsons.github.io/js/js-parsons/lib/prettify.css" rel="stylesheet" />
   <!-- parsons puzzle libs -->
   <script src="parsonsUI.js" type="text/javascript"></script>
 
@@ -29,6 +30,9 @@
       align-items: center;
       background-color: #FFF;
     }
+    .header .btn:not(:last-child) {
+      margin-right: 10px;
+    }
     .btn {
       padding: 10px 30px;
       background-color: #8c97b2;
@@ -42,9 +46,7 @@
       background-color: #6d7b9e;
       transition: background-color 0.4s;
     }
-    .firstBtn {
-      margin-right: 10px;
-    }
+
     .btn--primary {
       background-color: #15a4fa;
     }
@@ -94,7 +96,15 @@
       display: flex;
       align-items: center;
     }
-    .parsonsSettingsOverlay.export .applyOptions {
+    .parsonsSettingsOverlay .actions .btn:not(:last-child) {
+      margin-right: 10px;
+    }
+    .parsonsSettingsOverlay.import .toCode,
+    .parsonsSettingsOverlay.import .toParameters,
+    .parsonsSettingsOverlay.export .applyOptions,
+    .parsonsSettingsOverlay.export:not(.parameters) .toCode,
+    .parsonsSettingsOverlay.export.parameters .toParameters,
+    .parsonsSettingsOverlay.export.parameters .editorContainer:not(.codeContainer) {
       display: none;
     }
     .editor {
@@ -106,9 +116,17 @@
       display: flex;
       flex-direction: column;
     }
+    .codeContainer {
+      width: 100%;
+    }
     .editorContainer label {
       padding: 0 0 20px 40px;
       font-size: 18px;
+    }
+
+    .parsonsSettingsOverlay:not(.export) .codeContainer,
+    .parsonsSettingsOverlay.export:not(.parameters) .codeContainer{
+      display: none;
     }
     .CodeMirror {
       border: 1px solid #EAECF2;
@@ -172,19 +190,19 @@
       float: none;
     }
   </style>
-<link href="main.05c696754ab4dce047fc.css" rel="stylesheet"></head>
+<link href="main.8e14b84076581eb1f256.css" rel="stylesheet"></head>
 <body>
   <!-- parsons puzzle libs -->
-  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/underscore-min.js"></script>
-  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery.min.js"></script>
-  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/lis.js"></script>
-  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery.sound.js"></script>
-  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/jquery.ui.touch-punch.min.js"></script>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autorun=false"></script>
-  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/skulpt.js"></script>
-  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/skulpt-stdlib.js"></script>
-  <script type="text/javascript" src="//static-assets.codio.com/guides/parsons/parsons.js"></script>
+  <script src="https://js-parsons.github.io/js/js-parsons/lib/jquery.min.js"></script>
+  <script src="https://js-parsons.github.io/js/js-parsons/lib/jquery-ui.min.js"></script>
+  <script src="https://js-parsons.github.io/js/jquery.ui.touch-punch.min.js"></script>
+  <script src="https://js-parsons.github.io/js/js-parsons/lib/skulpt.js"></script>
+  <script src="https://js-parsons.github.io/js/js-parsons/lib/skulpt-stdlib.js"></script>
+  <script src="https://js-parsons.github.io/js/js-parsons/lib/underscore-min.js"></script>
+  <script src="https://js-parsons.github.io/js/js-parsons/lib/lis.js"></script>
+  <script src="https://js-parsons.github.io/js/js-parsons/lib/jquery.sound.js"></script>
+  <script src="https://js-parsons.github.io/js/js-parsons/lib/prettify.js"></script>
+  <script src="https://js-parsons.github.io/js/js-parsons/parsons.js"></script>
   <!-- parsons puzzle libs -->
   <div id="blockOverlay" class="hide" onclick="stopEvent()"></div>
   <div id="parsonsSettingsOverlay" class="parsonsSettingsOverlay">
@@ -198,14 +216,20 @@
         <label for="optionsEditor">Parsons puzzle options</label>
         <textarea id="optionsEditor" class="editor">{}</textarea>
       </div>
+      <div class="editorContainer codeContainer">
+        <label for="codeEditor">HTML Code</label>
+        <textarea id="codeEditor" class="editor"></textarea>
+      </div>
     </div>
     <div class="actions">
-      <a class="btn firstBtn" onclick="closeModal()">Cancel</a>
+      <a class="btn" onclick="closeModal()">Cancel</a>
       <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a>
+      <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a>
+      <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a>
     </div>
   </div>
   <div class="header">
-    <a class="btn firstBtn" onclick="importToParsonsUI()">Import</a>
+    <a class="btn" onclick="importToParsonsUI()">Import</a>
     <a class="btn" onclick="exportFromParsonsUI()">Export</a>
   </div>
   <div class="mainContainer">
@@ -237,6 +261,7 @@
     var parsonsPuzzle = null;
     var initialEditor = null;
     var optionsEditor = null;
+    var codeEditor = null;
 
     parsons = ParsonsUI.build('#uiContainer', {initial: '', options: {}});
 
@@ -277,6 +302,9 @@
       optionsEditor = CodeMirror.fromTextArea(document.getElementById('optionsEditor'), {
         lineNumbers: true
       });
+      codeEditor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+        lineNumbers: true
+      });
     }
     function openModal(isImport) {
       document.getElementById('overlayTitle').innerHTML = isImport ? 'Import' : 'Export';
@@ -292,11 +320,12 @@
       document.getElementById('blockOverlay').className = 'hide';
     }
     function importToParsonsUI() {
-      // todo clear editors?
+      initialEditor.setValue('', -1);
+      optionsEditor.setValue('{}', -1);
+
       openModal(true);
     }
     function exportFromParsonsUI() {
-      // todo what to do if Parsons UI not created yet?
       if (parsons) {
         var settings = parsons.export();
         var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
@@ -304,6 +333,34 @@
         optionsEditor.setValue(options, -1);
       }
       openModal(false);
+    }
+    function switchToCode() {
+      var overlay = document.getElementById('parsonsSettingsOverlay');
+      overlay.className = overlay.className.replace('parameters', '');
+    }
+    function switchToParameters() {
+      var initial = initialEditor.getValue();
+      var options = optionsEditor.getValue();
+
+      var initialJs = [];
+      var lines = initial.replace(/"/g, '\\"').split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        var line = '\"' + lines[i];
+        line += i < lines.length -1 ? '\\n' + '\" +' : '\"';
+        initialJs.push(i !== 0 ? '    ' + line : line);
+      }
+      initialJs = 'var initial = ' + initialJs.join('\n') + ';';
+      var code = [
+        initialJs,
+        'var parsonsPuzzle = new ParsonsWidget(' + options + ');',
+        'parsonsPuzzle.init(initial);',
+        'parsonsPuzzle.shuffleLines();'
+      ].join('\n');
+      codeEditor.setValue(code, -1);
+
+      var overlay = document.getElementById('parsonsSettingsOverlay');
+      overlay.className += ' parameters';
+      codeEditor.refresh();
     }
     function getSettingsFromEditors() {
       return {
