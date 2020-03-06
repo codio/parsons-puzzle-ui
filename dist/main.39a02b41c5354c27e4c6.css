@@ -13,6 +13,7 @@
 .ParsonsUI .CodeMirror {
   height: 80px;
   resize: vertical;
+  border: 1px solid #EAECF2;
 }
 .ParsonsUI .CodeMirror-empty.CodeMirror-focused {
   outline: none;
