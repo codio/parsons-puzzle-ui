@@ -5,7 +5,8 @@ export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | string | 
     return ParsonsGrader.LineBased
   }
 
-  const graderName: string = typeof grader === 'string' ? grader : grader.name
+  let graderName: string = typeof grader === 'string' ? grader : grader.name
+  graderName = graderName.replace('ParsonsWidget._graders.', '')
 
   switch (graderName) {
     case 'VariableCheckGrader':
