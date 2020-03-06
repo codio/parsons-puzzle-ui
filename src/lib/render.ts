@@ -1,5 +1,8 @@
 import $, { Cash } from 'cash-dom'
 
+// eslint-disable-next-line
+declare const CodeMirror: any
+
 import {
   convertParsonsGraderFuncToEnum,
   convertTestVariablesToString,
@@ -35,6 +38,12 @@ const renderInitialCodeBlock = (code: string): Cash => {
   taContainer.append(taCode)
   codeBlocksContainer.append(taContainer)
 
+  try {
+    const editor = CodeMirror.fromTextArea(taCode.get(0) as HTMLTextAreaElement, { lineNumbers: true })
+    setTimeout(() => { editor.refresh() }, 0)
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
+
   const hintText = '$$toggle::value1::value2::valuen$$&nbsp;&nbsp;&nbsp;&nbsp; new line \\n in same block'
   codeBlocksContainer.append(`<div class="code-blocks-hint">${hintText}</div>`)
 
@@ -51,6 +60,12 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
   taDistractors.attr('placeholder', 'Code blocks that serve as distractions (incorrect options)')
   taContainer.append(taDistractors)
   distractorBlockContainer.append(taContainer)
+
+  try {
+    const editor = CodeMirror.fromTextArea(taDistractors.get(0) as HTMLTextAreaElement, { lineNumbers: true })
+    setTimeout(() => { editor.refresh() }, 0)
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
 
   const maxDistractors: number = settings.options.max_wrong_lines || 10
   const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container fieldset"></div>')

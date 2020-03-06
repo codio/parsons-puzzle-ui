@@ -8,6 +8,10 @@
 .ParsonsUI label {
   padding-bottom: 8px;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+.ParsonsUI .CodeMirror {
+  height: 100px;
 }
 .ParsonsUI textarea,
 .ParsonsUI input[type='text'],
@@ -35,11 +39,11 @@
   padding-top: 35px;
 }
 .ParsonsUI .distractor-blocks-ta-container {
-  flex: 1 0 auto;
+  width: 60%;
   padding-right: 80px;
 }
 .ParsonsUI .distractor-blocks-max-container {
-  width: 300px;
+  width: 250px;
 }
 .ParsonsUI .common-settings-container {
   display: flex;

@@ -38,9 +38,22 @@ interface TurtleGraderOptions {
   turtleModelCode: string;
 }
 
+interface HTMLElementWithCodeMirror extends HTMLElement {
+  // eslint-disable-next-line
+  CodeMirror?: any;
+}
+
+const getValueFromEditor = (el: Cash): string => {
+  const codeMirrorEl: HTMLElementWithCodeMirror = el.siblings('.CodeMirror').get(0) as HTMLElement
+  if (codeMirrorEl && codeMirrorEl.CodeMirror) {
+    return codeMirrorEl.CodeMirror.getValue()
+  }
+  return (el.val() as string)
+}
+
 const collectCommonSettings = (container: Cash): CommonSettings => {
-  const codeBlocks: string = (container.find('#initial').val() as string)
-  const distractors: string = (container.find('#distractors').val() as string)
+  const codeBlocks: string = getValueFromEditor(container.find('#initial'))
+  const distractors: string = getValueFromEditor(container.find('#distractors'))
   const maxDistractors: number = parseInt(container.find('#max-distractors').val() as string, 10)
 
   const initialWithDistractors: string = [
