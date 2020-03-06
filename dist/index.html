@@ -144,8 +144,16 @@
       display: flex;
       padding: 0 30px;
     }
-    .containerTitle {
+    .containerTitle,
+    .parsonUIContainerTitle {
       margin: 10px 0 15px 60px;
+    }
+    .parsonUIContainerTitle {
+      display: inline-block;
+    }
+    .tryBtn {
+      float: right;
+      margin-top: 6px;
     }
     .parsonsContainer {
       display: flex;
@@ -182,7 +190,7 @@
       float: none;
     }
   </style>
-<link href="main.01692e48245f014a1bd1.css" rel="stylesheet"></head>
+<link href="main.8e14b84076581eb1f256.css" rel="stylesheet"></head>
 <body>
   <!-- parsons puzzle libs -->
   <script src="https://js-parsons.github.io/js/js-parsons/lib/jquery.min.js"></script>
@@ -215,7 +223,7 @@
     </div>
     <div class="actions">
       <a class="btn" onclick="closeModal()">Cancel</a>
-      <a class="btn btn--primary applyOptions" onclick="applySettings()">Apply</a>
+      <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a>
       <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a>
       <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a>
     </div>
@@ -226,7 +234,10 @@
   </div>
   <div class="mainContainer">
     <div class="parsonsContainer">
-      <h4 class="containerTitle">Parsons UI</h4>
+      <div>
+        <h4 class="parsonUIContainerTitle">Parsons UI</h4>
+        <a class="btn btn--primary tryBtn" onclick="previewParsonsPuzzle()">Try</a>
+      </div>
       <div id="uiContainer"></div>
     </div>
     <div class="parsonsPuzzleContainer">
@@ -251,6 +262,8 @@
     var initialEditor = null;
     var optionsEditor = null;
     var codeEditor = null;
+
+    parsons = ParsonsUI.build('#uiContainer', {initial: '', options: {}});
 
     var graders = [
       'ParsonsWidget._graders.LineBasedGrader',
@@ -330,11 +343,11 @@
       var options = optionsEditor.getValue();
 
       var initialJs = [];
-      var lines = initial.split('\n');
+      var lines = initial.replace(/"/g, '\\"').split('\n');
       for (var i = 0; i < lines.length; i++) {
         var line = '\"' + lines[i];
         line += i < lines.length -1 ? '\\n' + '\" +' : '\"';
-        initialJs.push(i !== 0 ? '  ' + line : line);
+        initialJs.push(i !== 0 ? '    ' + line : line);
       }
       initialJs = 'var initial = ' + initialJs.join('\n') + ';';
       var code = [
@@ -355,17 +368,18 @@
         options: optionsEditor.getValue()
       }
     }
-    function applySettings() {
-      var isImport = /import/.test(document.getElementById('parsonsSettingsOverlay').className);
-      closeModal();
-      isImport ? applyEditorsDataToParsonsUI() : applyEditorsDataToParsonsWidget();
-    }
     function applyEditorsDataToParsonsUI() {
       var data = getSettingsFromEditors();
       var options = addQuotesToGrader(data.options);
-      parsons = ParsonsUI.build('#uiContainer', {initial: data.initial, options: options});
+      try {
+        var jsonOptions = JSON.parse(options);
+        closeModal();
+        parsons = ParsonsUI.build('#uiContainer', {initial: data.initial, options: jsonOptions});
+      } catch (e) {
+        alert(e.message);
+      }
     }
-    function applyEditorsDataToParsonsWidget() {
+    function previewParsonsPuzzle() {
       document.getElementById('sortableTrash').innerHTML = '';
       document.getElementById('sortable').innerHTML = '';
       document.getElementById('feedback').innerHTML = '';
