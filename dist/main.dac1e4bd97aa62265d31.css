@@ -8,6 +8,17 @@
 .ParsonsUI label {
   padding-bottom: 8px;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+.ParsonsUI .CodeMirror {
+  height: 80px;
+  resize: vertical;
+}
+.ParsonsUI .CodeMirror-empty.CodeMirror-focused {
+  outline: none;
+}
+.ParsonsUI .CodeMirror pre.CodeMirror-placeholder {
+  color: #999;
 }
 .ParsonsUI textarea,
 .ParsonsUI input[type='text'],
@@ -35,11 +46,12 @@
   padding-top: 35px;
 }
 .ParsonsUI .distractor-blocks-ta-container {
-  flex: 1 0 auto;
+  width: 60%;
+  min-width: 60%;
   padding-right: 80px;
 }
 .ParsonsUI .distractor-blocks-max-container {
-  width: 300px;
+  width: 250px;
 }
 .ParsonsUI .common-settings-container {
   display: flex;
@@ -91,6 +103,9 @@
 .ParsonsUI .unit-test-grader-container .add-test-container {
   padding-top: 20px;
 }
+.ParsonsUI .tests-container .CodeMirror {
+  height: 60px;
+}
 .ParsonsUI .variable-check-grader-container .tests-container,
 .ParsonsUI .unit-test-grader-container .tests-container {
   padding-top: 20px;
@@ -128,10 +143,11 @@
   border: 1px solid #c7d3e5;
   padding: 10px;
   background-color: #FFF;
+  width: 0;
 }
 .ParsonsUI .variable-check-grader-container .column,
 .ParsonsUI .unit-test-grader-container .column {
-  flex: 1 0 auto;
+  width: 50%;
 }
 .ParsonsUI .variable-check-grader-container .column .fieldset,
 .ParsonsUI .unit-test-grader-container .column .fieldset {

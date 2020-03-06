@@ -8,6 +8,18 @@
   label {
     padding-bottom: 8px;
     text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .CodeMirror {
+    height: 80px;
+    resize: vertical;
+  }
+  .CodeMirror-empty.CodeMirror-focused {
+    outline: none;
+  }
+  .CodeMirror pre.CodeMirror-placeholder {
+    color: #999;
   }
 
   textarea,
@@ -19,6 +31,7 @@
     padding: 7px 10px;
     font-size: 12px;
   }
+
   .fieldset {
     display: flex;
     flex-direction: column;
@@ -39,12 +52,13 @@
   }
 
   .distractor-blocks-ta-container {
-    flex: 1 0 auto;
+    width: 60%;
+    min-width: 60%;
     padding-right: 80px;
   }
 
   .distractor-blocks-max-container {
-    width: 300px;
+    width: 250px;
   }
 
   .common-settings-container {
@@ -105,6 +119,9 @@
     padding-top: 20px;
   }
 
+  .tests-container .CodeMirror {
+    height: 60px;
+  }
   .variable-check-grader-container,
   .unit-test-grader-container {
     .tests-container {
@@ -143,10 +160,11 @@
       border: 1px solid #c7d3e5;
       padding: 10px;
       background-color: #FFF;
+      width: 0;
     }
 
     .column {
-      flex: 1 0 auto;
+      width: 50%;
     }
 
     .column .fieldset {
