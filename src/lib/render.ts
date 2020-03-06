@@ -299,7 +299,7 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
 
   graderFormContainer.append(renderUnitTestCodePrepend(options ? options.unittest_code_prepend : ''))
 
-  const tests: UnitTest[] | null = options ? convertUnitTestsFromString(/* options.unittests */) : null
+  const tests: UnitTest[] | null = options ? convertUnitTestsFromString(options.unittests) : null
 
   graderFormContainer.append(
     '<div class="add-test-container"><a id="add-test" class="btn btn--primary">New Test</a></div>'

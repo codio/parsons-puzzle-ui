@@ -30,9 +30,44 @@ export const convertTestVariablesToString = (variables: object): string => {
   return lines.join('\n')
 }
 
-export const convertUnitTestsFromString = (/* unitTests: string */): UnitTest[] => {
-  const test: UnitTest = { methodCall: '', expectedOutput: '', errorMessage: '' }
-  return [test]
+const unitTestParse = (str: string): UnitTest => {
+  const startPosition = str.lastIndexOf('")')
+  const messageQuoteEndPosition = str.lastIndexOf('"', startPosition - 1)
+  const firstCommaPosition = str.lastIndexOf(',', messageQuoteEndPosition - 1)
+  const secondCommaPosition = str.lastIndexOf(',', firstCommaPosition - 1)
+
+  const errorMessage = str.slice(firstCommaPosition + 1, startPosition + 1)
+  let expectedValue = str.slice(secondCommaPosition + 1, firstCommaPosition)
+  let testCode
+  const isArray = expectedValue.lastIndexOf(']')
+  const isObject = expectedValue.lastIndexOf('}')
+
+  if (isArray !== -1 || isObject !== -1) {
+    const startBracketPosition = str.lastIndexOf('[', firstCommaPosition) || str.lastIndexOf('{', firstCommaPosition)
+    const commaStartExpectedValuePos = str.lastIndexOf(',', startBracketPosition)
+    expectedValue = str.slice(startBracketPosition, firstCommaPosition)
+    testCode = str.slice(1, commaStartExpectedValuePos)
+  } else {
+    testCode = str.slice(1, secondCommaPosition)
+  }
+  return { methodCall: testCode.trim(), expectedOutput: expectedValue.trim(), errorMessage: errorMessage.trim() }
+}
+
+export const convertUnitTestsFromString = (unitTests: string | undefined): UnitTest[] => {
+  if (!unitTests) {
+    return []
+  }
+  let match: RegExpExecArray | null
+  const test: UnitTest[] = []
+  const re = /^\s*self\.assertEqual(\(.*?\))\s*$/gm
+
+  do {
+    match = re.exec(unitTests)
+    if (match !== null) {
+      test.push(unitTestParse(match[1]))
+    }
+  } while (match !== null)
+  return test
 }
 
 export default {
