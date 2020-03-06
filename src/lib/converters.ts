@@ -57,14 +57,16 @@ export const convertUnitTestsFromString = (unitTests: string | undefined): UnitT
   if (!unitTests) {
     return []
   }
-  let result: RegExpExecArray | null
+  let match: RegExpExecArray | null
   const test: UnitTest[] = []
   const re = /^\s*self\.assertEqual(\(.*?\))\s*$/gm
 
-  // eslint-disable-next-line no-cond-assign
-  while ((result = re.exec(unitTests)) != null) {
-    test.push(unitTestParse(result[1]))
-  }
+  do {
+    match = re.exec(unitTests)
+    if (match !== null) {
+      test.push(unitTestParse(match[1]))
+    }
+  } while (match !== null)
   return test
 }
 
