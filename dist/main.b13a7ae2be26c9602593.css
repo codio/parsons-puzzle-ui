@@ -62,7 +62,7 @@
   flex: 1 0 auto;
 }
 .ParsonsUI .common-settings-container .fieldset {
-  padding-right: 40px;
+  padding-right: 20px;
 }
 .ParsonsUI .common-settings-container .fieldset:last-child {
   padding-right: 0;
@@ -73,7 +73,7 @@
 }
 .ParsonsUI .indent-size-container,
 .ParsonsUI .exec-limit-container {
-  width: 80px;
+  width: 100px;
 }
 .ParsonsUI .grader-form-container {
   padding-top: 20px;
@@ -103,6 +103,10 @@
 }
 .ParsonsUI .unit-test-grader-container .add-test-container {
   padding-top: 20px;
+}
+.ParsonsUI .grader-hint {
+  float: right;
+  line-height: 32px;
 }
 .ParsonsUI .tests-container .CodeMirror {
   height: 60px;
