@@ -16,15 +16,31 @@ import {
   VariableTest
 } from '../@types/types'
 
-const getCodeBlocks = (code: string, isDistractors: boolean): string => {
+interface CodeBlocks {
+  codeBlocks: string;
+  distractorBlocks: string;
+}
+
+const getCodeBlocks = (code: string): CodeBlocks => {
+  const codeBlocks: string[] = []
+  const distractorsBlocks: string[] = []
   const lines = code.split('\n')
   const pattern = /(.*?)\s*#distractor\s*$/
-  if (isDistractors) {
-    return lines.filter((line: string) => !line.search(pattern))
-      .map((line: string) => line.replace(/#distractor\s*$/, ''))
-      .join('\n')
+
+  lines.forEach((line: string) => {
+    if (!line) {
+      return
+    }
+    if (line.search(pattern) !== -1) {
+      distractorsBlocks.push(line.replace(/#distractor\s*$/, ''))
+    } else {
+      codeBlocks.push(line)
+    }
+  })
+  return {
+    codeBlocks: codeBlocks.join('\n'),
+    distractorBlocks: distractorsBlocks.join('\n')
   }
-  return lines.filter((line: string) => line.search(pattern)).join('\n')
 }
 
 const tryToCreateEditorFromTextarea = (ta: Cash): void => {
@@ -35,29 +51,28 @@ const tryToCreateEditorFromTextarea = (ta: Cash): void => {
   } catch (e) {}
 }
 
-const renderInitialCodeBlock = (code: string): Cash => {
+const renderInitialCodeBlock = (codeBlocks: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
-  const codeBlock = getCodeBlocks(code, false)
 
   const taContainer: Cash = $('<div class="code-blocks-ta-container fieldset"></div>')
   taContainer.append('<label for="initial">Code to Become Blocks</label>')
-  const taCode: Cash = $(`<textarea id="initial" rows="7">${codeBlock}</textarea>`)
+  const taCode: Cash = $(`<textarea id="initial" rows="7">${codeBlocks}</textarea>`)
   taCode.attr('placeholder', 'Type solution here')
   taContainer.append(taCode)
   codeBlocksContainer.append(taContainer)
 
   tryToCreateEditorFromTextarea(taCode)
 
-  const hintText = '$$toggle::value1::value2::valuen$$&nbsp;&nbsp;&nbsp;&nbsp; new line \\n in same block'
-  codeBlocksContainer.append(`<div class="code-blocks-hint">${hintText}</div>`)
+  const hintText1 = '$$toggle::value1::value2::valuen$$'
+  const hintText2 = 'new line \\n in same block'
+  codeBlocksContainer.append(`<div class="code-blocks-hint">${hintText1}<br/>${hintText2}</div>`)
 
   return codeBlocksContainer
 }
 
-const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
+const renderDistractorBlocks = (distractors: string, maxWrongLines?: number): Cash => {
   const distractorBlockContainer: Cash = $('<div class="distractor-blocks-container"></div>')
   const taContainer: Cash = $('<div class="distractor-blocks-ta-container fieldset"></div>')
-  const distractors = getCodeBlocks(settings.initial, true)
 
   taContainer.append('<label for="distractors">Code to Become Distractor Blocks</label>')
   const taDistractors: Cash = $(`<textarea id="distractors" rows="6">${distractors}</textarea>`)
@@ -67,7 +82,7 @@ const renderDistractorBlocks = (settings: ParsonsSettings): Cash => {
 
   tryToCreateEditorFromTextarea(taDistractors)
 
-  const maxDistractors: number = settings.options.max_wrong_lines || 10
+  const maxDistractors: number = maxWrongLines || 10
   const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container fieldset"></div>')
   maxDistractorsContainer.append('<label for="max-distractors">Max Distractors</label>')
   maxDistractorsContainer.append(`<input id="max-distractors" type="number" value="${maxDistractors}" />`)
@@ -93,11 +108,11 @@ const renderGraderSelect = (grader?: (() => void) | string | undefined): Cash =>
   return graderContainer
 }
 
-const renderRequireDragging = (trashId?: string): Cash => {
+const renderRequireDragging = (requireDragging: boolean): Cash => {
   const draggingContainer: Cash = $('<div class="dragging-container fieldset"></div>')
 
   draggingContainer.append('<label for="require-dragging">Require dragging?</label>')
-  draggingContainer.append(`<input id="require-dragging" type="checkbox" ${trashId ? 'checked' : ''} />`)
+  draggingContainer.append(`<input id="require-dragging" type="checkbox" ${requireDragging ? 'checked' : ''} />`)
 
   return draggingContainer
 }
@@ -105,7 +120,7 @@ const renderRequireDragging = (trashId?: string): Cash => {
 const renderIndenting = (canIndent?: boolean): Cash => {
   const indentingContainer: Cash = $('<div class="indenting-container fieldset"></div>')
 
-  indentingContainer.append('<label for="can-indent">Indenting?</label>')
+  indentingContainer.append('<label for="can-indent">Check Indenting?</label>')
   indentingContainer.append(
     `<input id="can-indent" type="checkbox" ${canIndent || canIndent === undefined ? 'checked' : ''} />`
   )
@@ -116,7 +131,7 @@ const renderIndenting = (canIndent?: boolean): Cash => {
 const renderIndentSize = (canIndent?: boolean, xIndent?: number): Cash => {
   const indentSizeContainer: Cash = $('<div class="indent-size-container fieldset"></div>')
 
-  indentSizeContainer.append('<label for="indent-size">Indent Size</label>')
+  indentSizeContainer.append('<label for="indent-size">Indent Size(px)</label>')
   indentSizeContainer.append(
     `<input id="indent-size" type="text" value="${
       xIndent !== undefined ? xIndent : 50
@@ -129,7 +144,7 @@ const renderIndentSize = (canIndent?: boolean, xIndent?: number): Cash => {
 const renderExecLimit = (execLimit?: number): Cash => {
   const draggingContainer: Cash = $('<div class="exec-limit-container fieldset"></div>')
 
-  draggingContainer.append('<label for="exec-limit">Exec Limit</label>')
+  draggingContainer.append('<label for="exec-limit">Exec Limit(ms)</label>')
   draggingContainer.append(
     `<input id="exec-limit" type="text" value="${execLimit !== undefined ? execLimit : 2500}" />`
   )
@@ -137,11 +152,13 @@ const renderExecLimit = (execLimit?: number): Cash => {
   return draggingContainer
 }
 
-const renderCommonSettings = (options: ParsonsOptions): Cash => {
+const renderCommonSettings = (hasDistractors: boolean, options: ParsonsOptions): Cash => {
   const commonSettingsContainer: Cash = $('<div class="common-settings-container"></div>')
 
   commonSettingsContainer.append(renderGraderSelect(options.grader))
-  commonSettingsContainer.append(renderRequireDragging(options.trashId))
+
+  const requireDragging: boolean = hasDistractors || !!options.trashId
+  commonSettingsContainer.append(renderRequireDragging(requireDragging))
   commonSettingsContainer.append(renderIndenting(options.can_indent))
   commonSettingsContainer.append(renderIndentSize(options.can_indent, options.x_indent))
   commonSettingsContainer.append(renderExecLimit(options.exec_limit))
@@ -215,7 +232,11 @@ const renderVariableCheckGrader = (options?: ParsonsOptions, additionalGraderCla
   const graderFormContainer = $(`<div class="${classes.join(' ')}"></div>`)
 
   graderFormContainer.append(
-    '<div class="add-test-container"><a id="add-test" class="btn btn--primary">New Test</a></div>'
+    '<div class="add-test-container">'
+    + '<a id="add-test" class="btn btn--primary">New Test</a>'
+    + '<span class="grader-hint">This Grader only supports Python. For other languages, '
+    + 'try the Language Translation Grader.</span>'
+    + '</div>'
   )
   const testsContainer: Cash = $('<div class="tests-container"></div>')
   const testsList: Cash = $('<ul class="tests-list"></ul>')
@@ -302,7 +323,10 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
   const tests: UnitTest[] | null = options ? convertUnitTestsFromString(options.unittests) : null
 
   graderFormContainer.append(
-    '<div class="add-test-container"><a id="add-test" class="btn btn--primary">New Test</a></div>'
+    '<div class="add-test-container">'
+    + '<a id="add-test" class="btn btn--primary">New Test</a>'
+    + '<span class="grader-hint">This Grader only supports Python.</span>'
+    + '</div>'
   )
   const testsContainer: Cash = $('<div class="tests-container"></div>')
   const testsList: Cash = $('<ul class="tests-list"></ul>')
@@ -340,7 +364,7 @@ const renderExecutableCode = (code?: string): Cash => {
   const taContainer: Cash = $('<div class="executable-code-ta-container fieldset"></div>')
   taContainer.append('<label for="executable-code">Executable code</label>')
   const taCode: Cash = $(`<textarea id="executable-code" rows="4">${code || ''}</textarea>`)
-  taCode.attr('placeholder', 'Executable code')
+  taCode.attr('placeholder', 'Executable code to map to solution blocks')
   taContainer.append(taCode)
   executableCodeContainer.append(taContainer)
 
@@ -413,9 +437,11 @@ export const render = (container: Cash, settings: ParsonsSettings): void => {
 
   const uiContainer: Cash = $('<div class="ParsonsUI"></div>')
 
-  uiContainer.append(renderInitialCodeBlock(settings.initial))
-  uiContainer.append(renderDistractorBlocks(settings))
-  uiContainer.append(renderCommonSettings(settings.options))
+  const codeBlocks: CodeBlocks = getCodeBlocks(settings.initial)
+
+  uiContainer.append(renderInitialCodeBlock(codeBlocks.codeBlocks))
+  uiContainer.append(renderDistractorBlocks(codeBlocks.distractorBlocks, settings.options.max_wrong_lines))
+  uiContainer.append(renderCommonSettings(!!codeBlocks.distractorBlocks, settings.options))
 
   renderGraderForm(uiContainer, convertParsonsGraderFuncToEnum(settings.options.grader), settings.options)
 

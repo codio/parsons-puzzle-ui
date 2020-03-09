@@ -79,33 +79,37 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
   }
 }
 
+export const collectVariableTest = (container: Cash): VariableTest => {
+  const $this: Cash = $(container)
+  const variables: Dictionary<number | string> = {}
+  const variablesStr: string = getValueFromEditor($this.find('[name="variables"]'))
+  const description: string = getValueFromEditor($this.find('[name="description"]'))
+  const preCode: string = getValueFromEditor($this.find('[name="pre-code"]'))
+  const postCode: string = getValueFromEditor($this.find('[name="post-code"]'))
+
+  variablesStr.split('\n').forEach((line: string) => {
+    const params: RegExpExecArray | null = /^\s*"(.*)":\s*(.*)\s*$/.exec(line)
+    if (params && params.length !== 0) {
+      const [, key, value] = params
+      const trimmedValue: string = value.trim()
+      const isNumber: boolean = /^[0-9]*$/.test(trimmedValue)
+      variables[key] = isNumber ? parseInt(value, 10) : value.replace(/^"(.*)"$/, '$1')
+    }
+  })
+
+  return {
+    message: description,
+    initcode: preCode,
+    code: postCode,
+    variables
+  }
+}
+
 const collectVariableTests = (container: Cash): VariableTest[] => {
   const tests: VariableTest[] = []
 
   container.find('.test-container').each((index: number, el: HTMLElement) => {
-    const $this: Cash = $(el)
-    const variables: Dictionary<number | string> = {}
-    const variablesStr: string = getValueFromEditor($this.find('[name="variables"]'))
-    const description: string = getValueFromEditor($this.find('[name="description"]'))
-    const preCode: string = getValueFromEditor($this.find('[name="pre-code"]'))
-    const postCode: string = getValueFromEditor($this.find('[name="post-code"]'))
-
-    variablesStr.split('\n').forEach((line: string) => {
-      const params: RegExpExecArray | null = /^\s*"(.*)":\s*(.*)\s*$/.exec(line)
-      if (params && params.length !== 0) {
-        const [, key, value] = params
-        const trimmedValue: string = value.trim()
-        const isNumber: boolean = /^[0-9]*$/.test(trimmedValue)
-        variables[key] = isNumber ? parseInt(value, 10) : value.replace(/^"(.*)"$/, '$1')
-      }
-    })
-
-    tests.push({
-      message: description,
-      initcode: preCode,
-      code: postCode,
-      variables
-    })
+    tests.push(collectVariableTest($(el)))
   })
 
   return tests
@@ -117,6 +121,14 @@ const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGrader
   }
 }
 
+export const collectUnitTest = (container: Cash): UnitTest => {
+  const methodCall: string = getValueFromEditor(container.find('[name="method-call"]'))
+  const errorMessage: string = getValueFromEditor(container.find('[name="error-message"]'))
+  const expectedOutput: string = getValueFromEditor(container.find('[name="expected-output"]'))
+
+  return { methodCall, errorMessage, expectedOutput }
+}
+
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
   const unitTests: UnitTest[] = []
 
@@ -124,11 +136,7 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
 
   container.find('.test-container').each((index: number, el: HTMLElement) => {
     const $this: Cash = $(el)
-    const methodCall: string = getValueFromEditor($this.find('[name="method-call"]'))
-    const errorMessage: string = getValueFromEditor($this.find('[name="error-message"]'))
-    const expectedOutput: string = getValueFromEditor($this.find('[name="expected-output"]'))
-
-    unitTests.push({ methodCall, errorMessage, expectedOutput })
+    unitTests.push(collectUnitTest($this))
   })
 
   const unitTestsArr: string[] = [

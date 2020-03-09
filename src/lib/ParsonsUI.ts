@@ -2,7 +2,7 @@ import $, { Cash } from 'cash-dom'
 
 import { ParsonsSettings, ParsonsGrader } from '../@types/types'
 import * as render from './render'
-import { collectData } from './data-helper'
+import { collectData, collectUnitTest, collectVariableTest } from './data-helper'
 
 export default class ParsonsUI {
   private readonly container: Cash
@@ -32,8 +32,14 @@ export default class ParsonsUI {
     })
     this.container.on('click', '.action.duplicate', (event: Event) => {
       event.preventDefault()
+      const $this = $(event.currentTarget as HTMLElement)
+      const isUnitTest = $this.closest('.grader-form-container').hasClass('unit-test-grader-container')
       const currentTest: Cash = $(event.currentTarget as HTMLElement).closest('.test-container')
-      currentTest.clone().insertAfter(currentTest)
+      if (isUnitTest) {
+        render.renderUnitTest(collectUnitTest(currentTest)).insertAfter(currentTest)
+      } else {
+        render.renderVarTest(collectVariableTest(currentTest)).insertAfter(currentTest)
+      }
     })
     this.container.on('click', '.action.remove', (event: Event) => {
       event.preventDefault()
