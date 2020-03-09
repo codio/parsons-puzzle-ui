@@ -225,7 +225,7 @@
       </div>
     </div>
     <div class="actions">
-      <a class="btn" onclick="closeModal()">Cancel</a>
+      <a class="btn" onclick="closeModal()">Close</a>
       <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a>
       <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a>
       <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a>
@@ -363,11 +363,14 @@
         initialJs.push(i !== 0 ? '    ' + line : line);
       }
       initialJs = 'var initial = ' + initialJs.join('\n') + ';';
+
       var code = [
+        html,
         initialJs,
         'var parsonsPuzzle = new ParsonsWidget(' + options + ');',
         'parsonsPuzzle.init(initial);',
-        'parsonsPuzzle.shuffleLines();'
+        'parsonsPuzzle.shuffleLines();',
+        events,
       ].join('\n');
       codeEditor.setValue(code, -1);
 
