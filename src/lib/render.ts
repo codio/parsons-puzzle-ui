@@ -364,7 +364,7 @@ const renderExecutableCode = (code?: string): Cash => {
   const taContainer: Cash = $('<div class="executable-code-ta-container fieldset"></div>')
   taContainer.append('<label for="executable-code">Executable code</label>')
   const taCode: Cash = $(`<textarea id="executable-code" rows="4">${code || ''}</textarea>`)
-  taCode.attr('placeholder', 'Executable code to map to solution blocks')
+  taCode.attr('placeholder', 'Executable Python code to map to solution blocks')
   taContainer.append(taCode)
   executableCodeContainer.append(taContainer)
 
