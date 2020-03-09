@@ -1,3 +1,4 @@
+import { parseScript } from 'esprima'
 import { ParsonsGrader, UnitTest } from '../@types/types'
 
 export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | string | undefined): ParsonsGrader => {
@@ -30,44 +31,30 @@ export const convertTestVariablesToString = (variables: object): string => {
   return lines.join('\n')
 }
 
-const unitTestParse = (str: string): UnitTest => {
-  const startPosition = str.lastIndexOf('")')
-  const messageQuoteEndPosition = str.lastIndexOf('"', startPosition - 1)
-  const firstCommaPosition = str.lastIndexOf(',', messageQuoteEndPosition - 1)
-  const secondCommaPosition = str.lastIndexOf(',', firstCommaPosition - 1)
+const unitTestArgumentsParse = (str: string): UnitTest => {
+  // use any type because return type for esprima.parseScript is wrong
+  // eslint-disable-next-line
+  const jsonObj: any = parseScript(str, { range: true })
+  const expArgumentsArr = jsonObj.body[0].expression.arguments
+  const methodCall = str.slice(expArgumentsArr[0].range[0], expArgumentsArr[0].range[1])
+  const expectedValue = str.slice(expArgumentsArr[1].range[0], expArgumentsArr[1].range[1])
+  const errorMessage = str.slice(expArgumentsArr[2].range[0], expArgumentsArr[2].range[1])
 
-  const errorMessage = str.slice(firstCommaPosition + 1, startPosition + 1)
-  let expectedValue = str.slice(secondCommaPosition + 1, firstCommaPosition)
-  let testCode
-  const isArray = expectedValue.lastIndexOf(']')
-  const isObject = expectedValue.lastIndexOf('}')
-
-  if (isArray !== -1 || isObject !== -1) {
-    const startBracketPosition = str.lastIndexOf('[', firstCommaPosition) || str.lastIndexOf('{', firstCommaPosition)
-    const commaStartExpectedValuePos = str.lastIndexOf(',', startBracketPosition)
-    expectedValue = str.slice(startBracketPosition, firstCommaPosition)
-    testCode = str.slice(1, commaStartExpectedValuePos)
-  } else {
-    testCode = str.slice(1, secondCommaPosition)
-  }
-  return { methodCall: testCode.trim(), expectedOutput: expectedValue.trim(), errorMessage: errorMessage.trim() }
+  return { methodCall: methodCall.trim(), expectedOutput: expectedValue.trim(), errorMessage: errorMessage.trim() }
 }
 
 export const convertUnitTestsFromString = (unitTests: string | undefined): UnitTest[] => {
   if (!unitTests) {
     return []
   }
-  let match: RegExpExecArray | null
-  const test: UnitTest[] = []
+  const tests: UnitTest[] = []
   const re = /^\s*self\.assertEqual(\(.*?\))\s*$/gm
+  const matches = unitTests.match(re) || []
 
-  do {
-    match = re.exec(unitTests)
-    if (match !== null) {
-      test.push(unitTestParse(match[1]))
-    }
-  } while (match !== null)
-  return test
+  matches.forEach((match) => {
+    tests.push(unitTestArgumentsParse(match))
+  })
+  return tests
 }
 
 export default {
