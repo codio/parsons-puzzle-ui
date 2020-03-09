@@ -47,14 +47,9 @@ export const convertUnitTestsFromString = (unitTests: string | undefined): UnitT
   if (!unitTests) {
     return []
   }
-  const tests: UnitTest[] = []
   const re = /^\s*self\.assertEqual(\(.*?\))\s*$/gm
   const matches = unitTests.match(re) || []
-
-  matches.forEach((match) => {
-    tests.push(unitTestArgumentsParse(match))
-  })
-  return tests
+  return matches.map((match) => unitTestArgumentsParse(match))
 }
 
 export default {
