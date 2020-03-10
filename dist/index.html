@@ -102,8 +102,8 @@
     .parsonsSettingsOverlay.import .toCode,
     .parsonsSettingsOverlay.import .toParameters,
     .parsonsSettingsOverlay.export .applyOptions,
-    .parsonsSettingsOverlay.export:not(.parameters) .toCode,
-    .parsonsSettingsOverlay.export.parameters .toParameters,
+    .parsonsSettingsOverlay.export.parameters .toCode,
+    .parsonsSettingsOverlay.export:not(.parameters) .toParameters,
     .parsonsSettingsOverlay.export.parameters .editorContainer:not(.codeContainer) {
       display: none;
     }
@@ -193,7 +193,7 @@
       width: 100%;
     }
   </style>
-<link href="main.7091c73a30cff1b9fb3b.css" rel="stylesheet"></head>
+<link href="main.cd078c0462a9b37a9311.css" rel="stylesheet"></head>
 <body>
   <!-- parsons puzzle libs -->
   <script src="https://js-parsons.github.io/js/js-parsons/lib/jquery.min.js"></script>
@@ -220,12 +220,15 @@
         <textarea id="optionsEditor" class="editor">{}</textarea>
       </div>
       <div class="editorContainer codeContainer">
+        <label for="codeEditor">Elements prefix</label>
+        <input id="prefix" type="text"/>
+
         <label for="codeEditor">HTML Code</label>
         <textarea id="codeEditor" class="editor"></textarea>
       </div>
     </div>
     <div class="actions">
-      <a class="btn" onclick="closeModal()">Cancel</a>
+      <a class="btn" onclick="closeModal()">Close</a>
       <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a>
       <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a>
       <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a>
@@ -269,7 +272,24 @@
     </div>
   </div>
   <script type="text/javascript">
-    function stopEvent(ev) { ev.stopPropagation(); }
+    var PARSON_CODE_HTML = '<div id="###parsons_prefix###sortableTrash" class="sortable-code"></div> \n\
+<div id="###parsons_prefix###sortable" class="sortable-code"></div> \n\
+<div style="clear:both;"></div> \n\
+<p> \n\
+    <input id="###parsons_prefix###feedbackLink" value="Get Feedback" type="button" /> \n\
+    <input id="###parsons_prefix###newInstanceLink" value="Reset Problem" type="button" /> \n\
+</p> \n\
+<script type="text/javascript">';
+    var PARSON_CODE_EVENTS = '  $("####parsons_prefix###newInstanceLink").click(function(event){ \n\
+      event.preventDefault(); \n\
+      parsonsPuzzle.shuffleLines(); \n\
+  }); \n\
+  $("####parsons_prefix###feedbackLink").click(function(event){ \n\
+      event.preventDefault(); \n\
+      parsonsPuzzle.getFeedback(); \n\
+  }); \n\
+}();';
+    function stopEvent(ev) { ev && ev.stopPropagation(); }
     var parsons = null;
     var parsonsPuzzle = null;
     var initialEditor = null;
@@ -347,14 +367,19 @@
       }
       openModal(false);
     }
-    function switchToCode() {
+    function switchToParameters() {
       var overlay = document.getElementById('parsonsSettingsOverlay');
       overlay.className = overlay.className.replace('parameters', '');
     }
-    function switchToParameters() {
+    function switchToCode() {
       var initial = initialEditor.getValue();
       var options = optionsEditor.getValue();
 
+      var prefix = $.trim($("#prefix").val());
+      prefix = prefix.length > 0 ? prefix + '-' : '';
+      var html = PARSON_CODE_HTML.replace(/###parsons_prefix###/g, prefix);
+      var events = PARSON_CODE_EVENTS.replace(/###parsons_prefix###/g, prefix);
+      options = options.replace('"sortableId": "sortable",', '"sortableId": "'+prefix+'sortable",');
       var initialJs = [];
       var lines = initial.replace(/"/g, '\\"').split('\n');
       for (var i = 0; i < lines.length; i++) {
@@ -362,12 +387,15 @@
         line += i < lines.length -1 ? '\\n' + '\" +' : '\"';
         initialJs.push(i !== 0 ? '    ' + line : line);
       }
-      initialJs = 'var initial = ' + initialJs.join('\n') + ';';
+      initialJs = 'function(){\n  var initial = ' + initialJs.join('\n') + ';';
+      options = options.replace(/\n}$/, '\n  }');
       var code = [
+        html,
         initialJs,
-        'var parsonsPuzzle = new ParsonsWidget(' + options + ');',
-        'parsonsPuzzle.init(initial);',
-        'parsonsPuzzle.shuffleLines();'
+        '  var parsonsPuzzle = new ParsonsWidget(' + options + ');',
+        '  parsonsPuzzle.init(initial);',
+        '  parsonsPuzzle.shuffleLines();',
+        events
       ].join('\n');
       codeEditor.setValue(code, -1);
 
@@ -375,6 +403,9 @@
       overlay.className += ' parameters';
       codeEditor.refresh();
     }
+
+    $('#prefix').change(switchToCode);
+
     function getSettingsFromEditors() {
       return {
         initial: initialEditor.getValue(),
