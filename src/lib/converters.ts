@@ -31,16 +31,20 @@ export const convertTestVariablesToString = (variables: object): string => {
   return lines.join('\n')
 }
 
-const unitTestArgumentsParse = (str: string): UnitTest => {
+const parseUnitTestArguments = (str: string): UnitTest => {
   // use any type because return type for esprima.parseScript is wrong
   // eslint-disable-next-line
   const jsonObj: any = parseScript(str, { range: true })
   const expArgumentsArr = jsonObj.body[0].expression.arguments
-  const methodCall = str.slice(expArgumentsArr[0].range[0], expArgumentsArr[0].range[1])
-  const expectedValue = str.slice(expArgumentsArr[1].range[0], expArgumentsArr[1].range[1])
-  const errorMessage = str.slice(expArgumentsArr[2].range[0], expArgumentsArr[2].range[1])
+  const methodCall = str.slice(...expArgumentsArr[0].range)
+  const expectedValue = str.slice(...expArgumentsArr[0].range)
+  const errorMessage = str.slice(...expArgumentsArr[0].range)
 
-  return { methodCall: methodCall.trim(), expectedOutput: expectedValue.trim(), errorMessage: errorMessage.trim() }
+  return {
+    methodCall: methodCall.trim(),
+    expectedOutput: expectedValue.trim(),
+    errorMessage: errorMessage.trim()
+  }
 }
 
 export const convertUnitTestsFromString = (unitTests: string | undefined): UnitTest[] => {
@@ -48,8 +52,8 @@ export const convertUnitTestsFromString = (unitTests: string | undefined): UnitT
     return []
   }
   const re = /^\s*self\.assertEqual(\(.*?\))\s*$/gm
-  const matches = unitTests.match(re) || []
-  return matches.map((match) => unitTestArgumentsParse(match))
+  const matches: RegExpMatchArray | null = unitTests.match(re)
+  return matches ? matches.map((match) => parseUnitTestArguments(match)) : []
 }
 
 export default {
