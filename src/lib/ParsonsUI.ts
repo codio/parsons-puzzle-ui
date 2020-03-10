@@ -1,8 +1,11 @@
 import $, { Cash } from 'cash-dom'
-
 import { ParsonsSettings, ParsonsGrader } from '../@types/types'
 import * as render from './render'
-import { collectData, collectUnitTest, collectVariableTest } from './data-helper'
+import {
+  collectData, collectUnitTest, collectVariableTest, getValueFromEditor
+} from './data-helper'
+
+const NEED_DRAG = 'Dragging is necessary to work distractors'
 
 export default class ParsonsUI {
   private readonly container: Cash
@@ -54,6 +57,15 @@ export default class ParsonsUI {
         commonSettingsContainer.find('#indent-size').removeAttr('disabled')
       } else {
         commonSettingsContainer.find('#indent-size').attr('disabled', 'disabled')
+      }
+    })
+    this.container.on('click', '#require-dragging', (event: Event) => {
+      event.stopPropagation()
+      const ta: Cash = $('#distractors')
+      const isHasDistractors = /.*?[^\s]/.test(getValueFromEditor(ta))
+      const isDraggingChecked = $('#require-dragging').prop('checked')
+      if (isHasDistractors && !isDraggingChecked) {
+        alert(NEED_DRAG)
       }
     })
   }

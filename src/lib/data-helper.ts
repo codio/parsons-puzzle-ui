@@ -43,7 +43,7 @@ interface HTMLElementWithCodeMirror extends HTMLElement {
   CodeMirror?: any;
 }
 
-const getValueFromEditor = (el: Cash): string => {
+export const getValueFromEditor = (el: Cash): string => {
   const codeMirrorEl: HTMLElementWithCodeMirror = el.siblings('.CodeMirror').get(0) as HTMLElement
   if (codeMirrorEl && codeMirrorEl.CodeMirror) {
     return codeMirrorEl.CodeMirror.getValue()
