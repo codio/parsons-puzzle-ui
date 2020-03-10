@@ -223,7 +223,11 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   return testContainer
 }
 
-const renderVariableCheckGrader = (options?: ParsonsOptions, additionalGraderClass?: string): Cash => {
+const renderVariableCheckGrader = (
+  showHint: boolean,
+  options?: ParsonsOptions,
+  additionalGraderClass?: string
+): Cash => {
   const classes: string[] = [
     'grader-form-container',
     'variable-check-grader-container',
@@ -231,12 +235,10 @@ const renderVariableCheckGrader = (options?: ParsonsOptions, additionalGraderCla
   ]
   const graderFormContainer = $(`<div class="${classes.join(' ')}"></div>`)
 
+  const hint: string = showHint ? '<span class="grader-hint">This Grader only supports Python. For other languages, '
+      + 'try the Language Translation Grader.</span>' : ''
   graderFormContainer.append(
-    '<div class="add-test-container">'
-    + '<a id="add-test" class="btn btn--primary">New Test</a>'
-    + '<span class="grader-hint">This Grader only supports Python. For other languages, '
-    + 'try the Language Translation Grader.</span>'
-    + '</div>'
+    `<div class="add-test-container"><a id="add-test" class="btn btn--primary">New Test</a>${hint}</div>`
   )
   const testsContainer: Cash = $('<div class="tests-container"></div>')
   const testsList: Cash = $('<ul class="tests-list"></ul>')
@@ -389,7 +391,7 @@ const renderTurtleModelCode = (code?: string): Cash => {
 }
 
 const renderLanguageTranslationGrader = (options?: ParsonsOptions): Cash => {
-  const grader: Cash = renderVariableCheckGrader(options, 'language-translation-grader-container')
+  const grader: Cash = renderVariableCheckGrader(false, options, 'language-translation-grader-container')
   grader.prepend(renderExecutableCode(options ? options.executable_code : ''))
   grader.prepend(renderProgrammingLang(options ? options.programmingLang : ''))
   return grader
@@ -412,7 +414,7 @@ const renderGraderForm = (container: Cash, grader: ParsonsGrader, options?: Pars
 
   switch (grader) {
     case ParsonsGrader.VariableCheck:
-      container.append(renderVariableCheckGrader(options))
+      container.append(renderVariableCheckGrader(true, options))
       break
     case ParsonsGrader.UnitTest:
       container.append(renderUnitTestGrader(options))
