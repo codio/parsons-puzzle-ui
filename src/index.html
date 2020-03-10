@@ -279,7 +279,7 @@
     <input id="###parsons_prefix###feedbackLink" value="Get Feedback" type="button" /> \n\
     <input id="###parsons_prefix###newInstanceLink" value="Reset Problem" type="button" /> \n\
 </p> \n\
-<script type="text/javascript">'
+<script type="text/javascript">';
     var PARSON_CODE_EVENTS = '  $("####parsons_prefix###newInstanceLink").click(function(event){ \n\
       event.preventDefault(); \n\
       parsonsPuzzle.shuffleLines(); \n\
@@ -288,7 +288,7 @@
       event.preventDefault(); \n\
       parsonsPuzzle.getFeedback(); \n\
   }); \n\
-}()'
+}();';
     function stopEvent(ev) { ev && ev.stopPropagation(); }
     var parsons = null;
     var parsonsPuzzle = null;
@@ -376,10 +376,10 @@
       var options = optionsEditor.getValue();
 
       var prefix = $.trim($("#prefix").val());
-      prefix = prefix.length > 0 ? prefix + '-' : ''
+      prefix = prefix.length > 0 ? prefix + '-' : '';
       var html = PARSON_CODE_HTML.replace(/###parsons_prefix###/g, prefix);
       var events = PARSON_CODE_EVENTS.replace(/###parsons_prefix###/g, prefix);
-      options = options.replace('"sortableId": "sortable",', '"sortableId": "'+prefix+'sortable",')
+      options = options.replace('"sortableId": "sortable",', '"sortableId": "'+prefix+'sortable",');
       var initialJs = [];
       var lines = initial.replace(/"/g, '\\"').split('\n');
       for (var i = 0; i < lines.length; i++) {
@@ -388,6 +388,7 @@
         initialJs.push(i !== 0 ? '    ' + line : line);
       }
       initialJs = 'function(){\n  var initial = ' + initialJs.join('\n') + ';';
+      options = options.replace(/\n}$/, '\n  }');
       var code = [
         html,
         initialJs,
@@ -403,7 +404,7 @@
       codeEditor.refresh();
     }
 
-    $('#prefix').change(switchToCode)
+    $('#prefix').change(switchToCode);
 
     function getSettingsFromEditors() {
       return {
