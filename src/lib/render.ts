@@ -71,9 +71,6 @@ const renderInitialCodeBlock = (codeBlocks: string): Cash => {
 }
 
 const renderDistractorBlocks = (distractors: string, maxWrongLines?: number): Cash => {
-  const title = 'The maximum number of distractor blocks added to the solution blocks when a student sees'
-      + 'the problem. Use this if you, for example, have 4 distractor options but want only 2 to randomly display.'
-
   const distractorBlockContainer: Cash = $('<div class="distractor-blocks-container"></div>')
   const taContainer: Cash = $('<div class="distractor-blocks-ta-container fieldset"></div>')
 
@@ -85,11 +82,14 @@ const renderDistractorBlocks = (distractors: string, maxWrongLines?: number): Ca
 
   tryToCreateEditorFromTextarea(taDistractors)
 
+  const maxDistractorsTitle = 'The maximum number of distractor blocks added to the solution blocks when a student sees'
+      + 'the problem. Use this if you, for example, have 4 distractor options but want only 2 to randomly display.'
+
   const maxDistractors: number = maxWrongLines || 10
   const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container fieldset"></div>')
   maxDistractorsContainer.append('<label for="max-distractors">Max Distractors</label>')
   maxDistractorsContainer.append(
-    `<input id="max-distractors" type="number" title="${title}" value="${maxDistractors}" />`
+    `<input id="max-distractors" type="number" title="${maxDistractorsTitle}" value="${maxDistractors}" />`
   )
   distractorBlockContainer.append(maxDistractorsContainer)
 

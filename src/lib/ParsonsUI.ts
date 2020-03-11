@@ -5,8 +5,6 @@ import {
   collectData, collectUnitTest, collectVariableTest, getValueFromEditor
 } from './data-helper'
 
-const NEED_DRAG = 'Dragging is necessary to work distractors'
-
 export default class ParsonsUI {
   private readonly container: Cash
 
@@ -61,11 +59,11 @@ export default class ParsonsUI {
     })
     this.container.on('click', '#require-dragging', (event: Event) => {
       event.stopPropagation()
-      const ta: Cash = $('#distractors')
-      const isHasDistractors = /.*?[^\s]/.test(getValueFromEditor(ta))
-      const isDraggingChecked = $('#require-dragging').prop('checked')
-      if (isHasDistractors && !isDraggingChecked) {
-        alert(NEED_DRAG)
+      const distractorsTa: Cash = this.container.find('#distractors')
+      const hasDistractors = /.*?[^\s]/.test(getValueFromEditor(distractorsTa))
+      const isDraggingChecked = this.container.find('#require-dragging').is(':checked')
+      if (hasDistractors && !isDraggingChecked) {
+        alert('Dragging is necessary to work distractors')
       }
     })
   }
