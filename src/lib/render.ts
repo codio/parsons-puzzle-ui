@@ -57,7 +57,7 @@ const renderInitialCodeBlock = (codeBlocks: string): Cash => {
   const taContainer: Cash = $('<div class="code-blocks-ta-container fieldset"></div>')
   taContainer.append('<label for="initial">Code to Become Blocks</label>')
   const taCode: Cash = $(`<textarea id="initial" rows="7">${codeBlocks}</textarea>`)
-  taCode.attr('placeholder', 'Type solution here')
+  taCode.attr('placeholder', 'Type solution with expected indentation here')
   taContainer.append(taCode)
   codeBlocksContainer.append(taContainer)
 
@@ -379,9 +379,13 @@ const renderTurtleModelCode = (code?: string): Cash => {
   const turtleModelCodeContainer: Cash = $('<div class="turtle-model-code-container"></div>')
 
   const taContainer: Cash = $('<div class="turtle-model-code-ta-container fieldset"></div>')
-  taContainer.append('<label for="turtle-model-code">Turtle Model Code</label>')
+  taContainer.append(
+    '<label for="turtle-model-code">Turtle Model Code ('
+    + 'Uses <a href="https://docs.python.org/3.3/library/turtle.html" target="_blank">Python turtle library</a>'
+    + ')</label>'
+  )
   const taCode: Cash = $(`<textarea id="turtle-model-code" rows="4">${code || ''}</textarea>`)
-  taCode.attr('placeholder', 'Turtle Model Code')
+  taCode.attr('placeholder', 'import turtle\nmodelTurtle = turtle.Turtle() -- are done for you')
   taContainer.append(taCode)
   turtleModelCodeContainer.append(taContainer)
 
