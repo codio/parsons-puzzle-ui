@@ -1,8 +1,5 @@
 import $, { Cash } from 'cash-dom'
 
-// eslint-disable-next-line
-declare const CodeMirror: any
-
 import {
   convertParsonsGraderFuncToEnum,
   convertTestVariablesToString,
@@ -15,6 +12,7 @@ import {
   UnitTest,
   VariableTest
 } from '../@types/types'
+import { tryToCreateEditorFromTextarea } from './editor'
 
 interface CodeBlocks {
   codeBlocks: string;
@@ -41,14 +39,6 @@ const getCodeBlocks = (code: string): CodeBlocks => {
     codeBlocks: codeBlocks.join('\n'),
     distractorBlocks: distractorsBlocks.join('\n')
   }
-}
-
-const tryToCreateEditorFromTextarea = (ta: Cash): void => {
-  try {
-    const editor = CodeMirror.fromTextArea(ta.get(0) as HTMLTextAreaElement, { lineNumbers: true })
-    setTimeout(() => { editor.refresh() }, 0)
-  // eslint-disable-next-line no-empty
-  } catch (e) {}
 }
 
 const renderInitialCodeBlock = (codeBlocks: string): Cash => {
@@ -404,8 +394,24 @@ const renderLanguageTranslationGrader = (options?: ParsonsOptions): Cash => {
 const renderTurtleGrader = (options?: ParsonsOptions): Cash => {
   const graderFormContainer = $('<div class="grader-form-container turtle-grader-container"></div>')
 
-  graderFormContainer.append(renderProgrammingLang(options ? options.programmingLang : ''))
-  graderFormContainer.append(renderExecutableCode(options ? options.executable_code : ''))
+  const executableOptionsContainer: Cash = $('<div class="executable-options-container"></div>')
+
+  const generateBtnContainer: Cash = $('<div class="generate-btn-container"></div>')
+  generateBtnContainer.append(
+    '<div class="generate-btn-hint">'
+    + 'Use executable code (or if not specified, solution code) to generate modelTurtle code</div>'
+  )
+  generateBtnContainer.append(
+    '<a id="generate-model-turtle" class="btn btn--primary">Generate<br/>modelTurtle Code</a>'
+  )
+  executableOptionsContainer.append(generateBtnContainer)
+
+  const codeProgrammingLanguageContainer: Cash = $('<div class="code-programming-language-container"></div>')
+  codeProgrammingLanguageContainer.append(renderProgrammingLang(options ? options.programmingLang : ''))
+  codeProgrammingLanguageContainer.append(renderExecutableCode(options ? options.executable_code : ''))
+  executableOptionsContainer.append(codeProgrammingLanguageContainer)
+
+  graderFormContainer.append(executableOptionsContainer)
   graderFormContainer.append(renderTurtleModelCode(options ? options.turtleModelCode : ''))
 
   return graderFormContainer

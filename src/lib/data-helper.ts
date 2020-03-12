@@ -6,6 +6,7 @@ import {
   ParsonsSettings, UnitTest,
   VariableTest
 } from '../@types/types'
+import { getValueFromEditor } from './editor'
 
 interface CommonSettings {
   initial: string;
@@ -36,19 +37,6 @@ interface TurtleGraderOptions {
   programmingLang: string;
   executableCode: string;
   turtleModelCode: string;
-}
-
-interface HTMLElementWithCodeMirror extends HTMLElement {
-  // eslint-disable-next-line
-  CodeMirror?: any;
-}
-
-const getValueFromEditor = (el: Cash): string => {
-  const codeMirrorEl: HTMLElementWithCodeMirror = el.siblings('.CodeMirror').get(0) as HTMLElement
-  if (codeMirrorEl && codeMirrorEl.CodeMirror) {
-    return codeMirrorEl.CodeMirror.getValue()
-  }
-  return (el.val() as string)
 }
 
 const collectCommonSettings = (container: Cash): CommonSettings => {

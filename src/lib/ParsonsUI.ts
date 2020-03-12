@@ -3,6 +3,7 @@ import $, { Cash } from 'cash-dom'
 import { ParsonsSettings, ParsonsGrader } from '../@types/types'
 import * as render from './render'
 import { collectData, collectUnitTest, collectVariableTest } from './data-helper'
+import { setValueToEditor, getValueFromEditor } from './editor'
 
 export default class ParsonsUI {
   private readonly container: Cash
@@ -55,6 +56,15 @@ export default class ParsonsUI {
       } else {
         commonSettingsContainer.find('#indent-size').attr('disabled', 'disabled')
       }
+    })
+    this.container.on('click', '#generate-model-turtle', (event: Event) => {
+      event.preventDefault()
+
+      const solutionCode = getValueFromEditor(this.container.find('#initial'))
+      const executableCode = getValueFromEditor(this.container.find('#executable-code'))
+
+      const code = executableCode || solutionCode
+      setValueToEditor(this.container.find('#turtle-model-code'), code.replace('myTurtle', 'modelTurtle'))
     })
   }
 
