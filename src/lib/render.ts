@@ -1,16 +1,8 @@
 import $, { Cash } from 'cash-dom'
 
+import { convertParsonsGraderFuncToEnum, convertTestVariablesToString, convertUnitTestsFromString } from './converters'
 import {
-  convertParsonsGraderFuncToEnum,
-  convertTestVariablesToString,
-  convertUnitTestsFromString
-} from './converters'
-import {
-  ParsonsGrader,
-  ParsonsOptions,
-  ParsonsSettings,
-  UnitTest,
-  VariableTest
+  ParsonsGrader, ParsonsOptions, ParsonsSettings, UnitTest, VariableTest
 } from '../@types/types'
 import { tryToCreateEditorFromTextarea } from './editor'
 
@@ -334,10 +326,11 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
   return graderFormContainer
 }
 
-const renderProgrammingLang = (lang?: string): Cash => {
+const renderProgrammingLang = (grader: ParsonsGrader, lang?: string): Cash => {
   const programmingLangContainer: Cash = $('<div class="programming-lang-container fieldset"></div>')
 
-  programmingLangContainer.append('<label for="programming-lang">Programming Language</label>')
+  const labelSuffix = grader === ParsonsGrader.Turtle ? '(if solution code above is not python)' : ''
+  programmingLangContainer.append(`<label for="programming-lang">Programming Language ${labelSuffix}</label>`)
   const programmingLangSelect: Cash = $('<select id="programming-lang"></select>')
   programmingLangSelect.append('<option value="pseudo">pseudocode</option>')
   programmingLangSelect.append('<option value="java">java</option>')
@@ -350,13 +343,16 @@ const renderProgrammingLang = (lang?: string): Cash => {
   return programmingLangContainer
 }
 
-const renderExecutableCode = (code?: string): Cash => {
+const renderExecutableCode = (grader: ParsonsGrader, code?: string): Cash => {
   const executableCodeContainer: Cash = $('<div class="executable-code-container"></div>')
 
   const taContainer: Cash = $('<div class="executable-code-ta-container fieldset"></div>')
-  taContainer.append('<label for="executable-code">Executable code</label>')
+  const labelSuffix = grader === ParsonsGrader.Turtle ? '(if solution code above is not python)' : ''
+  taContainer.append(`<label for="executable-code">Executable code ${labelSuffix}</label>`)
   const taCode: Cash = $(`<textarea id="executable-code" rows="4">${code || ''}</textarea>`)
-  taCode.attr('placeholder', 'Executable Python code to map to solution blocks')
+  const placeholderSuffix = grader === ParsonsGrader.Turtle ? '\nimport turtle\n'
+    + 'myTurtle = turtle.Turtle() -- are done for you' : ''
+  taCode.attr('placeholder', `Executable Python code to map to solution blocks${placeholderSuffix}`)
   taContainer.append(taCode)
   executableCodeContainer.append(taContainer)
 
@@ -386,8 +382,8 @@ const renderTurtleModelCode = (code?: string): Cash => {
 
 const renderLanguageTranslationGrader = (options?: ParsonsOptions): Cash => {
   const grader: Cash = renderVariableCheckGrader(false, options, 'language-translation-grader-container')
-  grader.prepend(renderExecutableCode(options ? options.executable_code : ''))
-  grader.prepend(renderProgrammingLang(options ? options.programmingLang : ''))
+  grader.prepend(renderExecutableCode(ParsonsGrader.LanguageTranslation, options ? options.executable_code : ''))
+  grader.prepend(renderProgrammingLang(ParsonsGrader.LanguageTranslation, options ? options.programmingLang : ''))
   return grader
 }
 
@@ -407,8 +403,10 @@ const renderTurtleGrader = (options?: ParsonsOptions): Cash => {
   executableOptionsContainer.append(generateBtnContainer)
 
   const codeProgrammingLanguageContainer: Cash = $('<div class="code-programming-language-container"></div>')
-  codeProgrammingLanguageContainer.append(renderProgrammingLang(options ? options.programmingLang : ''))
-  codeProgrammingLanguageContainer.append(renderExecutableCode(options ? options.executable_code : ''))
+  codeProgrammingLanguageContainer
+    .append(renderProgrammingLang(ParsonsGrader.Turtle, options ? options.programmingLang : ''))
+  codeProgrammingLanguageContainer
+    .append(renderExecutableCode(ParsonsGrader.Turtle, options ? options.executable_code : ''))
   executableOptionsContainer.append(codeProgrammingLanguageContainer)
 
   graderFormContainer.append(executableOptionsContainer)
