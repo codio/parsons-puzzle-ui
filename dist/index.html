@@ -202,7 +202,7 @@
       width: 100%;
     }
   </style>
-<link href="main.4a632aa1d5cd2ee8e61e.css" rel="stylesheet"></head>
+<link href="main.04b4644fd6766e5c649c.css" rel="stylesheet"></head>
 <body>
   <!-- parsons puzzle libs -->
   <script src="parsons/lib/jquery.min.js"></script>
@@ -357,7 +357,7 @@
       var actionTypeCls = isImport ? 'import' : 'export';
       document.getElementById('blockOverlay').className = '';
       document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay is-opened ' + actionTypeCls;
-
+      switchToCode();
       initialEditor.refresh();
       optionsEditor.refresh();
     }
@@ -372,17 +372,17 @@
       openModal(true);
     }
     function exportFromParsonsUI() {
+      openModal(false);
+    }
+    function switchToParameters() {
+      var overlay = document.getElementById('parsonsSettingsOverlay');
+      overlay.className = overlay.className.replace('parameters', '');
       if (parsons) {
         var settings = parsons.export();
         var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
         initialEditor.setValue(settings.initial, -1);
         optionsEditor.setValue(options, -1);
       }
-      openModal(false);
-    }
-    function switchToParameters() {
-      var overlay = document.getElementById('parsonsSettingsOverlay');
-      overlay.className = overlay.className.replace('parameters', '');
     }
     function switchToCode() {
       var initial = initialEditor.getValue();
@@ -414,7 +414,9 @@
       codeEditor.setValue(code, -1);
 
       var overlay = document.getElementById('parsonsSettingsOverlay');
-      overlay.className += ' parameters';
+      if (!overlay.classList.contains('parameters')) {
+        overlay.className += ' parameters';
+      }
       codeEditor.refresh();
     }
 
