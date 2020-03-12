@@ -110,9 +110,9 @@ const renderRequireDragging = (requireDragging: boolean): Cash => {
 const renderIndenting = (canIndent?: boolean): Cash => {
   const indentingContainer: Cash = $('<div class="indenting-container fieldset"></div>')
 
-  indentingContainer.append('<label for="can-indent">Check Indenting?</label>')
+  indentingContainer.append('<label for="disable-indent">Disable indentation?</label>')
   indentingContainer.append(
-    `<input id="can-indent" type="checkbox" ${canIndent || canIndent === undefined ? 'checked' : ''} />`
+    `<input id="disable-indent" type="checkbox" ${canIndent === false ? 'checked' : ''} />`
   )
 
   return indentingContainer

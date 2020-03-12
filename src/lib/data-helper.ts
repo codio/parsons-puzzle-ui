@@ -61,7 +61,7 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
     maxDistractors: !Number.isNaN(maxDistractors) ? maxDistractors : 10,
     grader: grader || ParsonsGrader.LineBased,
     requireDragging: container.find('#require-dragging').is(':checked'),
-    indenting: container.find('#can-indent').is(':checked'),
+    indenting: !container.find('#disable-indent').is(':checked'),
     indentSize: !Number.isNaN(indentSize) ? indentSize : 50,
     execLimit: !Number.isNaN(execLimit) ? execLimit : 2500
   }
