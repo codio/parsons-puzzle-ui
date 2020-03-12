@@ -6,6 +6,7 @@ import {
   ParsonsSettings, UnitTest,
   VariableTest
 } from '../@types/types'
+import { getValueFromEditor } from './editor'
 
 interface CommonSettings {
   initial: string;
@@ -38,19 +39,6 @@ interface TurtleGraderOptions {
   turtleModelCode: string;
 }
 
-interface HTMLElementWithCodeMirror extends HTMLElement {
-  // eslint-disable-next-line
-  CodeMirror?: any;
-}
-
-const getValueFromEditor = (el: Cash): string => {
-  const codeMirrorEl: HTMLElementWithCodeMirror = el.siblings('.CodeMirror').get(0) as HTMLElement
-  if (codeMirrorEl && codeMirrorEl.CodeMirror) {
-    return codeMirrorEl.CodeMirror.getValue()
-  }
-  return (el.val() as string)
-}
-
 const collectCommonSettings = (container: Cash): CommonSettings => {
   const codeBlocks: string = getValueFromEditor(container.find('#initial'))
   const distractors: string = getValueFromEditor(container.find('#distractors'))
@@ -73,7 +61,7 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
     maxDistractors: !Number.isNaN(maxDistractors) ? maxDistractors : 10,
     grader: grader || ParsonsGrader.LineBased,
     requireDragging: container.find('#require-dragging').is(':checked'),
-    indenting: container.find('#can-indent').is(':checked'),
+    indenting: !container.find('#disable-indent').is(':checked'),
     indentSize: !Number.isNaN(indentSize) ? indentSize : 50,
     execLimit: !Number.isNaN(execLimit) ? execLimit : 2500
   }

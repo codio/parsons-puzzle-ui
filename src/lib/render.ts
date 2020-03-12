@@ -1,20 +1,10 @@
 import $, { Cash } from 'cash-dom'
 
-// eslint-disable-next-line
-declare const CodeMirror: any
-
+import { convertParsonsGraderFuncToEnum, convertTestVariablesToString, convertUnitTestsFromString } from './converters'
 import {
-  convertParsonsGraderFuncToEnum,
-  convertTestVariablesToString,
-  convertUnitTestsFromString
-} from './converters'
-import {
-  ParsonsGrader,
-  ParsonsOptions,
-  ParsonsSettings,
-  UnitTest,
-  VariableTest
+  ParsonsGrader, ParsonsOptions, ParsonsSettings, UnitTest, VariableTest
 } from '../@types/types'
+import { tryToCreateEditorFromTextarea } from './editor'
 
 interface CodeBlocks {
   codeBlocks: string;
@@ -41,14 +31,6 @@ const getCodeBlocks = (code: string): CodeBlocks => {
     codeBlocks: codeBlocks.join('\n'),
     distractorBlocks: distractorsBlocks.join('\n')
   }
-}
-
-const tryToCreateEditorFromTextarea = (ta: Cash): void => {
-  try {
-    const editor = CodeMirror.fromTextArea(ta.get(0) as HTMLTextAreaElement, { lineNumbers: true })
-    setTimeout(() => { editor.refresh() }, 0)
-  // eslint-disable-next-line no-empty
-  } catch (e) {}
 }
 
 const renderInitialCodeBlock = (codeBlocks: string): Cash => {
@@ -120,9 +102,9 @@ const renderRequireDragging = (requireDragging: boolean): Cash => {
 const renderIndenting = (canIndent?: boolean): Cash => {
   const indentingContainer: Cash = $('<div class="indenting-container fieldset"></div>')
 
-  indentingContainer.append('<label for="can-indent">Check Indenting?</label>')
+  indentingContainer.append('<label for="disable-indent">Disable indentation?</label>')
   indentingContainer.append(
-    `<input id="can-indent" type="checkbox" ${canIndent || canIndent === undefined ? 'checked' : ''} />`
+    `<input id="disable-indent" type="checkbox" ${canIndent === false ? 'checked' : ''} />`
   )
 
   return indentingContainer
@@ -344,10 +326,11 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
   return graderFormContainer
 }
 
-const renderProgrammingLang = (lang?: string): Cash => {
+const renderProgrammingLang = (grader: ParsonsGrader, lang?: string): Cash => {
   const programmingLangContainer: Cash = $('<div class="programming-lang-container fieldset"></div>')
 
-  programmingLangContainer.append('<label for="programming-lang">Programming Language</label>')
+  const labelSuffix = grader === ParsonsGrader.Turtle ? '(if solution code above is not python)' : ''
+  programmingLangContainer.append(`<label for="programming-lang">Programming Language ${labelSuffix}</label>`)
   const programmingLangSelect: Cash = $('<select id="programming-lang"></select>')
   programmingLangSelect.append('<option value="pseudo">pseudocode</option>')
   programmingLangSelect.append('<option value="java">java</option>')
@@ -360,13 +343,16 @@ const renderProgrammingLang = (lang?: string): Cash => {
   return programmingLangContainer
 }
 
-const renderExecutableCode = (code?: string): Cash => {
+const renderExecutableCode = (grader: ParsonsGrader, code?: string): Cash => {
   const executableCodeContainer: Cash = $('<div class="executable-code-container"></div>')
 
   const taContainer: Cash = $('<div class="executable-code-ta-container fieldset"></div>')
-  taContainer.append('<label for="executable-code">Executable code</label>')
+  const labelSuffix = grader === ParsonsGrader.Turtle ? '(if solution code above is not python)' : ''
+  taContainer.append(`<label for="executable-code">Executable code ${labelSuffix}</label>`)
   const taCode: Cash = $(`<textarea id="executable-code" rows="4">${code || ''}</textarea>`)
-  taCode.attr('placeholder', 'Executable Python code to map to solution blocks')
+  const placeholderSuffix = grader === ParsonsGrader.Turtle ? '\nimport turtle\n'
+    + 'myTurtle = turtle.Turtle() -- are done for you' : ''
+  taCode.attr('placeholder', `Executable Python code to map to solution blocks${placeholderSuffix}`)
   taContainer.append(taCode)
   executableCodeContainer.append(taContainer)
 
@@ -396,16 +382,34 @@ const renderTurtleModelCode = (code?: string): Cash => {
 
 const renderLanguageTranslationGrader = (options?: ParsonsOptions): Cash => {
   const grader: Cash = renderVariableCheckGrader(false, options, 'language-translation-grader-container')
-  grader.prepend(renderExecutableCode(options ? options.executable_code : ''))
-  grader.prepend(renderProgrammingLang(options ? options.programmingLang : ''))
+  grader.prepend(renderExecutableCode(ParsonsGrader.LanguageTranslation, options ? options.executable_code : ''))
+  grader.prepend(renderProgrammingLang(ParsonsGrader.LanguageTranslation, options ? options.programmingLang : ''))
   return grader
 }
 
 const renderTurtleGrader = (options?: ParsonsOptions): Cash => {
   const graderFormContainer = $('<div class="grader-form-container turtle-grader-container"></div>')
 
-  graderFormContainer.append(renderProgrammingLang(options ? options.programmingLang : ''))
-  graderFormContainer.append(renderExecutableCode(options ? options.executable_code : ''))
+  const executableOptionsContainer: Cash = $('<div class="executable-options-container"></div>')
+
+  const generateBtnContainer: Cash = $('<div class="generate-btn-container"></div>')
+  generateBtnContainer.append(
+    '<div class="generate-btn-hint">'
+    + 'Use executable code (or if not specified, solution code) to generate modelTurtle code</div>'
+  )
+  generateBtnContainer.append(
+    '<a id="generate-model-turtle" class="btn btn--primary">Generate<br/>modelTurtle Code</a>'
+  )
+  executableOptionsContainer.append(generateBtnContainer)
+
+  const codeProgrammingLanguageContainer: Cash = $('<div class="code-programming-language-container"></div>')
+  codeProgrammingLanguageContainer
+    .append(renderProgrammingLang(ParsonsGrader.Turtle, options ? options.programmingLang : ''))
+  codeProgrammingLanguageContainer
+    .append(renderExecutableCode(ParsonsGrader.Turtle, options ? options.executable_code : ''))
+  executableOptionsContainer.append(codeProgrammingLanguageContainer)
+
+  graderFormContainer.append(executableOptionsContainer)
   graderFormContainer.append(renderTurtleModelCode(options ? options.turtleModelCode : ''))
 
   return graderFormContainer

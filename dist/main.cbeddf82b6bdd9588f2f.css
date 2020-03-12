@@ -162,4 +162,18 @@
 .ParsonsUI .executable-code-container {
   padding: 10px 0 20px;
 }
+.ParsonsUI .turtle-grader-container .executable-options-container {
+  display: flex;
+}
+.ParsonsUI .turtle-grader-container .generate-btn-container {
+  width: 20%;
+  padding-right: 30px;
+}
+.ParsonsUI .turtle-grader-container .generate-btn-hint {
+  text-align: justify;
+  padding: 20px 0;
+}
+.ParsonsUI .turtle-grader-container .code-programming-language-container {
+  width: 80%;
+}
 

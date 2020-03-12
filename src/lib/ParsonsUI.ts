@@ -3,6 +3,7 @@ import $, { Cash } from 'cash-dom'
 import { ParsonsSettings, ParsonsGrader } from '../@types/types'
 import * as render from './render'
 import { collectData, collectUnitTest, collectVariableTest } from './data-helper'
+import { setValueToEditor, getValueFromEditor } from './editor'
 
 export default class ParsonsUI {
   private readonly container: Cash
@@ -45,16 +46,25 @@ export default class ParsonsUI {
       event.preventDefault()
       $(event.currentTarget as HTMLElement).closest('.test-container').remove()
     })
-    this.container.on('change', '#can-indent', (event: Event) => {
+    this.container.on('change', '#disable-indent', (event: Event) => {
       event.preventDefault()
       const $this: Cash = $(event.currentTarget as HTMLElement)
-      const isIndentingEnabled: boolean = $this.is(':checked')
+      const isIndentingDisabled: boolean = $this.is(':checked')
       const commonSettingsContainer: Cash = $this.closest('.common-settings-container')
-      if (isIndentingEnabled) {
-        commonSettingsContainer.find('#indent-size').removeAttr('disabled')
-      } else {
+      if (isIndentingDisabled) {
         commonSettingsContainer.find('#indent-size').attr('disabled', 'disabled')
+      } else {
+        commonSettingsContainer.find('#indent-size').removeAttr('disabled')
       }
+    })
+    this.container.on('click', '#generate-model-turtle', (event: Event) => {
+      event.preventDefault()
+
+      const solutionCode = getValueFromEditor(this.container.find('#initial'))
+      const executableCode = getValueFromEditor(this.container.find('#executable-code'))
+
+      const code = executableCode || solutionCode
+      setValueToEditor(this.container.find('#turtle-model-code'), code.replace('myTurtle', 'modelTurtle'))
     })
   }
 
