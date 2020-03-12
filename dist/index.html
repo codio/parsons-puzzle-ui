@@ -123,6 +123,15 @@
       padding: 0 0 20px 40px;
       font-size: 18px;
     }
+    .prefixContainer {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .prefixContainer input{
+      padding: 6px 0;
+      margin-right: 10px;
+      width: 50%;
+    }
 
     .parsonsSettingsOverlay:not(.export) .codeContainer,
     .parsonsSettingsOverlay.export:not(.parameters) .codeContainer{
@@ -193,7 +202,7 @@
       width: 100%;
     }
   </style>
-<link href="main.b82afea5262086d5947d.css" rel="stylesheet"></head>
+<link href="main.4a632aa1d5cd2ee8e61e.css" rel="stylesheet"></head>
 <body>
   <!-- parsons puzzle libs -->
   <script src="parsons/lib/jquery.min.js"></script>
@@ -220,18 +229,20 @@
         <textarea id="optionsEditor" class="editor">{}</textarea>
       </div>
       <div class="editorContainer codeContainer">
-        <label for="codeEditor">Elements prefix</label>
-        <input id="prefix" type="text"/>
-
+        <label for="codeEditor">Prefix (add unique prefix to host multiple Parson's problems on the same markdown page)</label>
+        <div class="prefixContainer">
+          <input id="prefix" class="prefixInput" type="text"/>
+          <a class="btn" onclick="switchToCode()">Update Prefix</a>
+        </div>
         <label for="codeEditor">HTML Code</label>
         <textarea id="codeEditor" class="editor"></textarea>
       </div>
     </div>
     <div class="actions">
-      <a class="btn" onclick="closeModal()">Close</a>
       <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a>
       <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a>
       <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a>
+      <a class="btn" onclick="closeModal()">Close</a>
     </div>
   </div>
   <div class="header">
