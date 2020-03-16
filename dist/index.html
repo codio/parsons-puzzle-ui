@@ -14,6 +14,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/addon/display/placeholder.min.js" type="text/javascript" charset="utf-8"></script>
   <!-- codemirror end -->
+
+  <!-- clipboard.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -102,6 +106,7 @@
     .parsonsSettingsOverlay.import .toCode,
     .parsonsSettingsOverlay.import .toParameters,
     .parsonsSettingsOverlay.export .applyOptions,
+    .parsonsSettingsOverlay.export.parameters .copyCode,
     .parsonsSettingsOverlay.export.parameters .toParameters,
     .parsonsSettingsOverlay.export:not(.parameters) .toCode,
     .parsonsSettingsOverlay.export.parameters .editorContainer.codeContainer {
@@ -203,7 +208,7 @@
       width: 100%;
     }
   </style>
-<link href="main.e9a9aaa2144f6307c513.css" rel="stylesheet"></head>
+<link href="main.bc61ab1bfee37af55ccf.css" rel="stylesheet"></head>
 <body>
 <!-- parsons puzzle libs -->
 <script src="parsons/lib/jquery.min.js"></script>
@@ -240,6 +245,7 @@
     </div>
   </div>
   <div class="actions">
+    <a class="btn copyCode" onclick="copyCodeToClipboard()">Copy code</a>
     <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a>
     <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a>
     <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a>
@@ -505,6 +511,13 @@
       var feedbackContainer = document.getElementById('feedback');
       feedbackContainer.innerHTML = message;
     }
+  }
+  function copyCodeToClipboard() {
+    new ClipboardJS('.copyCode', {
+      text: function() {
+        return codeEditor.getValue();
+      }
+    });
   }
 </script>
 <script type="text/javascript" src="parsonsUI.js"></script></body>
