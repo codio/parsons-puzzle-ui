@@ -203,7 +203,7 @@
       width: 100%;
     }
   </style>
-<link href="main.dc09b57278256d80f4f9.css" rel="stylesheet"></head>
+<link href="main.e9a9aaa2144f6307c513.css" rel="stylesheet"></head>
 <body>
 <!-- parsons puzzle libs -->
 <script src="parsons/lib/jquery.min.js"></script>
@@ -369,6 +369,12 @@
     openModal(true);
   }
   function exportFromParsonsUI() {
+    if (parsons) {
+      var settings = parsons.export();
+      var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
+      initialEditor.setValue(settings.initial, -1);
+      optionsEditor.setValue(options, -1);
+    }
     codeEditor.setValue(getCode(), -1);
     openModal(false);
     codeEditor.refresh();
@@ -378,14 +384,8 @@
     if (!overlay.classList.contains('parameters')) {
       overlay.className += ' parameters';
     }
-    if (parsons) {
-      var settings = parsons.export();
-      var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
-      initialEditor.setValue(settings.initial, -1);
-      optionsEditor.setValue(options, -1);
-      initialEditor.refresh();
-      optionsEditor.refresh();
-    }
+    initialEditor.refresh();
+    optionsEditor.refresh();
   }
   function switchToCode() {
     var overlay = document.getElementById('parsonsSettingsOverlay');
