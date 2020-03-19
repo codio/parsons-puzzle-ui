@@ -1,5 +1,3 @@
-<img src="https://wptavern.com/wp-content/uploads/2015/01/codio-new-logo.jpg" alt="codio logo" width = 300>
-
 # [Graphical Parson's Problem Creator](https://codio.github.io/parsons-puzzle-ui/dist/)
 To help all computing educators unlock the power of Parson's problems, Codio built a [graphical Parson's problem creator](https://codio.github.io/parsons-puzzle-ui/dist/) on top of the [js-parsons](https://js-parsons.github.io/) library. **This tool is free to use and does not require a Codio account.**
 
