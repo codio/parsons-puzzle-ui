@@ -14,6 +14,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/addon/display/placeholder.min.js" type="text/javascript" charset="utf-8"></script>
   <!-- codemirror end -->
+
+  <!-- clipboard.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -102,9 +106,11 @@
     .parsonsSettingsOverlay.import .toCode,
     .parsonsSettingsOverlay.import .toParameters,
     .parsonsSettingsOverlay.export .applyOptions,
-    .parsonsSettingsOverlay.export.parameters .toCode,
-    .parsonsSettingsOverlay.export:not(.parameters) .toParameters,
-    .parsonsSettingsOverlay.export.parameters .editorContainer:not(.codeContainer) {
+    .parsonsSettingsOverlay.export.parameters .copyCode,
+    .parsonsSettingsOverlay.import .copyCode,
+    .parsonsSettingsOverlay.export.parameters .toParameters,
+    .parsonsSettingsOverlay.export:not(.parameters) .toCode,
+    .parsonsSettingsOverlay.export.parameters .editorContainer.codeContainer {
       display: none;
     }
     .editor {
@@ -123,9 +129,19 @@
       padding: 0 0 20px 40px;
       font-size: 18px;
     }
+    .prefixContainer {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .prefixContainer .prefixInput {
+      padding: 6px 0;
+      margin-right: 10px;
+      width: 50%;
+    }
 
     .parsonsSettingsOverlay:not(.export) .codeContainer,
-    .parsonsSettingsOverlay.export:not(.parameters) .codeContainer{
+    .parsonsSettingsOverlay.export:not(.parameters) .initialContainer,
+    .parsonsSettingsOverlay.export:not(.parameters) .optionsContainer{
       display: none;
     }
     .CodeMirror {
@@ -195,85 +211,88 @@
   </style>
 </head>
 <body>
-  <!-- parsons puzzle libs -->
-  <script src="parsons/lib/jquery.min.js"></script>
-  <script src="parsons/lib/jquery-ui.min.js"></script>
-  <script src="parsons/lib/jquery.ui.touch-punch.min.js"></script>
-  <script src="parsons/lib/skulpt.js"></script>
-  <script src="parsons/lib/skulpt-stdlib.js"></script>
-  <script src="parsons/lib/underscore-min.js"></script>
-  <script src="parsons/lib/lis.js"></script>
-  <script src="parsons/lib/jquery.sound.js"></script>
-  <script src="parsons/lib/prettify.js"></script>
-  <script src="parsons/parsons.js"></script>
-  <!-- parsons puzzle libs -->
-  <div id="blockOverlay" class="hide" onclick="stopEvent()"></div>
-  <div id="parsonsSettingsOverlay" class="parsonsSettingsOverlay">
-    <h2 id="overlayTitle"></h2>
-    <div class="parsonsSettingsContainer">
-      <div class="editorContainer initialContainer">
-        <label for="initialEditor">Parsons puzzle initial code</label>
-        <textarea id="initialEditor" class="editor"></textarea>
-      </div>
-      <div class="editorContainer optionsContainer">
-        <label for="optionsEditor">Parsons puzzle options</label>
-        <textarea id="optionsEditor" class="editor">{}</textarea>
-      </div>
-      <div class="editorContainer codeContainer">
-        <label for="codeEditor">Elements prefix</label>
-        <input id="prefix" type="text"/>
-
-        <label for="codeEditor">HTML Code</label>
-        <textarea id="codeEditor" class="editor"></textarea>
-      </div>
+<!-- parsons puzzle libs -->
+<script src="parsons/lib/jquery.min.js"></script>
+<script src="parsons/lib/jquery-ui.min.js"></script>
+<script src="parsons/lib/jquery.ui.touch-punch.min.js"></script>
+<script src="parsons/lib/skulpt.js"></script>
+<script src="parsons/lib/skulpt-stdlib.js"></script>
+<script src="parsons/lib/underscore-min.js"></script>
+<script src="parsons/lib/lis.js"></script>
+<script src="parsons/lib/jquery.sound.js"></script>
+<script src="parsons/lib/prettify.js"></script>
+<script src="parsons/parsons.js"></script>
+<!-- parsons puzzle libs -->
+<div id="blockOverlay" class="hide" onclick="stopEvent()"></div>
+<div id="parsonsSettingsOverlay" class="parsonsSettingsOverlay">
+  <h2 id="overlayTitle"></h2>
+  <div class="parsonsSettingsContainer">
+    <div class="editorContainer initialContainer">
+      <label for="initialEditor">Parsons puzzle initial code</label>
+      <textarea id="initialEditor" class="editor"></textarea>
     </div>
-    <div class="actions">
-      <a class="btn" onclick="closeModal()">Close</a>
-      <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a>
-      <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a>
-      <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a>
+    <div class="editorContainer optionsContainer">
+      <label for="optionsEditor">Parsons puzzle options</label>
+      <textarea id="optionsEditor" class="editor">{}</textarea>
+    </div>
+    <div class="editorContainer codeContainer">
+      <label for="prefix">Prefix (add unique prefix to host multiple Parson's problems on the same markdown page)</label>
+      <div class="prefixContainer">
+        <input id="prefix" class="prefixInput" type="text"/>
+        <a class="btn" onclick="updateCode()">Update Prefix</a>
+      </div>
+      <label for="codeEditor">HTML Code</label>
+      <textarea id="codeEditor" class="editor"></textarea>
     </div>
   </div>
-  <div class="header">
-    <a class="btn" onclick="importToParsonsUI()">Import</a>
-    <a class="btn" onclick="exportFromParsonsUI()">Export</a>
+  <div class="actions">
+    <a class="btn copyCode" onclick="copyCodeToClipboard()">Copy code</a>
+    <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a>
+    <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a>
+    <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a>
+    <a class="btn" onclick="closeModal()">Close</a>
   </div>
-  <div class="mainContainer">
-    <div class="parsonsContainer">
+</div>
+<div class="header">
+  <a class="btn" onclick="importToParsonsUI()">Import</a>
+  <a class="btn" onclick="exportFromParsonsUI()">Export</a>
+</div>
+<div class="mainContainer">
+  <div class="parsonsContainer">
+    <div>
+      <h4 class="parsonUIContainerTitle">Parsons UI</h4>
+      <a class="btn btn--primary tryBtn" onclick="previewParsonsPuzzle()">Generate</a>
+    </div>
+    <div id="uiContainer"></div>
+  </div>
+  <div class="parsonsPuzzleContainer">
+    <h4 class="containerTitle">Parsons Puzzle Widget</h4>
+    <div id="parsonsPuzzleWidgetContainer" class="parsonsPuzzleWidgetContainer is-hide">
+      <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
+      <div id="sortable" class="sortable-code"><p>Solution</p></div>
+      <div id="turtleContainer" class="turtleContainer hide">
+        <div class="model turtle">
+          <h3>Model Drawing</h3>
+          <canvas id="modelCanvas" width="400" height="200" ></canvas>
+        </div>
+        <div class="student turtle">
+          <h3>Your Drawing</h3>
+          <canvas id="studentCanvas" width="400" height="200"></canvas>
+        </div>
+      </div>
       <div>
-        <h4 class="parsonUIContainerTitle">Parsons UI</h4>
-        <a class="btn btn--primary tryBtn" onclick="previewParsonsPuzzle()">Generate</a>
-      </div>
-      <div id="uiContainer"></div>
-    </div>
-    <div class="parsonsPuzzleContainer">
-      <h4 class="containerTitle">Parsons Puzzle Widget</h4>
-      <div id="parsonsPuzzleWidgetContainer" class="parsonsPuzzleWidgetContainer is-hide">
-        <div id="sortableTrash" class="sortable-code"><p>Trash</p></div>
-        <div id="sortable" class="sortable-code"><p>Solution</p></div>
-        <div id="turtleContainer" class="turtleContainer hide">
-          <div class="model turtle">
-            <h3>Model Drawing</h3>
-            <canvas id="modelCanvas" width="400" height="200" ></canvas>
-          </div>
-          <div class="student turtle">
-            <h3>Your Drawing</h3>
-            <canvas id="studentCanvas" width="400" height="200"></canvas>
-          </div>
-        </div>
-        <div>
-          <a class="btn" onclick="getFeedback()">Check Solution</a>
-          <a class="btn" onclick="previewParsonsPuzzle()">Reset puzzle</a>
-          <fieldset class="feedbackFieldset">
-            <legend>Feedback: </legend>
-            <div id="feedback"/>
-          </fieldset>
-        </div>
+        <a class="btn" onclick="getFeedback()">Check Solution</a>
+        <a class="btn" onclick="previewParsonsPuzzle()">Reset puzzle</a>
+        <fieldset class="feedbackFieldset">
+          <legend>Feedback: </legend>
+          <div id="feedback"/>
+        </fieldset>
       </div>
     </div>
   </div>
-  <script type="text/javascript">
-    var PARSON_CODE_HTML = '<div id="###parsons_prefix###sortableTrash" class="sortable-code"></div> \n\
+</div>
+<script type="text/javascript">
+  var PARSON_CODE_HTML = '<div id="###parsons_prefix###sortableTrash" class="sortable-code"></div> \n\
 <div id="###parsons_prefix###sortable" class="sortable-code"></div> \n\
 <div style="clear:both;"></div> \n\
 <p> \n\
@@ -282,7 +301,7 @@
 </p> \n\
 <script type="text/javascript"> \n\
 (function(){';
-    var PARSON_CODE_EVENTS = '  $("####parsons_prefix###newInstanceLink").click(function(event){ \n\
+  var PARSON_CODE_EVENTS = '  $("####parsons_prefix###newInstanceLink").click(function(event){ \n\
       event.preventDefault(); \n\
       parsonsPuzzle.shuffleLines(); \n\
   }); \n\
@@ -292,204 +311,218 @@
   }); \n\
 })(); \n\
 <\/script>';
-    function stopEvent(ev) { ev && ev.stopPropagation(); }
-    var parsons = null;
-    var parsonsPuzzle = null;
-    var initialEditor = null;
-    var optionsEditor = null;
-    var codeEditor = null;
+  function stopEvent(ev) { ev && ev.stopPropagation(); }
+  var parsons = null;
+  var parsonsPuzzle = null;
+  var initialEditor = null;
+  var optionsEditor = null;
+  var codeEditor = null;
 
-    parsons = ParsonsUI.build('#uiContainer', {initial: '', options: {}});
+  parsons = ParsonsUI.build('#uiContainer', {initial: '', options: {}});
 
-    var graders = [
-      'ParsonsWidget._graders.LineBasedGrader',
-      'ParsonsWidget._graders.VariableCheckGrader',
-      'ParsonsWidget._graders.UnitTestGrader',
-      'ParsonsWidget._graders.LanguageTranslationGrader',
-      'ParsonsWidget._graders.TurtleGrader'
-    ];
-    function addQuotesToGrader(jsonString) {
-      var resultString = jsonString;
-      for (var i = 0; i < graders.length; i++) {
-        resultString = jsonString.replace(graders[i], '"' + graders[i] + '"');
-        if (resultString !== jsonString) {
-          break;
-        }
+  var graders = [
+    'ParsonsWidget._graders.LineBasedGrader',
+    'ParsonsWidget._graders.VariableCheckGrader',
+    'ParsonsWidget._graders.UnitTestGrader',
+    'ParsonsWidget._graders.LanguageTranslationGrader',
+    'ParsonsWidget._graders.TurtleGrader'
+  ];
+  function addQuotesToGrader(jsonString) {
+    var resultString = jsonString;
+    for (var i = 0; i < graders.length; i++) {
+      resultString = jsonString.replace(graders[i], '"' + graders[i] + '"');
+      if (resultString !== jsonString) {
+        break;
       }
-      return resultString;
     }
-    function removeGraderQuotes(jsonString) {
-      var resultString = jsonString;
-      for (var i = 0; i < graders.length; i++) {
-        resultString = jsonString.replace('"' + graders[i] + '"', graders[i]);
-        if (resultString !== jsonString) {
-          break;
-        }
+    return resultString;
+  }
+  function removeGraderQuotes(jsonString) {
+    var resultString = jsonString;
+    for (var i = 0; i < graders.length; i++) {
+      resultString = jsonString.replace('"' + graders[i] + '"', graders[i]);
+      if (resultString !== jsonString) {
+        break;
       }
-      return resultString;
     }
+    return resultString;
+  }
 
-    initEditors();
+  initEditors();
 
-    function initEditors() {
-      initialEditor = CodeMirror.fromTextArea(document.getElementById('initialEditor'), {
-        lineNumbers: true
-      });
-      optionsEditor = CodeMirror.fromTextArea(document.getElementById('optionsEditor'), {
-        lineNumbers: true
-      });
-      codeEditor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
-        lineNumbers: true
-      });
+  function initEditors() {
+    initialEditor = CodeMirror.fromTextArea(document.getElementById('initialEditor'), {
+      lineNumbers: true
+    });
+    optionsEditor = CodeMirror.fromTextArea(document.getElementById('optionsEditor'), {
+      lineNumbers: true
+    });
+    codeEditor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+      lineNumbers: true
+    });
+  }
+  function openModal(isImport) {
+    document.getElementById('overlayTitle').innerHTML = isImport ? 'Import' : 'Export';
+    var actionTypeCls = isImport ? 'import' : 'export';
+    document.getElementById('blockOverlay').className = '';
+    document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay is-opened ' + actionTypeCls;
+  }
+  function closeModal() {
+    document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay';
+    document.getElementById('blockOverlay').className = 'hide';
+  }
+  function importToParsonsUI() {
+    initialEditor.setValue('', -1);
+    optionsEditor.setValue('{}', -1);
+    openModal(true);
+    initialEditor.refresh();
+    optionsEditor.refresh();
+  }
+  function exportFromParsonsUI() {
+    if (parsons) {
+      var settings = parsons.export();
+      var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
+      initialEditor.setValue(settings.initial, -1);
+      optionsEditor.setValue(options, -1);
     }
-    function openModal(isImport) {
-      document.getElementById('overlayTitle').innerHTML = isImport ? 'Import' : 'Export';
-      var actionTypeCls = isImport ? 'import' : 'export';
-      document.getElementById('blockOverlay').className = '';
-      document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay is-opened ' + actionTypeCls;
-
-      initialEditor.refresh();
-      optionsEditor.refresh();
-    }
-    function closeModal() {
-      document.getElementById('parsonsSettingsOverlay').className = 'parsonsSettingsOverlay';
-      document.getElementById('blockOverlay').className = 'hide';
-    }
-    function importToParsonsUI() {
-      initialEditor.setValue('', -1);
-      optionsEditor.setValue('{}', -1);
-
-      openModal(true);
-    }
-    function exportFromParsonsUI() {
-      if (parsons) {
-        var settings = parsons.export();
-        var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
-        initialEditor.setValue(settings.initial, -1);
-        optionsEditor.setValue(options, -1);
-      }
-      openModal(false);
-    }
-    function switchToParameters() {
-      var overlay = document.getElementById('parsonsSettingsOverlay');
-      overlay.className = overlay.className.replace('parameters', '');
-    }
-    function switchToCode() {
-      var initial = initialEditor.getValue();
-      var options = optionsEditor.getValue();
-
-      var prefix = $.trim($("#prefix").val());
-      prefix = prefix.length > 0 ? prefix + '-' : '';
-      var html = PARSON_CODE_HTML.replace(/###parsons_prefix###/g, prefix);
-      var events = PARSON_CODE_EVENTS.replace(/###parsons_prefix###/g, prefix);
-      options = options.replace('"sortableId": "sortable"', '"sortableId": "'+prefix+'sortable"');
-      options = options.replace('"trashId": "sortableTrash"', '"trashId": "'+prefix+'sortableTrash"');
-      var initialJs = [];
-      var lines = initial.replace(/"/g, '\\"').split('\n');
-      for (var i = 0; i < lines.length; i++) {
-        var line = '\"' + lines[i];
-        line += i < lines.length -1 ? '\\n' + '\" +' : '\"';
-        initialJs.push(i !== 0 ? '    ' + line : line);
-      }
-      initialJs = '  var initial = ' + initialJs.join('\n') + ';';
-      options = options.replace(/\n}$/, '\n  }');
-      var code = [
-        html,
-        initialJs,
-        '  var parsonsPuzzle = new ParsonsWidget(' + options + ');',
-        '  parsonsPuzzle.init(initial);',
-        '  parsonsPuzzle.shuffleLines();',
-        events
-      ].join('\n');
-      codeEditor.setValue(code, -1);
-
-      var overlay = document.getElementById('parsonsSettingsOverlay');
+    codeEditor.setValue(getCode(), -1);
+    openModal(false);
+    codeEditor.refresh();
+  }
+  function switchToParameters() {
+    var overlay = document.getElementById('parsonsSettingsOverlay');
+    if (!overlay.classList.contains('parameters')) {
       overlay.className += ' parameters';
-      codeEditor.refresh();
+    }
+    initialEditor.refresh();
+    optionsEditor.refresh();
+  }
+  function switchToCode() {
+    var overlay = document.getElementById('parsonsSettingsOverlay');
+    overlay.className = overlay.className.replace('parameters', '');
+  }
+  function updateCode() {
+    codeEditor.setValue(getCode(), -1);
+    codeEditor.refresh();
+  }
+  function getCode() {
+    var initial = initialEditor.getValue();
+    var options = optionsEditor.getValue();
+
+    var prefix = $.trim($("#prefix").val());
+    prefix = prefix.length > 0 ? prefix + '-' : '';
+    var html = PARSON_CODE_HTML.replace(/###parsons_prefix###/g, prefix);
+    var events = PARSON_CODE_EVENTS.replace(/###parsons_prefix###/g, prefix);
+    options = options.replace('"sortableId": "sortable"', '"sortableId": "'+prefix+'sortable"');
+    options = options.replace('"trashId": "sortableTrash"', '"trashId": "'+prefix+'sortableTrash"');
+    var initialJs = [];
+    var lines = initial.replace(/"/g, '\\"').split('\n');
+    for (var i = 0; i < lines.length; i++) {
+      var line = '\"' + lines[i];
+      line += i < lines.length -1 ? '\\n' + '\" +' : '\"';
+      initialJs.push(i !== 0 ? '    ' + line : line);
+    }
+    initialJs = '  var initial = ' + initialJs.join('\n') + ';';
+    options = options.replace(/\n}$/, '\n  }');
+    return [
+      html,
+      initialJs,
+      '  var parsonsPuzzle = new ParsonsWidget(' + options + ');',
+      '  parsonsPuzzle.init(initial);',
+      '  parsonsPuzzle.shuffleLines();',
+      events
+    ].join('\n');
+  }
+
+  $('#prefix').change(updateCode);
+
+  function getSettingsFromEditors() {
+    return {
+      initial: initialEditor.getValue(),
+      options: optionsEditor.getValue()
+    }
+  }
+  function applyEditorsDataToParsonsUI() {
+    var data = getSettingsFromEditors();
+    var options = addQuotesToGrader(data.options);
+    try {
+      var jsonOptions = JSON.parse(options);
+      closeModal();
+      parsons = ParsonsUI.build('#uiContainer', {initial: data.initial, options: jsonOptions});
+    } catch (e) {
+      alert(e.message);
+    }
+  }
+  function clearCanvas(id) {
+    var canvas = document.getElementById(id);
+    if (canvas) {
+      var context = canvas.getContext('2d');
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  function previewParsonsPuzzle() {
+    document.getElementById('sortableTrash').innerHTML = '';
+    document.getElementById('sortable').innerHTML = '';
+    document.getElementById('feedback').innerHTML = '';
+
+    clearCanvas('modelCanvas');
+    clearCanvas('studentCanvas');
+
+    if (parsons) {
+      var settings = parsons.export();
+      var isTurtle = settings.options.grader  === 'ParsonsWidget._graders.TurtleGrader';
+      settings.options.grader = convertGraderToParsonFormat(settings.options.grader);
+
+      parsonsPuzzle = new ParsonsWidget(settings.options);
+      parsonsPuzzle.init(settings.initial);
+      parsonsPuzzle.shuffleLines();
     }
 
-    $('#prefix').change(switchToCode);
-
-    function getSettingsFromEditors() {
-      return {
-        initial: initialEditor.getValue(),
-        options: optionsEditor.getValue()
-      }
+    document.getElementById('parsonsPuzzleWidgetContainer').className = 'parsonsPuzzleWidgetContainer';
+    if (isTurtle) {
+      document.getElementById('turtleContainer').className = 'turtleContainer';
+    } else {
+      document.getElementById('turtleContainer').className = 'turtleContainer hide';
     }
-    function applyEditorsDataToParsonsUI() {
-      var data = getSettingsFromEditors();
-      var options = addQuotesToGrader(data.options);
-      try {
-        var jsonOptions = JSON.parse(options);
-        closeModal();
-        parsons = ParsonsUI.build('#uiContainer', {initial: data.initial, options: jsonOptions});
-      } catch (e) {
-        alert(e.message);
-      }
+  }
+
+  function convertGraderToParsonFormat(grader) {
+    switch (grader) {
+      case 'ParsonsWidget._graders.VariableCheckGrader':
+        return ParsonsWidget._graders.VariableCheckGrader;
+      case 'ParsonsWidget._graders.TurtleGrader':
+        return ParsonsWidget._graders.TurtleGrader;
+      case 'ParsonsWidget._graders.UnitTestGrader':
+        return ParsonsWidget._graders.UnitTestGrader;
+      case 'ParsonsWidget._graders.LanguageTranslationGrader':
+        return ParsonsWidget._graders.LanguageTranslationGrader;
+      case 'ParsonsWidget._graders.LineBasedGrader':
+        return ParsonsWidget._graders.LineBasedGrader;
+      default:
+        return undefined
     }
-    function clearCanvas(id) {
-      var canvas = document.getElementById(id);
-      if (canvas) {
-        var context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  function getFeedback() {
+    if (parsonsPuzzle) {
+      var feedback = parsonsPuzzle.getFeedback();
+
+      var message = feedback.html || feedback.feedback;
+      if (!message && feedback.length) {
+        message = feedback.join('\n')
       }
+      message = message && !feedback.success ? message : 'Congratulations on solving your Parsons Problem!';
+
+      var feedbackContainer = document.getElementById('feedback');
+      feedbackContainer.innerHTML = message;
     }
-    function previewParsonsPuzzle() {
-      document.getElementById('sortableTrash').innerHTML = '';
-      document.getElementById('sortable').innerHTML = '';
-      document.getElementById('feedback').innerHTML = '';
-
-      clearCanvas('modelCanvas');
-      clearCanvas('studentCanvas');
-
-      if (parsons) {
-        var settings = parsons.export();
-        var isTurtle = settings.options.grader  === 'ParsonsWidget._graders.TurtleGrader';
-        settings.options.grader = convertGraderToParsonFormat(settings.options.grader);
-
-        parsonsPuzzle = new ParsonsWidget(settings.options);
-        parsonsPuzzle.init(settings.initial);
-        parsonsPuzzle.shuffleLines();
+  }
+  function copyCodeToClipboard() {
+    new ClipboardJS('.copyCode', {
+      text: function() {
+        return codeEditor.getValue();
       }
-
-      document.getElementById('parsonsPuzzleWidgetContainer').className = 'parsonsPuzzleWidgetContainer';
-      if (isTurtle) {
-        document.getElementById('turtleContainer').className = 'turtleContainer';
-      } else {
-        document.getElementById('turtleContainer').className = 'turtleContainer hide';
-      }
-    }
-
-    function convertGraderToParsonFormat(grader) {
-      switch (grader) {
-        case 'ParsonsWidget._graders.VariableCheckGrader':
-          return ParsonsWidget._graders.VariableCheckGrader;
-        case 'ParsonsWidget._graders.TurtleGrader':
-          return ParsonsWidget._graders.TurtleGrader;
-        case 'ParsonsWidget._graders.UnitTestGrader':
-          return ParsonsWidget._graders.UnitTestGrader;
-        case 'ParsonsWidget._graders.LanguageTranslationGrader':
-          return ParsonsWidget._graders.LanguageTranslationGrader;
-        case 'ParsonsWidget._graders.LineBasedGrader':
-          return ParsonsWidget._graders.LineBasedGrader;
-        default:
-          return undefined
-      }
-    }
-    function getFeedback() {
-      if (parsonsPuzzle) {
-        var feedback = parsonsPuzzle.getFeedback();
-
-        var message = feedback.html || feedback.feedback;
-        if (!message && feedback.length) {
-          message = feedback.join('\n')
-        }
-        message = message && !feedback.success ? message : 'Congratulations on solving your Parsons Problem!';
-
-        var feedbackContainer = document.getElementById('feedback');
-        feedbackContainer.innerHTML = message;
-      }
-    }
-  </script>
+    });
+  }
+</script>
 </body>
 </html>
