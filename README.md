@@ -12,48 +12,9 @@ There are 5 types of graders in the js-parsons library which you can select from
 ### Line Based Grader
 The line based grader is a way to quickly and easily make Parson's problems with a single right answer. This grader does not require you to use a certain programming language which makes it a great way to abstract processes and workflows one level higher than actual code.
 
-#### Example Line based grader problem
-<div id="1-sortableTrash" class="sortable-code"></div> 
-<div id="1-sortable" class="sortable-code"></div> 
-<div style="clear:both;"></div> 
-<p> 
-    <input id="1-feedbackLink" value="Get Feedback" type="button" /> 
-    <input id="1-newInstanceLink" value="Reset Problem" type="button" /> 
-</p> 
-<script type="text/javascript"> 
-(function(){
-  var initial = "print(\"Hello\") \nprint(\" \")\n" +
-    "print(\"World\")\n" +
-    "print(\"!\")\n" +
-    "print(Hello) #distractor\n" +
-    "print(World!) #distractor";
-  var parsonsPuzzle = new ParsonsWidget({
-    "sortableId": "1-sortable",
-    "max_wrong_lines": 1,
-    "grader": ParsonsWidget._graders.LineBasedGrader,
-    "exec_limit": 2500,
-    "can_indent": false,
-    "x_indent": 50,
-    "lang": "en",
-    "trashId": "1-sortableTrash"
-  });
-  parsonsPuzzle.init(initial);
-  parsonsPuzzle.shuffleLines();
-  $("#1-newInstanceLink").click(function(event){ 
-      event.preventDefault(); 
-      parsonsPuzzle.shuffleLines(); 
-  }); 
-  $("#1-feedbackLink").click(function(event){ 
-      event.preventDefault(); 
-      parsonsPuzzle.getFeedback(); 
-  }); 
-})(); 
-</script>
 
 ### Variable Check Grader
 The variable check grader is for Python problems where students are manipulating variables. You can set the variables of interest before the student code and check them after -- meaning this grader checks the **functionality** of student code so it's okay that there is more than one right answer!
-
-
 
 
 ### Unit Test Grader
