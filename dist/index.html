@@ -28,7 +28,7 @@
     }
     .header {
       height: 75px;
-      padding-left: 90px;
+      padding: 0 90px;
       border-bottom: 1px solid #EAECF2;
       display: flex;
       align-items: center;
@@ -36,6 +36,12 @@
     }
     .header .btn:not(:last-child) {
       margin-right: 10px;
+    }
+    .leftHeaderButtons {
+      flex: 1 0 auto;
+    }
+    .rightHeaderButtons .btn {
+      text-decoration: none;
     }
     .btn {
       padding: 10px 30px;
@@ -208,8 +214,11 @@
     .turtle {
       width: 100%;
     }
+    .floatRight {
+      float: right;
+    }
   </style>
-<link href="main.8db161b82978ac6a5f2f.css" rel="stylesheet"></head>
+<link href="main.b341e1ce7ada851014e3.css" rel="stylesheet"></head>
 <body>
 <!-- parsons puzzle libs -->
 <script src="parsons/lib/jquery.min.js"></script>
@@ -254,8 +263,15 @@
   </div>
 </div>
 <div class="header">
-  <a class="btn" onclick="importToParsonsUI()">Import</a>
-  <a class="btn" onclick="exportFromParsonsUI()">Export</a>
+  <div class="leftHeaderButtons">
+    <a class="btn" onclick="importToParsonsUI()">Import</a>
+    <a class="btn" onclick="exportFromParsonsUI()">Export</a>
+  </div>
+  <div class="rightHeaderButtons">
+    <a class="btn" href="https://codio.github.io/parsons-puzzle-ui/" target="_blank">How to Use Creator</a>
+    <a class="btn" href="https://github.com/codio/parsons-puzzle-ui" target="_blank">View Source Code</a>
+    <a class="btn" href="https://github.com/codio-content/hosting-parsons-on-github-template" target="_blank">Hosting Template</a>
+  </div>
 </div>
 <div class="mainContainer">
   <div class="parsonsContainer">
