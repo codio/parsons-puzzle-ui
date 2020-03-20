@@ -30,3 +30,4 @@ export const tryToCreateEditorFromTextarea = (ta: Cash): void => {
     // eslint-disable-next-line no-empty
   } catch (e) {}
 }
+
