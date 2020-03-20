@@ -1,3 +1,4 @@
+const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -15,9 +16,13 @@ module.exports = {
     extensions: [ '.tsx', '.ts', '.js' ],
   },
   plugins: [
+    new CopyPlugin([
+      { from: 'src/parsons', to: 'parsons' }
+    ]),
     new HtmlWebpackPlugin({
       template: './src/index.html'
-    })
+    }),
+
   ],
   output: {
     library: 'ParsonsUI',
