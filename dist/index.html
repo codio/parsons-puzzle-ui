@@ -107,6 +107,7 @@
     .parsonsSettingsOverlay.import .toParameters,
     .parsonsSettingsOverlay.export .applyOptions,
     .parsonsSettingsOverlay.export.parameters .copyCode,
+    .parsonsSettingsOverlay.import .copyCode,
     .parsonsSettingsOverlay.export.parameters .toParameters,
     .parsonsSettingsOverlay.export:not(.parameters) .toCode,
     .parsonsSettingsOverlay.export.parameters .editorContainer.codeContainer {
@@ -208,7 +209,7 @@
       width: 100%;
     }
   </style>
-<link href="main.bc61ab1bfee37af55ccf.css" rel="stylesheet"></head>
+<link href="main.8db161b82978ac6a5f2f.css" rel="stylesheet"></head>
 <body>
 <!-- parsons puzzle libs -->
 <script src="parsons/lib/jquery.min.js"></script>
@@ -281,6 +282,7 @@
       </div>
       <div>
         <a class="btn" onclick="getFeedback()">Check Solution</a>
+        <a class="btn" onclick="previewParsonsPuzzle()">Reset puzzle</a>
         <fieldset class="feedbackFieldset">
           <legend>Feedback: </legend>
           <div id="feedback"/>
@@ -373,6 +375,8 @@
     initialEditor.setValue('', -1);
     optionsEditor.setValue('{}', -1);
     openModal(true);
+    initialEditor.refresh();
+    optionsEditor.refresh();
   }
   function exportFromParsonsUI() {
     if (parsons) {

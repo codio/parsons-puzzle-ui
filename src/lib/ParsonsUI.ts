@@ -1,8 +1,9 @@
 import $, { Cash } from 'cash-dom'
-
 import { ParsonsSettings, ParsonsGrader } from '../@types/types'
 import * as render from './render'
-import { collectData, collectUnitTest, collectVariableTest } from './data-helper'
+import {
+  collectData, collectUnitTest, collectVariableTest
+} from './data-helper'
 import { setValueToEditor, getValueFromEditor } from './editor'
 
 export default class ParsonsUI {
@@ -65,6 +66,16 @@ export default class ParsonsUI {
 
       const code = executableCode || solutionCode
       setValueToEditor(this.container.find('#turtle-model-code'), code.replace('myTurtle', 'modelTurtle'))
+    })
+    this.container.on('click', '#require-dragging', (event: Event) => {
+      event.stopPropagation()
+      const distractorsTa: Cash = this.container.find('#distractors')
+      const hasDistractors = /.*?[^\s]/.test(getValueFromEditor(distractorsTa))
+      const isDraggingChecked = this.container.find('#require-dragging').is(':checked')
+      if (hasDistractors && !isDraggingChecked) {
+        // eslint-disable-next-line no-alert
+        alert('Dragging is necessary to work distractors')
+      }
     })
   }
 
