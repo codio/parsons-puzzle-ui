@@ -117,6 +117,22 @@ export const collectUnitTest = (container: Cash): UnitTest => {
   return { methodCall, errorMessage, expectedOutput }
 }
 
+const getMethodsCall = (test: UnitTest): string[] => {
+  const callMethods = test.methodCall.trim().split('\n')
+  const expectedOutputValues = test.expectedOutput.trim().split('\n')
+  const errorMessage = test.errorMessage && test.errorMessage.length !== 0
+    ? test.errorMessage.trim().split('\n') : ''
+  const methods = callMethods.map((method: string, i: number) => {
+    const obj: {[k: string]: string} = {}
+    obj.methodCall = callMethods[i]
+    obj.expectedOutput = expectedOutputValues[i]
+    obj.errorMessage = errorMessage[i] || ''
+    return obj
+  })
+  return methods.map((method: {[k: string]: string}) => `    self.assertEqual(${method.methodCall},
+  ${method.expectedOutput},${method.errorMessage})`)
+}
+
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
   const unitTests: UnitTest[] = []
 
@@ -132,7 +148,7 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
     'class myTests(unittestparson.unittest):',
     ...unitTests.map((test: UnitTest, index: number): string => [
       `  def test_${index}(self):`,
-      `    self.assertEqual(${test.methodCall},${test.expectedOutput},${test.errorMessage})`
+      `${getMethodsCall(test)}`
     ].join('\n')),
     '_test_result = myTests().main()'
   ]
