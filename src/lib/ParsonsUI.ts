@@ -65,7 +65,7 @@ export default class ParsonsUI {
       const executableCode = getValueFromEditor(this.container.find('#executable-code'))
 
       const code = executableCode || solutionCode
-      setValueToEditor(this.container.find('#turtle-model-code'), code.replace('myTurtle', 'modelTurtle'))
+      setValueToEditor(this.container.find('#turtle-model-code'), code.replace(/myTurtle/g, 'modelTurtle'))
     })
     this.container.on('click', '#require-dragging', (event: Event) => {
       event.stopPropagation()
