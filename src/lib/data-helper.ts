@@ -3,7 +3,8 @@ import {
   Dictionary,
   ParsonsGrader,
   ParsonsOptions,
-  ParsonsSettings, UnitTest,
+  ParsonsSettings,
+  AssertEqualParams,
   VariableTest
 } from '../@types/types'
 import { getValueFromEditor } from './editor'
@@ -109,7 +110,7 @@ const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGrader
   }
 }
 
-export const collectUnitTest = (container: Cash): UnitTest => {
+export const collectUnitTest = (container: Cash): AssertEqualParams => {
   const methodCall: string = getValueFromEditor(container.find('[name="method-call"]'))
   const errorMessage: string = getValueFromEditor(container.find('[name="error-message"]'))
   const expectedOutput: string = getValueFromEditor(container.find('[name="expected-output"]'))
@@ -117,7 +118,7 @@ export const collectUnitTest = (container: Cash): UnitTest => {
   return { methodCall, errorMessage, expectedOutput }
 }
 
-const getMethodsCall = (test: UnitTest): string[] => {
+const getMethodsCall = (test: AssertEqualParams): string => {
   const callMethods = test.methodCall.trim().split('\n')
   const expectedOutputValues = test.expectedOutput.trim().split('\n')
   const errorMessage = test.errorMessage && test.errorMessage.length !== 0
@@ -129,12 +130,12 @@ const getMethodsCall = (test: UnitTest): string[] => {
     obj.errorMessage = errorMessage[i] || ''
     return obj
   })
-  return methods.map((method: {[k: string]: string}) => `    self.assertEqual(${method.methodCall},
-  ${method.expectedOutput},${method.errorMessage})`)
+  return methods.map((method: { [k: string]: string }) => ('    self.assertEqual('
+      + `${method.methodCall},${method.expectedOutput},${method.errorMessage})`)).join('\n')
 }
 
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
-  const unitTests: UnitTest[] = []
+  const unitTests: AssertEqualParams[] = []
 
   const codePrepend: string = getValueFromEditor(container.find('[name="code-prepend"]'))
 
@@ -146,7 +147,7 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
   const unitTestsArr: string[] = [
     'import unittestparson',
     'class myTests(unittestparson.unittest):',
-    ...unitTests.map((test: UnitTest, index: number): string => [
+    ...unitTests.map((test: AssertEqualParams, index: number): string => [
       `  def test_${index}(self):`,
       `${getMethodsCall(test)}`
     ].join('\n')),

@@ -53,8 +53,10 @@ export interface ParsonsSettings {
   options: ParsonsOptions;
 }
 
-export interface UnitTest {
+export interface AssertEqualParams {
   methodCall: string;
   expectedOutput: string;
   errorMessage?: string;
 }
+
+

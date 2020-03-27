@@ -2,7 +2,7 @@ import $, { Cash } from 'cash-dom'
 
 import { convertParsonsGraderFuncToEnum, convertTestVariablesToString, convertUnitTestsFromString } from './converters'
 import {
-  ParsonsGrader, ParsonsOptions, ParsonsSettings, UnitTest, VariableTest
+  ParsonsGrader, ParsonsOptions, ParsonsSettings, AssertEqualParams, VariableTest
 } from '../@types/types'
 import { tryToCreateEditorFromTextarea } from './editor'
 
@@ -256,7 +256,7 @@ const renderUnitTestCodePrepend = (code?: string): Cash => {
   return codePrependContainer
 }
 
-export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
+export const renderUnitTest = (test?: AssertEqualParams | undefined): Cash => {
   const testContainer: Cash = $('<li class="test-container"></li>')
 
   const actionsContainer = $('<div class="action-container"></div>')
@@ -309,7 +309,7 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
 
   graderFormContainer.append(renderUnitTestCodePrepend(options ? options.unittest_code_prepend : ''))
 
-  const tests: UnitTest[] | null = options ? convertUnitTestsFromString(options.unittests) : null
+  const tests: AssertEqualParams[] | null = options ? convertUnitTestsFromString(options.unittests) : null
 
   graderFormContainer.append(
     '<div class="add-test-container">'
@@ -321,7 +321,7 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
   const testsList: Cash = $('<ul class="tests-list"></ul>')
 
   if (tests) {
-    tests.forEach((test: UnitTest) => testsList.append(renderUnitTest(test)))
+    tests.forEach((test: AssertEqualParams) => testsList.append(renderUnitTest(test)))
   } else {
     testsList.append(renderUnitTest())
   }

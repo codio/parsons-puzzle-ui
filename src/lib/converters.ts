@@ -1,5 +1,5 @@
 import { parseScript } from 'esprima'
-import { ParsonsGrader, UnitTest } from '../@types/types'
+import { ParsonsGrader, AssertEqualParams } from '../@types/types'
 
 export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | string | undefined): ParsonsGrader => {
   if (!grader) {
@@ -31,29 +31,35 @@ export const convertTestVariablesToString = (variables: object): string => {
   return lines.join('\n')
 }
 
-const parseUnitTestArguments = (str: string): UnitTest => {
-  // use any type because return type for esprima.parseScript is wrong
-  // eslint-disable-next-line
-  const jsonObj: any = parseScript(str, { range: true })
-  const expArgumentsArr = jsonObj.body[0].expression.arguments
-  const methodCall = str.slice(...expArgumentsArr[0].range)
-  const expectedValue = str.slice(...expArgumentsArr[0].range)
-  const errorMessage = str.slice(...expArgumentsArr[0].range)
+const parseUnitTestArguments = (str: string): AssertEqualParams => {
+  const unitTestChecks = str.split('\n')
+  const methodCall: string[] = []
+  const expectedOutput: string[] = []
+  const errorMessage: string[] = []
 
+  unitTestChecks.forEach((check: string) => {
+    // use any type because return type for esprima.parseScript is wrong
+    // eslint-disable-next-line
+    const jsonObj: any = parseScript(check, { range: true })
+    const expArgumentsArr = jsonObj.body[0].expression.arguments
+    methodCall.push(check.slice(...expArgumentsArr[0].range))
+    expectedOutput.push(check.slice(...expArgumentsArr[1].range))
+    errorMessage.push(expArgumentsArr[2] ? check.slice(...expArgumentsArr[2].range) : '')
+  })
   return {
-    methodCall: methodCall.trim(),
-    expectedOutput: expectedValue.trim(),
-    errorMessage: errorMessage.trim()
+    methodCall: methodCall.join('\n'),
+    expectedOutput: expectedOutput.join('\n'),
+    errorMessage: errorMessage.join('\n')
   }
 }
 
-export const convertUnitTestsFromString = (unitTests: string | undefined): UnitTest[] => {
-  if (!unitTests) {
-    return []
-  }
-  const re = /^\s*self\.assertEqual(\(.*?\))\s*$/gm
-  const matches: RegExpMatchArray | null = unitTests.match(re)
-  return matches ? matches.map((match) => parseUnitTestArguments(match)) : []
+export const convertUnitTestsFromString = (unitTests: string | undefined): AssertEqualParams[] => {
+  if (!unitTests) return []
+  const pattern = /(?<=def.*?\(.*?\):\n)^(\s*self\.assertEqual\(.*?\))*\s*$/gm
+  const testMatches: RegExpMatchArray | null = unitTests.match(pattern)
+  if (!testMatches) return []
+
+  return testMatches.map((match) => parseUnitTestArguments(match))
 }
 
 export default {
