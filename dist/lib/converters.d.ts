@@ -1,7 +1,7 @@
-import { ParsonsGrader, UnitTest } from '../@types/types';
+import { ParsonsGrader, AssertEqualParams } from '../@types/types';
 export declare const convertParsonsGraderFuncToEnum: (grader?: string | (() => void) | undefined) => ParsonsGrader;
 export declare const convertTestVariablesToString: (variables: object) => string;
-export declare const convertUnitTestsFromString: (unitTests: string | undefined) => UnitTest[];
+export declare const convertUnitTestsFromString: (unitTests: string | undefined) => AssertEqualParams[];
 declare const _default: {
     convertParsonsGraderFuncToEnum: (grader?: string | (() => void) | undefined) => ParsonsGrader;
     convertTestVariablesToString: (variables: object) => string;
