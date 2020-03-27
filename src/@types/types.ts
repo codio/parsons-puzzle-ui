@@ -59,4 +59,7 @@ export interface AssertEqualParams {
   errorMessage?: string;
 }
 
-
+export interface UnitTest {
+  name: string;
+  assertEquals: AssertEqualParams;
+}

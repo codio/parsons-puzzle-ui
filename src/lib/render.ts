@@ -2,7 +2,7 @@ import $, { Cash } from 'cash-dom'
 
 import { convertParsonsGraderFuncToEnum, convertTestVariablesToString, convertUnitTestsFromString } from './converters'
 import {
-  ParsonsGrader, ParsonsOptions, ParsonsSettings, AssertEqualParams, VariableTest
+  ParsonsGrader, ParsonsOptions, ParsonsSettings, VariableTest, UnitTest, AssertEqualParams
 } from '../@types/types'
 import { tryToCreateEditorFromTextarea } from './editor'
 
@@ -256,7 +256,7 @@ const renderUnitTestCodePrepend = (code?: string): Cash => {
   return codePrependContainer
 }
 
-export const renderUnitTest = (test?: AssertEqualParams | undefined): Cash => {
+export const renderUnitTest = (test?: AssertEqualParams): Cash => {
   const testContainer: Cash = $('<li class="test-container"></li>')
 
   const actionsContainer = $('<div class="action-container"></div>')
@@ -280,7 +280,8 @@ export const renderUnitTest = (test?: AssertEqualParams | undefined): Cash => {
 
   const messageContainer = $('<div class="fieldset"></div>')
   messageContainer.append('<label>Error Message (optional)</label>')
-  const taMessage = $(`<textarea rows="2" name="error-message">${test ? test.errorMessage : ''}</textarea>`)
+  const taMessage = $(`<textarea rows="2" name="error-message">${test
+    ? test.errorMessage : ''}</textarea>`)
   taMessage.attr('placeholder', 'What student sees if this test fails')
   messageContainer.append(taMessage)
   column1.append(messageContainer)
@@ -291,7 +292,8 @@ export const renderUnitTest = (test?: AssertEqualParams | undefined): Cash => {
 
   const expectedOutputContainer = $('<div class="fieldset"></div>')
   expectedOutputContainer.append('<label>Expected Output(s)*</label>')
-  const taExpectedOutput = $(`<textarea rows="2" name="expected-output">${test ? test.expectedOutput : ''}</textarea>`)
+  const taExpectedOutput = $(`<textarea rows="2" name="expected-output">${test
+    ? test.expectedOutput : ''}</textarea>`)
   taExpectedOutput.attr('placeholder', 'Expected output of method call')
   expectedOutputContainer.append(taExpectedOutput)
   column2.append(expectedOutputContainer)
@@ -309,7 +311,7 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
 
   graderFormContainer.append(renderUnitTestCodePrepend(options ? options.unittest_code_prepend : ''))
 
-  const tests: AssertEqualParams[] | null = options ? convertUnitTestsFromString(options.unittests) : null
+  const tests: UnitTest[] | null = options ? convertUnitTestsFromString(options.unittests) : null
 
   graderFormContainer.append(
     '<div class="add-test-container">'
@@ -321,7 +323,7 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
   const testsList: Cash = $('<ul class="tests-list"></ul>')
 
   if (tests) {
-    tests.forEach((test: AssertEqualParams) => testsList.append(renderUnitTest(test)))
+    tests.forEach((test: UnitTest) => testsList.append(renderUnitTest(test.assertEquals)))
   } else {
     testsList.append(renderUnitTest())
   }

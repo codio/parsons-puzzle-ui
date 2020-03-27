@@ -50,4 +50,8 @@ export interface AssertEqualParams {
     expectedOutput: string;
     errorMessage?: string;
 }
+export interface UnitTest {
+    name: string;
+    assertEquals: AssertEqualParams;
+}
 //# sourceMappingURL=types.d.ts.map

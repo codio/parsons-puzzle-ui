@@ -1,5 +1,5 @@
 import { parseScript } from 'esprima'
-import { ParsonsGrader, AssertEqualParams } from '../@types/types'
+import { ParsonsGrader, AssertEqualParams, UnitTest } from '../@types/types'
 
 export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | string | undefined): ParsonsGrader => {
   if (!grader) {
@@ -53,13 +53,26 @@ const parseUnitTestArguments = (str: string): AssertEqualParams => {
   }
 }
 
-export const convertUnitTestsFromString = (unitTests: string | undefined): AssertEqualParams[] => {
-  if (!unitTests) return []
-  const pattern = /(?<=def.*?\(.*?\):\n)^(\s*self\.assertEqual\(.*?\))*\s*$/gm
-  const testMatches: RegExpMatchArray | null = unitTests.match(pattern)
+const parseUnitTests = (unitTestsStr: string | undefined): RegExpMatchArray => {
+  if (!unitTestsStr) return []
+  const pattern = /(def\s*(.*?)\(.*?\):\n)^(\s*self\.assertEqual\(.*?\))*\s*$/gm
+  const testMatches: RegExpMatchArray | null = unitTestsStr.match(pattern)
   if (!testMatches) return []
+  return testMatches
+}
 
-  return testMatches.map((match) => parseUnitTestArguments(match))
+export const convertUnitTestsFromString = (unitTestsStr: string | undefined): UnitTest[] => {
+  const unitTests = parseUnitTests(unitTestsStr)
+  const unitTestsArr: UnitTest[] = []
+  unitTests.forEach((test) => {
+    const pattern = /(?<=def\s*(.*?)\(.*?\):\n)^(\s*self\.assertEqual\(.*?\))*\s*$/m
+    const checks: RegExpMatchArray | null = pattern.exec(test) || []
+    unitTestsArr.push({
+      name: checks[1],
+      assertEquals: parseUnitTestArguments(checks[0])
+    })
+  })
+  return unitTestsArr
 }
 
 export default {
