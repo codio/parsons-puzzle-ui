@@ -152,7 +152,7 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
     'import unittestparson',
     'class myTests(unittestparson.unittest):',
     ...unitTests.map((test: UnitTest, index: number): string => [
-      `  def ${test.name ? test.name : `test_${index}`}(self):`,
+      `  def ${test.name || `test_${index}`}(self):`,
       `${getMethodCalls(test)}`
     ].join('\n')),
     '_test_result = myTests().main()'
