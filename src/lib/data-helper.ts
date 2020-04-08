@@ -116,7 +116,7 @@ export const collectUnitTest = (container: Cash): UnitTest => {
   const expectedOutput: string = getValueFromEditor(container.find('[name="expected-output"]'))
 
   return {
-    name: container.data('data-name'),
+    name: container.data('test-name'),
     assertEquals: { methodCall, errorMessage, expectedOutput }
   }
 }
@@ -151,8 +151,8 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
   const unitTestsArr: string[] = [
     'import unittestparson',
     'class myTests(unittestparson.unittest):',
-    ...unitTests.map((test: UnitTest): string => [
-      `  def ${test.name}(self):`,
+    ...unitTests.map((test: UnitTest, index: number): string => [
+      `  def ${test.name ? test.name : `test_${index}`}(self):`,
       `${getMethodCalls(test)}`
     ].join('\n')),
     '_test_result = myTests().main()'

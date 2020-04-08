@@ -258,7 +258,7 @@ const renderUnitTestCodePrepend = (code?: string): Cash => {
 
 export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
   const testContainer: Cash = $('<li class="test-container"></li>')
-  $(testContainer).data('data-name', test ? test.name : '')
+  $(testContainer).data('test-name', test ? test.name : '')
 
   const actionsContainer = $('<div class="action-container"></div>')
   actionsContainer.append('<a class="btn action duplicate">clone</a>')
