@@ -4,8 +4,8 @@ import {
   ParsonsGrader,
   ParsonsOptions,
   ParsonsSettings,
-  AssertEqualParams,
-  VariableTest
+  VariableTest,
+  UnitTest
 } from '../@types/types'
 import { getValueFromEditor } from './editor'
 
@@ -110,15 +110,19 @@ const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGrader
   }
 }
 
-export const collectUnitTest = (container: Cash): AssertEqualParams => {
+export const collectUnitTest = (container: Cash): UnitTest => {
   const methodCall: string = getValueFromEditor(container.find('[name="method-call"]'))
   const errorMessage: string = getValueFromEditor(container.find('[name="error-message"]'))
   const expectedOutput: string = getValueFromEditor(container.find('[name="expected-output"]'))
 
-  return { methodCall, errorMessage, expectedOutput }
+  return {
+    name: container.data('data-name'),
+    assertEquals: { methodCall, errorMessage, expectedOutput }
+  }
 }
 
-const getMethodsCall = (test: AssertEqualParams): string => {
+const getMethodCalls = (unitTest: UnitTest): string => {
+  const test = unitTest.assertEquals
   const callMethods = test.methodCall.trim().split('\n')
   const expectedOutputValues = test.expectedOutput.trim().split('\n')
   const errorMessage = test.errorMessage && test.errorMessage.length !== 0
@@ -135,7 +139,7 @@ const getMethodsCall = (test: AssertEqualParams): string => {
 }
 
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
-  const unitTests: AssertEqualParams[] = []
+  const unitTests: UnitTest[] = []
 
   const codePrepend: string = getValueFromEditor(container.find('[name="code-prepend"]'))
 
@@ -147,9 +151,9 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
   const unitTestsArr: string[] = [
     'import unittestparson',
     'class myTests(unittestparson.unittest):',
-    ...unitTests.map((test: AssertEqualParams, index: number): string => [
-      `  def test_${index}(self):`,
-      `${getMethodsCall(test)}`
+    ...unitTests.map((test: UnitTest): string => [
+      `  def ${test.name}(self):`,
+      `${getMethodCalls(test)}`
     ].join('\n')),
     '_test_result = myTests().main()'
   ]

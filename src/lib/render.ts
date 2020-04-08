@@ -2,7 +2,7 @@ import $, { Cash } from 'cash-dom'
 
 import { convertParsonsGraderFuncToEnum, convertTestVariablesToString, convertUnitTestsFromString } from './converters'
 import {
-  ParsonsGrader, ParsonsOptions, ParsonsSettings, VariableTest, UnitTest, AssertEqualParams
+  ParsonsGrader, ParsonsOptions, ParsonsSettings, VariableTest, UnitTest
 } from '../@types/types'
 import { tryToCreateEditorFromTextarea } from './editor'
 
@@ -256,8 +256,9 @@ const renderUnitTestCodePrepend = (code?: string): Cash => {
   return codePrependContainer
 }
 
-export const renderUnitTest = (test?: AssertEqualParams): Cash => {
+export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
   const testContainer: Cash = $('<li class="test-container"></li>')
+  $(testContainer).data('data-name', test ? test.name : '')
 
   const actionsContainer = $('<div class="action-container"></div>')
   actionsContainer.append('<a class="btn action duplicate">clone</a>')
@@ -269,8 +270,9 @@ export const renderUnitTest = (test?: AssertEqualParams): Cash => {
 
   const methodsContainer = $('<div class="fieldset"></div>')
   methodsContainer.append('<label>Method Call(s)*</label>')
+  const methodCall = test ? test.assertEquals.methodCall : ''
   const taMethods = $(
-    `<textarea rows="2" name="method-call">${test ? test.methodCall : ''}</textarea>`
+    `<textarea rows="2" name="method-call">${methodCall}</textarea>`
   )
   taMethods.attr('placeholder', 'Write method call with arguments')
   methodsContainer.append(taMethods)
@@ -280,7 +282,8 @@ export const renderUnitTest = (test?: AssertEqualParams): Cash => {
 
   const messageContainer = $('<div class="fieldset"></div>')
   messageContainer.append('<label>Error Message (optional)</label>')
-  const taMessage = $(`<textarea rows="2" name="error-message">${test ? test.errorMessage : ''}</textarea>`)
+  const errorMessage = test ? test.assertEquals.errorMessage : ''
+  const taMessage = $(`<textarea rows="2" name="error-message">${errorMessage}</textarea>`)
   taMessage.attr('placeholder', 'What student sees if this test fails')
   messageContainer.append(taMessage)
   column1.append(messageContainer)
@@ -291,7 +294,8 @@ export const renderUnitTest = (test?: AssertEqualParams): Cash => {
 
   const expectedOutputContainer = $('<div class="fieldset"></div>')
   expectedOutputContainer.append('<label>Expected Output(s)*</label>')
-  const taExpectedOutput = $(`<textarea rows="2" name="expected-output">${test ? test.expectedOutput : ''}</textarea>`)
+  const expectedOutput = test ? test.assertEquals.expectedOutput : ''
+  const taExpectedOutput = $(`<textarea rows="2" name="expected-output">${expectedOutput}</textarea>`)
   taExpectedOutput.attr('placeholder', 'Expected output of method call')
   expectedOutputContainer.append(taExpectedOutput)
   column2.append(expectedOutputContainer)
@@ -321,7 +325,7 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
   const testsList: Cash = $('<ul class="tests-list"></ul>')
 
   if (tests) {
-    tests.forEach((test: UnitTest) => testsList.append(renderUnitTest(test.assertEquals)))
+    tests.forEach((test: UnitTest) => testsList.append(renderUnitTest(test)))
   } else {
     testsList.append(renderUnitTest())
   }
