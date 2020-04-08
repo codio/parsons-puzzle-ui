@@ -280,8 +280,7 @@ export const renderUnitTest = (test?: AssertEqualParams): Cash => {
 
   const messageContainer = $('<div class="fieldset"></div>')
   messageContainer.append('<label>Error Message (optional)</label>')
-  const taMessage = $(`<textarea rows="2" name="error-message">${test
-    ? test.errorMessage : ''}</textarea>`)
+  const taMessage = $(`<textarea rows="2" name="error-message">${test ? test.errorMessage : ''}</textarea>`)
   taMessage.attr('placeholder', 'What student sees if this test fails')
   messageContainer.append(taMessage)
   column1.append(messageContainer)
@@ -292,8 +291,7 @@ export const renderUnitTest = (test?: AssertEqualParams): Cash => {
 
   const expectedOutputContainer = $('<div class="fieldset"></div>')
   expectedOutputContainer.append('<label>Expected Output(s)*</label>')
-  const taExpectedOutput = $(`<textarea rows="2" name="expected-output">${test
-    ? test.expectedOutput : ''}</textarea>`)
+  const taExpectedOutput = $(`<textarea rows="2" name="expected-output">${test ? test.expectedOutput : ''}</textarea>`)
   taExpectedOutput.attr('placeholder', 'Expected output of method call')
   expectedOutputContainer.append(taExpectedOutput)
   column2.append(expectedOutputContainer)
