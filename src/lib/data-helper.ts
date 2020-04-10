@@ -3,8 +3,9 @@ import {
   Dictionary,
   ParsonsGrader,
   ParsonsOptions,
-  ParsonsSettings, UnitTest,
-  VariableTest
+  ParsonsSettings,
+  VariableTest,
+  UnitTest
 } from '../@types/types'
 import { getValueFromEditor } from './editor'
 
@@ -114,7 +115,27 @@ export const collectUnitTest = (container: Cash): UnitTest => {
   const errorMessage: string = getValueFromEditor(container.find('[name="error-message"]'))
   const expectedOutput: string = getValueFromEditor(container.find('[name="expected-output"]'))
 
-  return { methodCall, errorMessage, expectedOutput }
+  return {
+    name: container.data('test-name'),
+    assertEquals: { methodCall, errorMessage, expectedOutput }
+  }
+}
+
+const getMethodCalls = (unitTest: UnitTest): string => {
+  const test = unitTest.assertEquals
+  const callMethods = test.methodCall.trim().split('\n')
+  const expectedOutputValues = test.expectedOutput.trim().split('\n')
+  const errorMessage = test.errorMessage && test.errorMessage.length !== 0
+    ? test.errorMessage.trim().split('\n') : ''
+  const methods = callMethods.map((method: string, i: number) => {
+    const obj: {[k: string]: string} = {}
+    obj.methodCall = callMethods[i]
+    obj.expectedOutput = expectedOutputValues[i]
+    obj.errorMessage = errorMessage[i] || ''
+    return obj
+  })
+  return methods.map((method: { [k: string]: string }) => ('    self.assertEqual('
+      + `${method.methodCall},${method.expectedOutput},${method.errorMessage})`)).join('\n')
 }
 
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
@@ -131,8 +152,8 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
     'import unittestparson',
     'class myTests(unittestparson.unittest):',
     ...unitTests.map((test: UnitTest, index: number): string => [
-      `  def test_${index}(self):`,
-      `    self.assertEqual(${test.methodCall},${test.expectedOutput},${test.errorMessage})`
+      `  def ${test.name || `test_${index}`}(self):`,
+      `${getMethodCalls(test)}`
     ].join('\n')),
     '_test_result = myTests().main()'
   ]

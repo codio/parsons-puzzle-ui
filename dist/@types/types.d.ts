@@ -45,9 +45,13 @@ export interface ParsonsSettings {
     initial: string;
     options: ParsonsOptions;
 }
-export interface UnitTest {
+export interface AssertEqualParams {
     methodCall: string;
     expectedOutput: string;
     errorMessage?: string;
+}
+export interface UnitTest {
+    name: string;
+    assertEquals: AssertEqualParams;
 }
 //# sourceMappingURL=types.d.ts.map

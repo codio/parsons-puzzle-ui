@@ -1,5 +1,5 @@
 import { Cash } from 'cash-dom';
-import { ParsonsGrader, ParsonsSettings, UnitTest, VariableTest } from '../@types/types';
+import { ParsonsGrader, ParsonsSettings, VariableTest, UnitTest } from '../@types/types';
 export declare const renderVarTest: (test?: VariableTest | undefined) => Cash;
 export declare const renderUnitTest: (test?: UnitTest | undefined) => Cash;
 export declare const renderGrader: (container: Cash, grader: ParsonsGrader) => void;
