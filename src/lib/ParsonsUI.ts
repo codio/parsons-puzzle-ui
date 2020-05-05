@@ -74,7 +74,7 @@ export default class ParsonsUI {
       const isDraggingChecked = this.container.find('#require-dragging').is(':checked')
       if (hasDistractors && !isDraggingChecked) {
         // eslint-disable-next-line no-alert
-        alert('Dragging is necessary to work distractors')
+        alert('Dragging is needed to make this solvable')
       }
     })
   }
