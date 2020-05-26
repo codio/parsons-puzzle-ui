@@ -6,7 +6,7 @@ import {
 } from './data-helper'
 import { setValueToEditor, getValueFromEditor } from './editor'
 
-export default class ParsonsUI {
+class ParsonsUI {
   private readonly container: Cash
 
   constructor(selector: string, private readonly initialSettings: ParsonsSettings) {
@@ -83,3 +83,6 @@ export default class ParsonsUI {
     return collectData(this.container, this.initialSettings.options)
   }
 }
+
+export { ParsonsUI }
+export default ParsonsUI
