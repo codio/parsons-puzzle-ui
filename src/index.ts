@@ -1,4 +1,4 @@
-import ParsonsUI from './lib/ParsonsUI'
+import { ParsonsUI } from './lib/ParsonsUI'
 import { ParsonsSettings } from './@types/types'
 import './style.less'
 

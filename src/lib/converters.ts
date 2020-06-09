@@ -65,12 +65,15 @@ export const convertUnitTestsFromString = (unitTestsStr: string | undefined): Un
   const unitTests = parseUnitTests(unitTestsStr)
   const unitTestsArr: UnitTest[] = []
   unitTests.forEach((test) => {
-    const pattern = /(?<=def\s*(.*?)\(.*?\):\n)^(\s*self\.assertEqual\(.*?\))*\s*$/m
+    const pattern = /\s*def\s*(.*?)\(.*?\):\n^(\s*self\.assertEqual\(.*?\))*\s*$/m
     const checks: RegExpMatchArray | null = pattern.exec(test) || []
-    unitTestsArr.push({
-      name: checks[1],
-      assertEquals: parseUnitTestArguments(checks[0])
-    })
+    if (checks.length) {
+      const firstAssertEqualIndex = checks[0].indexOf('self.assertEqual')
+      unitTestsArr.push({
+        name: checks[1],
+        assertEquals: parseUnitTestArguments(checks[0].substr(firstAssertEqualIndex))
+      })
+    }
   })
   return unitTestsArr
 }
