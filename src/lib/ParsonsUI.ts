@@ -34,6 +34,7 @@ class ParsonsUI {
     })
     this.container.on('click', '.action.duplicate', (event: Event) => {
       event.preventDefault()
+      event.stopImmediatePropagation()
       const $this = $(event.currentTarget as HTMLElement)
       const isUnitTest = $this.closest('.grader-form-container').hasClass('unit-test-grader-container')
       const currentTest: Cash = $(event.currentTarget as HTMLElement).closest('.test-container')
