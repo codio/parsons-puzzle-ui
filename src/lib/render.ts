@@ -33,6 +33,17 @@ const getCodeBlocks = (code: string): CodeBlocks => {
   }
 }
 
+const renderCodeContainHtmlCheckbox = (): Cash => {
+  const containHtmlContainer: Cash = $('<div class="contain-html-container fieldset"></div>')
+
+  containHtmlContainer.append('<input id="code-contain-html" type="checkbox" />')
+  containHtmlContainer.append(
+    '<label for="code-contain-html" class="code-contain-html-label">Code blocks contain HTML?</label>'
+  )
+
+  return containHtmlContainer
+}
+
 const renderInitialCodeBlock = (codeBlocks: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
 
@@ -44,6 +55,8 @@ const renderInitialCodeBlock = (codeBlocks: string): Cash => {
   codeBlocksContainer.append(taContainer)
 
   tryToCreateEditorFromTextarea(taCode)
+
+  codeBlocksContainer.append(renderCodeContainHtmlCheckbox())
 
   const hintText1 = '$$toggle::value1::value2::valuen$$'
   const hintText2 = 'new line \\n in same block'

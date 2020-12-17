@@ -40,6 +40,13 @@ interface TurtleGraderOptions {
   turtleModelCode: string;
 }
 
+const escapeHtml = (unsafe: string): string => unsafe
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#039;')
+
 const collectCommonSettings = (container: Cash): CommonSettings => {
   const codeBlocks: string = getValueFromEditor(container.find('#initial'))
   const distractors: string = getValueFromEditor(container.find('#distractors'))
@@ -232,8 +239,9 @@ export const collectData = (container: Cash, initialOptions: ParsonsOptions): Pa
       break
   }
 
+  const codeContainHtml = container.find('#code-contain-html').is(':checked')
   return {
-    initial: common.initial,
+    initial: codeContainHtml ? common.initial : escapeHtml(common.initial),
     options
   }
 }
