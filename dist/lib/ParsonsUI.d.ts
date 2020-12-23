@@ -4,6 +4,7 @@ declare class ParsonsUI {
     private readonly container;
     constructor(selector: string, initialSettings: ParsonsSettings);
     private render;
+    private updateRequireDragging;
     private bindEvents;
     export(): ParsonsSettings;
 }

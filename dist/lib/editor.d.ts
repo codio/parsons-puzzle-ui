@@ -5,4 +5,5 @@ export interface HTMLElementWithCodeMirror extends HTMLElement {
 export declare const setValueToEditor: (el: Cash, value: string) => void;
 export declare const getValueFromEditor: (el: Cash) => string;
 export declare const tryToCreateEditorFromTextarea: (ta: Cash) => void;
+export declare const bindEventToEditor: (el: Cash, event: string, callback: () => void) => void;
 //# sourceMappingURL=editor.d.ts.map
