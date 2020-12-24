@@ -78,12 +78,12 @@ class ParsonsUI {
       const code = executableCode || solutionCode
       setValueToEditor(this.container.find('#turtle-model-code'), code.replace(/myTurtle/g, 'modelTurtle'))
     })
-    this.container.on('focusout', '#max-distractors', (event: Event) => {
+    this.container.on('change', '#max-distractors', (event: Event) => {
       event.preventDefault()
       this.updateRequireDragging()
     })
     const distractorsTa: Cash = this.container.find('#distractors')
-    bindEventToEditor(distractorsTa, 'blur', () => {
+    bindEventToEditor(distractorsTa, 'change', () => {
       this.updateRequireDragging()
     })
     this.container.on('click', '#require-dragging', (event: Event) => {
