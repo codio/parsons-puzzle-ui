@@ -31,3 +31,10 @@ export const tryToCreateEditorFromTextarea = (ta: Cash): void => {
   } catch (e) {}
 }
 
+export const bindEventToEditor = (el: Cash, event: string, callback: () => void): void => {
+  const codeMirrorEl: HTMLElementWithCodeMirror = el.siblings('.CodeMirror').get(0) as HTMLElement
+  if (codeMirrorEl && codeMirrorEl.CodeMirror) {
+    codeMirrorEl.CodeMirror.on(event, callback)
+  }
+  el.on(event, callback)
+}

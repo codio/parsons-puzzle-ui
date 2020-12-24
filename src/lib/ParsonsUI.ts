@@ -4,7 +4,7 @@ import * as render from './render'
 import {
   collectData, collectUnitTest, collectVariableTest
 } from './data-helper'
-import { setValueToEditor, getValueFromEditor } from './editor'
+import { setValueToEditor, getValueFromEditor, bindEventToEditor } from './editor'
 
 class ParsonsUI {
   private readonly container: Cash
@@ -17,6 +17,16 @@ class ParsonsUI {
 
   private render(): void {
     render.render(this.container, this.initialSettings)
+  }
+
+  private updateRequireDragging(): void {
+    const distractorsTa: Cash = this.container.find('#distractors')
+    const hasDistractors = /.*?[^\s]/.test(getValueFromEditor(distractorsTa))
+    const maxDistractors: number = parseInt(this.container.find('#max-distractors').val() as string, 10)
+    const maxDistractorsVal: number = !Number.isNaN(maxDistractors) ? maxDistractors : 10
+    if (hasDistractors && maxDistractorsVal > 0) {
+      this.container.find('#require-dragging').prop('checked', true)
+    }
   }
 
   private bindEvents(): void {
@@ -68,12 +78,21 @@ class ParsonsUI {
       const code = executableCode || solutionCode
       setValueToEditor(this.container.find('#turtle-model-code'), code.replace(/myTurtle/g, 'modelTurtle'))
     })
+    this.container.on('change', '#max-distractors', (event: Event) => {
+      event.preventDefault()
+      this.updateRequireDragging()
+    })
+    const distractorsTa: Cash = this.container.find('#distractors')
+    bindEventToEditor(distractorsTa, 'change', () => {
+      this.updateRequireDragging()
+    })
     this.container.on('click', '#require-dragging', (event: Event) => {
       event.stopPropagation()
-      const distractorsTa: Cash = this.container.find('#distractors')
       const hasDistractors = /.*?[^\s]/.test(getValueFromEditor(distractorsTa))
       const isDraggingChecked = this.container.find('#require-dragging').is(':checked')
-      if (hasDistractors && !isDraggingChecked) {
+      const maxDistractors: number = parseInt(this.container.find('#max-distractors').val() as string, 10)
+      const maxDistractorsVal: number = !Number.isNaN(maxDistractors) ? maxDistractors : 10
+      if (hasDistractors && !isDraggingChecked && maxDistractorsVal > 0) {
         // eslint-disable-next-line no-alert
         alert('Dragging is needed to make this solvable')
       }
