@@ -2,7 +2,7 @@ import $, { Cash } from 'cash-dom'
 import { ParsonsSettings, ParsonsGrader } from '../@types/types'
 import * as render from './render'
 import {
-  collectData, collectUnitTest, collectVariableTest
+  collectData, collectUnitTest, collectVariableTest,
 } from './data-helper'
 import { setValueToEditor, getValueFromEditor, bindEventToEditor } from './editor'
 

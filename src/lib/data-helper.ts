@@ -5,7 +5,7 @@ import {
   ParsonsOptions,
   ParsonsSettings,
   VariableTest,
-  UnitTest
+  UnitTest,
 } from '../@types/types'
 import { getValueFromEditor } from './editor'
 
@@ -71,7 +71,7 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
     requireDragging: container.find('#require-dragging').is(':checked'),
     indenting: !container.find('#disable-indent').is(':checked'),
     indentSize: !Number.isNaN(indentSize) ? indentSize : 50,
-    execLimit: !Number.isNaN(execLimit) ? execLimit : 2500
+    execLimit: !Number.isNaN(execLimit) ? execLimit : 2500,
   }
 }
 
@@ -97,7 +97,7 @@ export const collectVariableTest = (container: Cash): VariableTest => {
     message: description,
     initcode: preCode,
     code: postCode,
-    variables
+    variables,
   }
 }
 
@@ -113,7 +113,7 @@ const collectVariableTests = (container: Cash): VariableTest[] => {
 
 const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGraderOptions => {
   return {
-    vartests: collectVariableTests(container)
+    vartests: collectVariableTests(container),
   }
 }
 
@@ -123,8 +123,8 @@ export const collectUnitTest = (container: Cash): UnitTest => {
   const expectedOutput: string = getValueFromEditor(container.find('[name="expected-output"]'))
 
   return {
-    name: container.data('test-name'),
-    assertEquals: { methodCall, errorMessage, expectedOutput }
+    name: container.data('test-name') as string,
+    assertEquals: { methodCall, errorMessage, expectedOutput },
   }
 }
 
@@ -135,7 +135,7 @@ const getMethodCalls = (unitTest: UnitTest): string => {
   const errorMessage = test.errorMessage && test.errorMessage.length !== 0
     ? test.errorMessage.trim().split('\n') : ''
   const methods = callMethods.map((method: string, i: number) => {
-    const obj: {[k: string]: string} = {}
+    const obj: { [k: string]: string } = {}
     obj.methodCall = callMethods[i]
     obj.expectedOutput = expectedOutputValues[i]
     obj.errorMessage = errorMessage[i] || ''
@@ -160,14 +160,14 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
     'class myTests(unittestparson.unittest):',
     ...unitTests.map((test: UnitTest, index: number): string => [
       `  def ${test.name || `test_${index}`}(self):`,
-      `${getMethodCalls(test)}`
+      `${getMethodCalls(test)}`,
     ].join('\n')),
-    '_test_result = myTests().main()'
+    '_test_result = myTests().main()',
   ]
 
   return {
     unittestCodePrepend: codePrepend,
-    unitTests: unitTestsArr.join('\n')
+    unitTests: unitTestsArr.join('\n'),
   }
 }
 
@@ -175,7 +175,7 @@ const collectLanguageTranslationGraderOptions = (container: Cash): LanguageTrans
   return {
     programmingLang: container.find('#programming-lang').val() as string,
     executableCode: getValueFromEditor(container.find('#executable-code')),
-    vartests: collectVariableTests(container)
+    vartests: collectVariableTests(container),
   }
 }
 
@@ -183,7 +183,7 @@ const collectTurtleGraderOptions = (container: Cash): TurtleGraderOptions => {
   return {
     programmingLang: container.find('#programming-lang').val() as string,
     executableCode: getValueFromEditor(container.find('#executable-code')),
-    turtleModelCode: getValueFromEditor(container.find('#turtle-model-code'))
+    turtleModelCode: getValueFromEditor(container.find('#turtle-model-code')),
   }
 }
 
@@ -202,7 +202,7 @@ export const collectData = (container: Cash, initialOptions: ParsonsOptions): Pa
     x_indent: common.indentSize,
     lang: initialOptions.lang || 'en',
     toggleTypeHandlers: initialOptions.toggleTypeHandlers,
-    feedback_cb: initialOptions.feedback_cb
+    feedback_cb: initialOptions.feedback_cb,
   }
 
   if (common.requireDragging) {
@@ -242,10 +242,10 @@ export const collectData = (container: Cash, initialOptions: ParsonsOptions): Pa
   const codeContainHtml = container.find('#code-contain-html').is(':checked')
   return {
     initial: codeContainHtml ? common.initial : escapeHtml(common.initial),
-    options
+    options,
   }
 }
 
 export default {
-  collectData
+  collectData,
 }

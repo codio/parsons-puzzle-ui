@@ -23,7 +23,7 @@ export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | string | 
   }
 }
 
-export const convertTestVariablesToString = (variables: object): string => {
+export const convertTestVariablesToString = (variables: Record<string, string | number>): string => {
   const lines: string[] = []
   Object.entries(variables).forEach(([key, value]) => {
     lines.push(`"${key}": ${value}`)
@@ -38,18 +38,18 @@ const parseUnitTestArguments = (str: string): AssertEqualParams => {
   const errorMessage: string[] = []
 
   unitTestChecks.forEach((check: string) => {
-    // use any type because return type for esprima.parseScript is wrong
-    // eslint-disable-next-line
+    /* eslint-disable */
     const jsonObj: any = parseScript(check, { range: true })
     const expArgumentsArr = jsonObj.body[0].expression.arguments
     methodCall.push(check.slice(...expArgumentsArr[0].range))
     expectedOutput.push(check.slice(...expArgumentsArr[1].range))
     errorMessage.push(expArgumentsArr[2] ? check.slice(...expArgumentsArr[2].range) : '')
+    /* eslint-enable */
   })
   return {
     methodCall: methodCall.join('\n'),
     expectedOutput: expectedOutput.join('\n'),
-    errorMessage: errorMessage.join('\n')
+    errorMessage: errorMessage.join('\n'),
   }
 }
 
@@ -71,7 +71,7 @@ export const convertUnitTestsFromString = (unitTestsStr: string | undefined): Un
       const firstAssertEqualIndex = checks[0].indexOf('self.assertEqual')
       unitTestsArr.push({
         name: checks[1],
-        assertEquals: parseUnitTestArguments(checks[0].substr(firstAssertEqualIndex))
+        assertEquals: parseUnitTestArguments(checks[0].substr(firstAssertEqualIndex)),
       })
     }
   })
@@ -80,5 +80,5 @@ export const convertUnitTestsFromString = (unitTestsStr: string | undefined): Un
 
 export default {
   convertParsonsGraderFuncToEnum,
-  convertTestVariablesToString
+  convertTestVariablesToString,
 }

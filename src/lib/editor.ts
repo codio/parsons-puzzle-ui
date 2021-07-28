@@ -1,10 +1,8 @@
 import { Cash } from 'cash-dom'
-
-// eslint-disable-next-line
+/* eslint-disable */
 declare const CodeMirror: any
 
 export interface HTMLElementWithCodeMirror extends HTMLElement {
-  // eslint-disable-next-line
   CodeMirror?: any;
 }
 
@@ -34,7 +32,9 @@ export const tryToCreateEditorFromTextarea = (ta: Cash): void => {
 export const bindEventToEditor = (el: Cash, event: string, callback: () => void): void => {
   const codeMirrorEl: HTMLElementWithCodeMirror = el.siblings('.CodeMirror').get(0) as HTMLElement
   if (codeMirrorEl && codeMirrorEl.CodeMirror) {
+    // @ts-ignore
     codeMirrorEl.CodeMirror.on(event, callback)
   }
   el.on(event, callback)
 }
+/* eslint-enable */
