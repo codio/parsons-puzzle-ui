@@ -4,7 +4,7 @@ import * as render from './render'
 import {
   collectData, collectUnitTest, collectVariableTest,
 } from './data-helper'
-import { setValueToEditor, getValueFromEditor, bindEventToEditor } from './editor'
+import { setValueToEditor, getValueFromEditor, bindChangeEventToEditor } from './editor'
 
 class ParsonsUI {
   private readonly container: Cash
@@ -83,7 +83,7 @@ class ParsonsUI {
       this.updateRequireDragging()
     })
     const distractorsTa: Cash = this.container.find('#distractors')
-    bindEventToEditor(distractorsTa, 'change', () => {
+    bindChangeEventToEditor(distractorsTa, () => {
       this.updateRequireDragging()
     })
     this.container.on('click', '#require-dragging', (event: Event) => {

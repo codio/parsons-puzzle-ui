@@ -11,16 +11,10 @@
     white-space: nowrap;
   }
 
-  .CodeMirror {
-    height: 80px;
+  .code-editor-container {
+    overflow: hidden;
     resize: vertical;
     border: 1px solid #EAECF2;
-  }
-  .CodeMirror-empty.CodeMirror-focused {
-    outline: none;
-  }
-  .CodeMirror pre.CodeMirror-placeholder {
-    color: #999;
   }
 
   textarea,
@@ -48,6 +42,10 @@
     padding: 0 0 0 5px;
   }
 
+  .code-blocks-editor {
+    height: 80px;
+  }
+
   .code-blocks-hint {
     text-align: left;
     padding: 13px 10px;
@@ -62,10 +60,14 @@
     padding-top: 35px;
   }
 
-  .distractor-blocks-ta-container {
+  .distractor-blocks-controls-container {
     width: 60%;
     min-width: 60%;
     padding-right: 80px;
+  }
+
+  .distractor-blocks-editor {
+    height: 80px;
   }
 
   .distractor-blocks-max-container {
@@ -75,6 +77,14 @@
   .common-settings-container {
     display: flex;
     padding-top: 35px;
+  }
+
+  .test-param-editor {
+    height: 60px;
+  }
+
+  .additional-code-editor {
+    height: 80px;
   }
 
   .grader-container {
@@ -135,9 +145,6 @@
     line-height: 32px;
   }
 
-  .tests-container .CodeMirror {
-    height: 60px;
-  }
   .variable-check-grader-container,
   .unit-test-grader-container {
     .tests-container {

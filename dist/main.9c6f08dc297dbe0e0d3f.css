@@ -10,6 +10,11 @@
   text-transform: uppercase;
   white-space: nowrap;
 }
+.ParsonsUI .code-editor-container {
+  overflow: hidden;
+  resize: vertical;
+  border: 1px solid #EAECF2;
+}
 .ParsonsUI .CodeMirror {
   height: 80px;
   resize: vertical;
@@ -42,6 +47,9 @@
 .ParsonsUI .code-contain-html-label {
   padding: 0 0 0 5px;
 }
+.ParsonsUI .code-blocks-editor {
+  height: 80px;
+}
 .ParsonsUI .code-blocks-hint {
   text-align: left;
   padding: 13px 10px;
@@ -54,10 +62,13 @@
   display: flex;
   padding-top: 35px;
 }
-.ParsonsUI .distractor-blocks-ta-container {
+.ParsonsUI .distractor-blocks-controls-container {
   width: 60%;
   min-width: 60%;
   padding-right: 80px;
+}
+.ParsonsUI .distractor-blocks-editor {
+  height: 80px;
 }
 .ParsonsUI .distractor-blocks-max-container {
   width: 250px;
@@ -65,6 +76,12 @@
 .ParsonsUI .common-settings-container {
   display: flex;
   padding-top: 35px;
+}
+.ParsonsUI .test-param-editor {
+  height: 60px;
+}
+.ParsonsUI .additional-code-editor {
+  height: 80px;
 }
 .ParsonsUI .grader-container {
   flex: 1 0 auto;

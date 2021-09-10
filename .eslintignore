@@ -5,3 +5,4 @@ dist
 src/*.html
 src/*.less
 src/parsons
+src/@custom-types

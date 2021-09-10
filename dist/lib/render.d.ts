@@ -1,3 +1,4 @@
+/// <reference path="../../src/@custom-types/monaco.d.ts" />
 import { Cash } from 'cash-dom';
 import { ParsonsGrader, ParsonsSettings, VariableTest, UnitTest } from '../@types/types';
 export declare const renderVarTest: (test?: VariableTest | undefined) => Cash;

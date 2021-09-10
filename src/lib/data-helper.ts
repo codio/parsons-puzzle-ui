@@ -78,10 +78,10 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
 export const collectVariableTest = (container: Cash): VariableTest => {
   const $this: Cash = $(container)
   const variables: Dictionary<number | string> = {}
-  const variablesStr: string = getValueFromEditor($this.find('[name="variables"]'))
-  const description: string = getValueFromEditor($this.find('[name="description"]'))
-  const preCode: string = getValueFromEditor($this.find('[name="pre-code"]'))
-  const postCode: string = getValueFromEditor($this.find('[name="post-code"]'))
+  const variablesStr: string = getValueFromEditor($this.find('.js-variables'))
+  const description: string = getValueFromEditor($this.find('.js-description'))
+  const preCode: string = getValueFromEditor($this.find('.js-pre-code'))
+  const postCode: string = getValueFromEditor($this.find('.js-post-code'))
 
   variablesStr.split('\n').forEach((line: string) => {
     const params: RegExpExecArray | null = /^\s*"(.*)":\s*(.*)\s*$/.exec(line)
@@ -118,9 +118,9 @@ const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGrader
 }
 
 export const collectUnitTest = (container: Cash): UnitTest => {
-  const methodCall: string = getValueFromEditor(container.find('[name="method-call"]'))
-  const errorMessage: string = getValueFromEditor(container.find('[name="error-message"]'))
-  const expectedOutput: string = getValueFromEditor(container.find('[name="expected-output"]'))
+  const methodCall: string = getValueFromEditor(container.find('.js-method-call'))
+  const errorMessage: string = getValueFromEditor(container.find('.js-error-message'))
+  const expectedOutput: string = getValueFromEditor(container.find('.js-expected-output'))
 
   return {
     name: container.data('test-name') as string,
@@ -148,7 +148,7 @@ const getMethodCalls = (unitTest: UnitTest): string => {
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
   const unitTests: UnitTest[] = []
 
-  const codePrepend: string = getValueFromEditor(container.find('[name="code-prepend"]'))
+  const codePrepend: string = getValueFromEditor(container.find('.js-code-prepend'))
 
   container.find('.test-container').each((index: number, el: HTMLElement) => {
     const $this: Cash = $(el)
