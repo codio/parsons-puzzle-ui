@@ -15,17 +15,6 @@
   resize: vertical;
   border: 1px solid #EAECF2;
 }
-.ParsonsUI .CodeMirror {
-  height: 80px;
-  resize: vertical;
-  border: 1px solid #EAECF2;
-}
-.ParsonsUI .CodeMirror-empty.CodeMirror-focused {
-  outline: none;
-}
-.ParsonsUI .CodeMirror pre.CodeMirror-placeholder {
-  color: #999;
-}
 .ParsonsUI textarea,
 .ParsonsUI input[type='text'],
 .ParsonsUI input[type='number'],
@@ -132,9 +121,6 @@
 .ParsonsUI .grader-hint {
   float: right;
   line-height: 32px;
-}
-.ParsonsUI .tests-container .CodeMirror {
-  height: 60px;
 }
 .ParsonsUI .variable-check-grader-container .tests-container,
 .ParsonsUI .unit-test-grader-container .tests-container {

@@ -118,6 +118,8 @@
     }
     .editor {
       flex: 1 0 auto;
+      overflow: hidden;
+      min-height: 300px;
       border: 1px solid #EAECF2;
     }
     .editorContainer {
@@ -384,9 +386,13 @@
 
   function initEditors() {
     waitForMonacoEditor(function () {
-      initialEditor = monaco.editor.create(document.getElementById('initialEditor'))
-      optionsEditor = monaco.editor.create(document.getElementById('optionsEditor'), {value: '{}'})
-      codeEditor = monaco.editor.create(document.getElementById('codeEditor'))
+      var options = {
+        fontSize: 12,
+        minimap: { enabled: false }
+      }
+      initialEditor = monaco.editor.create(document.getElementById('initialEditor'), options)
+      optionsEditor = monaco.editor.create(document.getElementById('optionsEditor'), {value: '{}', ...options})
+      codeEditor = monaco.editor.create(document.getElementById('codeEditor'), {...options, language: 'html'})
     })
   }
   function openModal(isImport) {
@@ -400,38 +406,38 @@
     document.getElementById('blockOverlay').className = 'hide';
   }
   function importToParsonsUI() {
-    initialEditor.setValue('', -1);
-    optionsEditor.setValue('{}', -1);
+    initialEditor.setValue('');
+    optionsEditor.setValue('{}');
     openModal(true);
-    initialEditor.refresh();
-    optionsEditor.refresh();
+    initialEditor.layout();
+    optionsEditor.layout();
   }
   function exportFromParsonsUI() {
     if (parsons) {
       var settings = parsons.export();
       var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
-      initialEditor.setValue(settings.initial, -1);
-      optionsEditor.setValue(options, -1);
+      initialEditor.setValue(settings.initial);
+      optionsEditor.setValue(options);
     }
-    codeEditor.setValue(getCode(), -1);
+    codeEditor.setValue(getCode());
     openModal(false);
-    codeEditor.refresh();
+    codeEditor.layout();
   }
   function switchToParameters() {
     var overlay = document.getElementById('parsonsSettingsOverlay');
     if (!overlay.classList.contains('parameters')) {
       overlay.className += ' parameters';
     }
-    initialEditor.refresh();
-    optionsEditor.refresh();
+    initialEditor.layout();
+    optionsEditor.layout();
   }
   function switchToCode() {
     var overlay = document.getElementById('parsonsSettingsOverlay');
     overlay.className = overlay.className.replace('parameters', '');
   }
   function updateCode() {
-    codeEditor.setValue(getCode(), -1);
-    codeEditor.refresh();
+    codeEditor.setValue(getCode());
+    codeEditor.layout();
   }
   function getCode() {
     var initial = initialEditor.getValue();

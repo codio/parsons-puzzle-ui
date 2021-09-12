@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><title>Parsons Puzzle UI</title><link href="parsons/parsons.css" rel="stylesheet"/><link href="parsons/lib/prettify.css" rel="stylesheet"/><script src="parsonsUI.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.css" rel="stylesheet"/><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.js" charset="utf-8"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/addon/display/placeholder.min.js" charset="utf-8"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs/editor/editor.main.min.css" integrity="sha512-896EGrrwYjjw7rSmY1wybIey2vw8chm+mLcJx5xOssMFegAhWBwenZVOyLmZ6/C/ssxoAp1E6Hw/GvioJKsUow==" crossorigin="anonymous" referrerpolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script><style>body {
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><title>Parsons Puzzle UI</title><link href="parsons/parsons.css" rel="stylesheet"/><link href="parsons/lib/prettify.css" rel="stylesheet"/><script src="parsonsUI.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs/editor/editor.main.min.css" integrity="sha512-896EGrrwYjjw7rSmY1wybIey2vw8chm+mLcJx5xOssMFegAhWBwenZVOyLmZ6/C/ssxoAp1E6Hw/GvioJKsUow==" crossorigin="anonymous" referrerpolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script><style>body {
       margin: 0;
       padding: 0;
       background-color: #F7F9FC;
@@ -100,6 +100,8 @@
     }
     .editor {
       flex: 1 0 auto;
+      overflow: hidden;
+      min-height: 300px;
       border: 1px solid #EAECF2;
     }
     .editorContainer {
@@ -126,17 +128,8 @@
 
     .parsonsSettingsOverlay:not(.export) .codeContainer,
     .parsonsSettingsOverlay.export:not(.parameters) .initialContainer,
-    .parsonsSettingsOverlay.export:not(.parameters) .optionsContainer{
+    .parsonsSettingsOverlay.export:not(.parameters) .optionsContainer {
       display: none;
-    }
-    .CodeMirror {
-      border: 1px solid #EAECF2;
-    }
-    .CodeMirror-empty.CodeMirror-focused {
-      outline: none;
-    }
-    .CodeMirror pre.CodeMirror-placeholder {
-      color: #999;
     }
     .initialContainer {
       padding-right: 20px;
@@ -195,7 +188,7 @@
     }
     .floatRight {
       float: right;
-    }</style><script defer="defer" src="parsonsUI.js"></script><link href="main.9c6f08dc297dbe0e0d3f.css" rel="stylesheet"></head><body><script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs/loader.js"></script><script src="parsons/lib/jquery.min.js"></script><script src="parsons/lib/jquery-ui.min.js"></script><script src="parsons/lib/jquery.ui.touch-punch.min.js"></script><script src="parsons/lib/skulpt.js"></script><script src="parsons/lib/skulpt-stdlib.js"></script><script src="parsons/lib/underscore-min.js"></script><script src="parsons/lib/lis.js"></script><script src="parsons/lib/jquery.sound.js"></script><script src="parsons/lib/prettify.js"></script><script src="parsons/parsons.js"></script><div id="blockOverlay" class="hide" onclick="stopEvent()"></div><div id="parsonsSettingsOverlay" class="parsonsSettingsOverlay"><h2 id="overlayTitle"></h2><div class="parsonsSettingsContainer"><div class="editorContainer initialContainer"><label for="initialEditor">Parsons puzzle initial code</label> <textarea id="initialEditor" class="editor"></textarea></div><div class="editorContainer optionsContainer"><label for="optionsEditor">Parsons puzzle options</label> <textarea id="optionsEditor" class="editor">{}</textarea></div><div class="editorContainer codeContainer"><label for="prefix">Prefix (add unique prefix to host multiple Parson's problems on the same markdown page)</label><div class="prefixContainer"><input id="prefix" class="prefixInput"/> <a class="btn" onclick="updateCode()">Update Prefix</a></div><label for="codeEditor">HTML Code</label> <textarea id="codeEditor" class="editor"></textarea></div></div><div class="actions"><a class="btn copyCode" onclick="copyCodeToClipboard()">Copy code</a> <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a> <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a> <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a> <a class="btn" onclick="closeModal()">Close</a></div></div><div class="header"><div class="leftHeaderButtons"><a class="btn" onclick="importToParsonsUI()">Import</a> <a class="btn" onclick="exportFromParsonsUI()">Export</a></div><div class="rightHeaderButtons"><a class="btn" href="https://codio.github.io/parsons-puzzle-ui/" target="_blank">How to Use Creator</a> <a class="btn" href="https://github.com/codio/parsons-puzzle-ui" target="_blank">View Source Code</a> <a class="btn" href="https://github.com/codio-content/hosting-parsons-on-github-template" target="_blank">Hosting Template</a></div></div><div class="mainContainer"><div class="parsonsContainer"><div><h4 class="parsonUIContainerTitle">Parsons UI</h4><a class="btn btn--primary tryBtn" onclick="previewParsonsPuzzle()">Generate</a></div><div id="uiContainer"></div></div><div class="parsonsPuzzleContainer"><h4 class="containerTitle">Parsons Puzzle Widget</h4><div id="parsonsPuzzleWidgetContainer" class="parsonsPuzzleWidgetContainer is-hide"><div id="sortableTrash" class="sortable-code"><p>Trash</p></div><div id="sortable" class="sortable-code"><p>Solution</p></div><div id="turtleContainer" class="turtleContainer hide"><div class="model turtle"><h3>Model Drawing</h3><canvas id="modelCanvas" width="400" height="200"></canvas></div><div class="student turtle"><h3>Your Drawing</h3><canvas id="studentCanvas" width="400" height="200"></canvas></div></div><div><a class="btn btn--primary" onclick="getFeedback()">Check Solution</a> <a class="btn" onclick="previewParsonsPuzzle()">Reset puzzle</a><fieldset class="feedbackFieldset"><legend>Feedback:</legend><div id="feedback"/></fieldset></div></div></div></div><script>// monaco editor cross-domain configuration
+    }</style><script defer="defer" src="parsonsUI.js"></script><link href="main.b7d0be8c61440c2a8839.css" rel="stylesheet"></head><body><script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs/loader.js"></script><script src="parsons/lib/jquery.min.js"></script><script src="parsons/lib/jquery-ui.min.js"></script><script src="parsons/lib/jquery.ui.touch-punch.min.js"></script><script src="parsons/lib/skulpt.js"></script><script src="parsons/lib/skulpt-stdlib.js"></script><script src="parsons/lib/underscore-min.js"></script><script src="parsons/lib/lis.js"></script><script src="parsons/lib/jquery.sound.js"></script><script src="parsons/lib/prettify.js"></script><script src="parsons/parsons.js"></script><div id="blockOverlay" class="hide" onclick="stopEvent()"></div><div id="parsonsSettingsOverlay" class="parsonsSettingsOverlay"><h2 id="overlayTitle"></h2><div class="parsonsSettingsContainer"><div class="editorContainer initialContainer"><label for="initialEditor">Parsons puzzle initial code</label><div id="initialEditor" class="editor"></div></div><div class="editorContainer optionsContainer"><label for="optionsEditor">Parsons puzzle options</label><div id="optionsEditor" class="editor"></div></div><div class="editorContainer codeContainer"><label for="prefix">Prefix (add unique prefix to host multiple Parson's problems on the same markdown page)</label><div class="prefixContainer"><input id="prefix" class="prefixInput"/> <a class="btn" onclick="updateCode()">Update Prefix</a></div><label for="codeEditor">HTML Code</label><div id="codeEditor" class="editor"></div></div></div><div class="actions"><a class="btn copyCode" onclick="copyCodeToClipboard()">Copy code</a> <a class="btn btn--primary applyOptions" onclick="applyEditorsDataToParsonsUI()">Apply</a> <a class="btn btn--primary toCode" onclick="switchToCode()">Switch to code</a> <a class="btn btn--primary toParameters" onclick="switchToParameters()">Switch to parameters</a> <a class="btn" onclick="closeModal()">Close</a></div></div><div class="header"><div class="leftHeaderButtons"><a class="btn" onclick="importToParsonsUI()">Import</a> <a class="btn" onclick="exportFromParsonsUI()">Export</a></div><div class="rightHeaderButtons"><a class="btn" href="https://codio.github.io/parsons-puzzle-ui/" target="_blank">How to Use Creator</a> <a class="btn" href="https://github.com/codio/parsons-puzzle-ui" target="_blank">View Source Code</a> <a class="btn" href="https://github.com/codio-content/hosting-parsons-on-github-template" target="_blank">Hosting Template</a></div></div><div class="mainContainer"><div class="parsonsContainer"><div><h4 class="parsonUIContainerTitle">Parsons UI</h4><a class="btn btn--primary tryBtn" onclick="previewParsonsPuzzle()">Generate</a></div><div id="uiContainer"></div></div><div class="parsonsPuzzleContainer"><h4 class="containerTitle">Parsons Puzzle Widget</h4><div id="parsonsPuzzleWidgetContainer" class="parsonsPuzzleWidgetContainer is-hide"><div id="sortableTrash" class="sortable-code"><p>Trash</p></div><div id="sortable" class="sortable-code"><p>Solution</p></div><div id="turtleContainer" class="turtleContainer hide"><div class="model turtle"><h3>Model Drawing</h3><canvas id="modelCanvas" width="400" height="200"></canvas></div><div class="student turtle"><h3>Your Drawing</h3><canvas id="studentCanvas" width="400" height="200"></canvas></div></div><div><a class="btn btn--primary" onclick="getFeedback()">Check Solution</a> <a class="btn" onclick="previewParsonsPuzzle()">Reset puzzle</a><fieldset class="feedbackFieldset"><legend>Feedback:</legend><div id="feedback"/></fieldset></div></div></div></div><script>// monaco editor cross-domain configuration
   require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs' }});
   window.MonacoEnvironment = {
     getWorkerUrl: function(workerId, label) {
@@ -279,15 +272,15 @@
   initEditors();
 
   function initEditors() {
-    initialEditor = CodeMirror.fromTextArea(document.getElementById('initialEditor'), {
-      lineNumbers: true
-    });
-    optionsEditor = CodeMirror.fromTextArea(document.getElementById('optionsEditor'), {
-      lineNumbers: true
-    });
-    codeEditor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
-      lineNumbers: true
-    });
+    waitForMonacoEditor(function () {
+      var options = {
+        fontSize: 12,
+        minimap: { enabled: false }
+      }
+      initialEditor = monaco.editor.create(document.getElementById('initialEditor'), options)
+      optionsEditor = monaco.editor.create(document.getElementById('optionsEditor'), {value: '{}', ...options})
+      codeEditor = monaco.editor.create(document.getElementById('codeEditor'), {...options, language: 'html'})
+    })
   }
   function openModal(isImport) {
     document.getElementById('overlayTitle').innerHTML = isImport ? 'Import' : 'Export';
@@ -300,38 +293,38 @@
     document.getElementById('blockOverlay').className = 'hide';
   }
   function importToParsonsUI() {
-    initialEditor.setValue('', -1);
-    optionsEditor.setValue('{}', -1);
+    initialEditor.setValue('');
+    optionsEditor.setValue('{}');
     openModal(true);
-    initialEditor.refresh();
-    optionsEditor.refresh();
+    initialEditor.layout();
+    optionsEditor.layout();
   }
   function exportFromParsonsUI() {
     if (parsons) {
       var settings = parsons.export();
       var options = removeGraderQuotes(JSON.stringify(settings.options, null, 4));
-      initialEditor.setValue(settings.initial, -1);
-      optionsEditor.setValue(options, -1);
+      initialEditor.setValue(settings.initial);
+      optionsEditor.setValue(options);
     }
-    codeEditor.setValue(getCode(), -1);
+    codeEditor.setValue(getCode());
     openModal(false);
-    codeEditor.refresh();
+    codeEditor.layout();
   }
   function switchToParameters() {
     var overlay = document.getElementById('parsonsSettingsOverlay');
     if (!overlay.classList.contains('parameters')) {
       overlay.className += ' parameters';
     }
-    initialEditor.refresh();
-    optionsEditor.refresh();
+    initialEditor.layout();
+    optionsEditor.layout();
   }
   function switchToCode() {
     var overlay = document.getElementById('parsonsSettingsOverlay');
     overlay.className = overlay.className.replace('parameters', '');
   }
   function updateCode() {
-    codeEditor.setValue(getCode(), -1);
-    codeEditor.refresh();
+    codeEditor.setValue(getCode());
+    codeEditor.layout();
   }
   function getCode() {
     var initial = initialEditor.getValue();
