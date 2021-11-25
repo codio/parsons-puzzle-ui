@@ -108,6 +108,15 @@ const renderGraderSelect = (grader?: (() => void) | string | undefined): Cash =>
   return graderContainer
 }
 
+const renderShowFeedback = (showFeedback?: boolean): Cash => {
+  const showFeedbackContainer: Cash = $('<div class="show-feedback-container fieldset"></div>')
+
+  showFeedbackContainer.append('<label for="show-feedback">Show feedback</label>')
+  showFeedbackContainer.append(`<input id="show-feedback" type="checkbox" ${showFeedback === false ? '' : 'checked'} />`)
+
+  return showFeedbackContainer
+}
+
 const renderRequireDragging = (requireDragging: boolean): Cash => {
   const draggingContainer: Cash = $('<div class="dragging-container fieldset"></div>')
 
@@ -158,6 +167,7 @@ const renderCommonSettings = (hasDistractors: boolean, options: ParsonsOptions):
   commonSettingsContainer.append(renderGraderSelect(options.grader))
 
   const requireDragging: boolean = hasDistractors || !!options.trashId
+  commonSettingsContainer.append(renderShowFeedback(options.show_feedback))
   commonSettingsContainer.append(renderRequireDragging(requireDragging))
   commonSettingsContainer.append(renderIndenting(options.can_indent))
   commonSettingsContainer.append(renderIndentSize(options.can_indent, options.x_indent))

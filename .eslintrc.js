@@ -30,7 +30,8 @@ module.exports = {
         "feedback_cb",
         "x_indent",
         "exec_limit",
-        "unittest_code_prepend"
+        "unittest_code_prepend",
+        "show_feedback"
       ]
     }],
     "comma-dangle": [2, "only-multiline"],

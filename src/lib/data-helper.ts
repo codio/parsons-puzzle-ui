@@ -17,6 +17,7 @@ interface CommonSettings {
   indenting: boolean;
   indentSize: number;
   execLimit: number;
+  showFeedback: boolean;
 }
 
 interface VariableCheckGraderOptions {
@@ -71,7 +72,8 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
     requireDragging: container.find('#require-dragging').is(':checked'),
     indenting: !container.find('#disable-indent').is(':checked'),
     indentSize: !Number.isNaN(indentSize) ? indentSize : 50,
-    execLimit: !Number.isNaN(execLimit) ? execLimit : 2500
+    execLimit: !Number.isNaN(execLimit) ? execLimit : 2500,
+    showFeedback: container.find('#show-feedback').is(':checked')
   }
 }
 
@@ -202,7 +204,8 @@ export const collectData = (container: Cash, initialOptions: ParsonsOptions): Pa
     x_indent: common.indentSize,
     lang: initialOptions.lang || 'en',
     toggleTypeHandlers: initialOptions.toggleTypeHandlers,
-    feedback_cb: initialOptions.feedback_cb
+    feedback_cb: initialOptions.feedback_cb,
+    show_feedback: common.showFeedback
   }
 
   if (common.requireDragging) {

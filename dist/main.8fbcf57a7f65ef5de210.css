@@ -75,6 +75,7 @@
 .ParsonsUI .common-settings-container .fieldset:last-child {
   padding-right: 0;
 }
+.ParsonsUI .show-feedback-container,
 .ParsonsUI .dragging-container,
 .ParsonsUI .indenting-container {
   align-items: center;
