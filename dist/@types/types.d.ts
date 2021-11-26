@@ -40,6 +40,7 @@ export interface ParsonsOptions {
     x_indent?: number;
     exec_limit?: number;
     unittest_code_prepend?: string;
+    show_feedback?: boolean;
 }
 export interface ParsonsSettings {
     initial: string;
