@@ -4,7 +4,9 @@ import * as render from './render'
 import {
   collectData, collectUnitTest, collectVariableTest,
 } from './data-helper'
-import { setValueToEditor, getValueFromEditor, bindChangeEventToEditor } from './editor'
+import {
+  setValueToEditor, getValueFromEditor, bindChangeEventToEditor, destroyEditor,
+} from './editor'
 
 class ParsonsUI {
   private readonly container: Cash
@@ -56,6 +58,10 @@ class ParsonsUI {
     })
     this.container.on('click', '.action.remove', (event: Event) => {
       event.preventDefault()
+      const testContainer: Cash = $(event.currentTarget as HTMLElement).closest('.test-container')
+      testContainer.find('.code-editor-container').each((index, el) => {
+        destroyEditor($(el))
+      })
       $(event.currentTarget as HTMLElement).closest('.test-container').remove()
     })
     this.container.on('change', '#disable-indent', (event: Event) => {

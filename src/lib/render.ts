@@ -53,8 +53,11 @@ const renderInitialCodeBlock = (codeBlocks: string): Cash => {
   editorControlsContainer.append('<label for="initial">Code to Become Blocks</label>')
   const editorContainer: Cash = $('<div class="code-blocks-editor code-editor-container" id="initial" />')
 
-  // todo placeholder - Type solution with expected indentation here
-  const editorId = createEditor(editorContainer, { value: codeBlocks })
+  const editorId = createEditor(
+    editorContainer,
+    { value: codeBlocks },
+    'Type solution with expected indentation here',
+  )
   editorContainer.data('editor-id', editorId)
 
   editorControlsContainer.append(editorContainer)
@@ -75,8 +78,11 @@ const renderDistractorBlocks = (distractors: string, maxWrongLines?: number): Ca
 
   distractorBlockControlsContainer.append('<label for="distractors">Code to Become Distractor Blocks</label>')
   const editorContainer: Cash = $('<div class="distractor-blocks-editor code-editor-container" id="distractors" />')
-  // todo placeholder - Code blocks that serve as distractions (incorrect options)
-  const editorId = createEditor(editorContainer, { value: distractors })
+  const editorId = createEditor(
+    editorContainer,
+    { value: distractors },
+    'Code blocks that serve as distractions (incorrect options)',
+  )
   editorContainer.data('editor-id', editorId)
 
   distractorBlockControlsContainer.append(editorContainer)
@@ -186,10 +192,9 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   variablesControlsContainer.append('<label>Expected variable values*</label>')
 
   const varEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-variables"/>')
-  // todo placeholder - '"var_Name_1": value\n"var_Name_2": value'
-  const varEditorId = createEditor(varEditorContainer, {
-    value: test ? convertTestVariablesToString(test.variables) : '',
-  })
+  const varEditorId = createEditor(varEditorContainer,
+    { value: test ? convertTestVariablesToString(test.variables) : '' },
+    '"var_Name_1": value\n"var_Name_2": value')
   varEditorContainer.data('editor-id', varEditorId)
 
   variablesControlsContainer.append(varEditorContainer)
@@ -199,8 +204,11 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   descriptionControlsContainer.append('<label>Test Description*</label>')
 
   const descEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-description"/>')
-  // todo placeholder - Description of test that is shown to learner
-  const descEditorId = createEditor(descEditorContainer, { value: test ? test.message : '' })
+  const descEditorId = createEditor(
+    descEditorContainer,
+    { value: test ? test.message : '' },
+    'Description of test that is shown to learner',
+  )
   descEditorContainer.data('editor-id', descEditorId)
 
   descriptionControlsContainer.append(descEditorContainer)
@@ -212,8 +220,11 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   preCodeControlsContainer.append('<label>Pre Code</label>')
 
   const preEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-pre-code"/>')
-  // todo placeholder - Code prepended before student code
-  const preEditorId = createEditor(preEditorContainer, { value: test && test.initcode ? test.initcode : '' })
+  const preEditorId = createEditor(
+    preEditorContainer,
+    { value: test && test.initcode ? test.initcode : '' },
+    'Code prepended before student code',
+  )
   preEditorContainer.data('editor-id', preEditorId)
 
   preCodeControlsContainer.append(preEditorContainer)
@@ -223,8 +234,11 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   postCodeControlsContainer.append('<label>Post Code</label>')
 
   const postEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-post-code"/>')
-  // todo placeholder - Code appended after student code
-  const postEditorId = createEditor(postEditorContainer, { value: test && test.code ? test.code : '' })
+  const postEditorId = createEditor(
+    postEditorContainer,
+    { value: test && test.code ? test.code : '' },
+    'Code appended after student code',
+  )
   postEditorContainer.data('editor-id', postEditorId)
 
   postCodeControlsContainer.append(postEditorContainer)
@@ -274,8 +288,11 @@ const renderUnitTestCodePrepend = (code?: string): Cash => {
   codePrependControlsContainer.append('<label for="code-prepend">Code prepended before student code</label>')
 
   const editorContainer: Cash = $('<div class="additional-code-editor code-editor-container" id="code-prepend" />')
-  // todo placeholder - Code prepended before student code
-  const editorId = createEditor(editorContainer, { value: code || '' })
+  const editorId = createEditor(
+    editorContainer,
+    { value: code || '' },
+    'Code prepended before student code',
+  )
   editorContainer.data('editor-id', editorId)
 
   codePrependControlsContainer.append(editorContainer)
@@ -302,8 +319,11 @@ export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
   const methodCall = test ? test.assertEquals.methodCall : ''
 
   const methodCallEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-method-call"/>')
-  // todo placeholder - Write method call with arguments
-  const methodCallEditorId = createEditor(methodCallEditorContainer, { value: methodCall })
+  const methodCallEditorId = createEditor(
+    methodCallEditorContainer,
+    { value: methodCall },
+    'Write method call with arguments',
+  )
   methodCallEditorContainer.data('editor-id', methodCallEditorId)
 
   methodsContainer.append(methodCallEditorContainer)
@@ -314,8 +334,11 @@ export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
   const errorMessage = test && test.assertEquals.errorMessage ? test.assertEquals.errorMessage : ''
 
   const messageEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-error-message"/>')
-  // todo placeholder - What student sees if this test fails
-  const messageCallEditorId = createEditor(messageEditorContainer, { value: errorMessage })
+  const messageCallEditorId = createEditor(
+    messageEditorContainer,
+    { value: errorMessage },
+    'What student sees if this test fails',
+  )
   messageEditorContainer.data('editor-id', messageCallEditorId)
 
   messageContainer.append(messageEditorContainer)
@@ -328,8 +351,11 @@ export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
   const expectedOutput = test ? test.assertEquals.expectedOutput : ''
 
   const expectedEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-expected-output"/>')
-  // todo placeholder - Expected output of method call
-  const expectedEditorId = createEditor(expectedEditorContainer, { value: expectedOutput })
+  const expectedEditorId = createEditor(
+    expectedEditorContainer,
+    { value: expectedOutput },
+    'Expected output of method call',
+  )
   expectedEditorContainer.data('editor-id', expectedEditorId)
 
   expectedOutputContainer.append(expectedEditorContainer)
@@ -393,10 +419,13 @@ const renderExecutableCode = (grader: ParsonsGrader, code?: string): Cash => {
   executableCodeControlsContainer.append(`<label for="executable-code">Executable code ${labelSuffix}</label>`)
 
   const editorContainer: Cash = $('<div class="additional-code-editor code-editor-container" id="executable-code" />')
-  // const placeholderSuffix = grader === ParsonsGrader.Turtle ? '\nimport turtle\n'
-  //   + 'myTurtle = turtle.Turtle() -- are done for you' : ''
-  // todo placeholder - `Executable Python code to map to solution blocks${placeholderSuffix}`
-  const editorId = createEditor(editorContainer, { value: code || '' })
+  const placeholderSuffix = grader === ParsonsGrader.Turtle ? '\nimport turtle\n'
+    + 'myTurtle = turtle.Turtle() -- are done for you' : ''
+  const editorId = createEditor(
+    editorContainer,
+    { value: code || '' },
+    `Executable Python code to map to solution blocks${placeholderSuffix}`,
+  )
   editorContainer.data('editor-id', editorId)
 
   executableCodeControlsContainer.append(editorContainer)
@@ -416,8 +445,11 @@ const renderTurtleModelCode = (code?: string): Cash => {
   )
 
   const editorContainer: Cash = $('<div class="additional-code-editor code-editor-container" id="turtle-model-code" />')
-  // todo placeholder - 'import turtle\nmodelTurtle = turtle.Turtle() -- are done for you'
-  const editorId = createEditor(editorContainer, { value: code || '' })
+  const editorId = createEditor(
+    editorContainer,
+    { value: code || '' },
+    'import turtle\nmodelTurtle = turtle.Turtle() -- are done for you',
+  )
   editorContainer.data('editor-id', editorId)
 
   turtleModelCodeControlsContainer.append(editorContainer)

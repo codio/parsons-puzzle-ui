@@ -7,6 +7,7 @@ declare global {
 }
 export declare const setValueToEditor: (el: Cash, value: string) => void;
 export declare const getValueFromEditor: (el: Cash) => string;
-export declare const createEditor: (container: Cash, options: monaco.editor.IStandaloneEditorConstructionOptions) => string | null;
+export declare const createEditor: (container: Cash, options: monaco.editor.IStandaloneEditorConstructionOptions, placeholder?: string | undefined) => string | null;
+export declare const destroyEditor: (el: Cash) => void;
 export declare const bindChangeEventToEditor: (el: Cash, callback: () => void) => void;
 //# sourceMappingURL=editor.d.ts.map
