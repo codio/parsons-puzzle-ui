@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const {merge} = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const common = require('./webpack.common');
@@ -8,7 +8,7 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
-    hot: true
+    injectClient: false
   },
   module: {
     rules: [
@@ -17,9 +17,6 @@ module.exports = merge(common, {
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: true
-            },
           },
           'css-loader',
           'postcss-loader',

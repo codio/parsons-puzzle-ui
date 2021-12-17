@@ -55,5 +55,11 @@ module.exports = {
     "prefer-template": 2,
 
     "import/first": 0,
+    "class-methods-use-this": 0,
+    "@typescript-eslint/no-unused-expressions": [
+      "error", {
+        "allowShortCircuit": true
+      }
+    ]
   }
 };
