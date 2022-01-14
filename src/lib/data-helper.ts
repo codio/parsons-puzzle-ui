@@ -62,7 +62,7 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
 
   const codeArr: string[] = codeBlocks.split('\n')
   const disrtactorsArr: string[] = distractors.split('\n')
-    .map((line: string) => (line ? `${line} #distractor` : ''))
+    .map((line: string) => (line ? `${line}#distractor` : ''))
   const initialWithDistractors: string = codeArr.concat(disrtactorsArr)
     .filter((line: string) => !!line)
     .join('\n')
