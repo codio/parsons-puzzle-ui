@@ -48,6 +48,13 @@ const escapeHtml = (unsafe: string): string => unsafe
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#039;')
 
+export const unescapeHTML = (str: string): string => str
+  .replace(/&lt;/g, '<')
+  .replace(/&gt;/g, '>')
+  .replace(/&amp;/g, '&')
+  .replace(/&quot;/g, '"')
+  .replace(/&#039;/g, "'")
+
 const collectCommonSettings = (container: Cash): CommonSettings => {
   const codeBlocks: string = getValueFromEditor(container.find('#initial'))
   const distractors: string = getValueFromEditor(container.find('#distractors'))
