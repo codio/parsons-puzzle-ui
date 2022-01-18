@@ -6,6 +6,7 @@ import { convertParsonsGraderFuncToEnum, convertTestVariablesToString, convertUn
 import {
   ParsonsGrader, ParsonsOptions, ParsonsSettings, VariableTest, UnitTest,
 } from '../@types/types'
+import { unescapeHTML } from './data-helper'
 import { createEditor } from './editor'
 
 interface CodeBlocks {
@@ -55,7 +56,7 @@ const renderInitialCodeBlock = (codeBlocks: string): Cash => {
 
   const editorId = createEditor(
     editorContainer,
-    { value: codeBlocks },
+    { value: unescapeHTML(codeBlocks) },
     'Type solution with expected indentation here',
   )
   editorContainer.data('editor-id', editorId)
@@ -80,7 +81,7 @@ const renderDistractorBlocks = (distractors: string, maxWrongLines?: number): Ca
   const editorContainer: Cash = $('<div class="distractor-blocks-editor code-editor-container" id="distractors" />')
   const editorId = createEditor(
     editorContainer,
-    { value: distractors },
+    { value: unescapeHTML(distractors) },
     'Code blocks that serve as distractions (incorrect options)',
   )
   editorContainer.data('editor-id', editorId)
