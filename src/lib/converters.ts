@@ -26,6 +26,7 @@ export const convertParsonsGraderFuncToEnum = (grader?: (() => void) | string | 
 export const convertTestVariablesToString = (variables: Record<string, string | number>): string => {
   const lines: string[] = []
   Object.entries(variables).forEach(([key, value]) => {
+    value = (typeof(value) == 'number') ? value : `"${value}"`
     lines.push(`"${key}": ${value}`)
   })
   return lines.join('\n')
