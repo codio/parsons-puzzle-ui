@@ -28,7 +28,7 @@ export const tryToCreateEditorFromTextarea = (ta: Cash): void => {
     const editor = CodeMirror.fromTextArea(ta.get(0) as HTMLTextAreaElement, { lineNumbers: true })
     setTimeout(() => { editor.refresh() }, 0)
     // eslint-disable-next-line no-empty
-  } catch (e) {}
+  } catch {}
 }
 
 export const bindEventToEditor = (el: Cash, event: string, callback: () => void): void => {

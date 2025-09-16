@@ -41,7 +41,7 @@ export interface ParsonsOptions {
   unittests?: string;
   toggleTypeHandlers? : ToggleTypeHandler[];
   turtleModelCode?: string;
-  feedback_cb?: boolean | (() => void); // eslint-disable-line  @typescript-eslint/camelcase
+  feedback_cb?: boolean | (() => void);
   lang?: string;
   x_indent?: number;
   exec_limit?: number;

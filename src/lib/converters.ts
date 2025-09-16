@@ -53,21 +53,24 @@ const parseUnitTestArguments = (str: string): AssertEqualParams => {
   }
 }
 
-const parseUnitTests = (unitTestsStr: string | undefined): RegExpMatchArray => {
-  if (!unitTestsStr) return []
+const parseUnitTests = (unitTestsStr: string | undefined): RegExpMatchArray | null => {
+  if (!unitTestsStr) return null
   const pattern = /(def\s*(.*?)\(.*?\):\n)^(\s*self\.assertEqual\(.*?\))*\s*$/gm
   const testMatches: RegExpMatchArray | null = unitTestsStr.match(pattern)
-  if (!testMatches) return []
+  if (!testMatches) return null
   return testMatches
 }
 
 export const convertUnitTestsFromString = (unitTestsStr: string | undefined): UnitTest[] => {
   const unitTests = parseUnitTests(unitTestsStr)
+  if (!unitTests) {
+    return []
+  }
   const unitTestsArr: UnitTest[] = []
   unitTests.forEach((test) => {
     const pattern = /\s*def\s*(.*?)\(.*?\):\n^(\s*self\.assertEqual\(.*?\))*\s*$/m
-    const checks: RegExpMatchArray | null = pattern.exec(test) || []
-    if (checks.length) {
+    const checks: RegExpMatchArray | null = pattern.exec(test)
+    if (checks?.length) {
       const firstAssertEqualIndex = checks[0].indexOf('self.assertEqual')
       unitTestsArr.push({
         name: checks[1],

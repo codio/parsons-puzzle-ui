@@ -93,7 +93,6 @@ class ParsonsUI {
       const maxDistractors: number = parseInt(this.container.find('#max-distractors').val() as string, 10)
       const maxDistractorsVal: number = !Number.isNaN(maxDistractors) ? maxDistractors : 10
       if (hasDistractors && !isDraggingChecked && maxDistractorsVal > 0) {
-        // eslint-disable-next-line no-alert
         alert('Dragging is needed to make this solvable')
       }
     })
