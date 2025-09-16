@@ -2,9 +2,11 @@ import $, { Cash } from 'cash-dom'
 import { ParsonsSettings, ParsonsGrader } from '../@types/types'
 import * as render from './render'
 import {
-  collectData, collectUnitTest, collectVariableTest
+  collectData, collectUnitTest, collectVariableTest,
 } from './data-helper'
-import { setValueToEditor, getValueFromEditor, bindEventToEditor } from './editor'
+import {
+  setValueToEditor, getValueFromEditor, bindChangeEventToEditor, destroyEditor,
+} from './editor'
 
 class ParsonsUI {
   private readonly container: Cash
@@ -56,6 +58,10 @@ class ParsonsUI {
     })
     this.container.on('click', '.action.remove', (event: Event) => {
       event.preventDefault()
+      const testContainer: Cash = $(event.currentTarget as HTMLElement).closest('.test-container')
+      testContainer.find('.code-editor-container').each((index, el) => {
+        destroyEditor($(el))
+      })
       $(event.currentTarget as HTMLElement).closest('.test-container').remove()
     })
     this.container.on('change', '#disable-indent', (event: Event) => {
@@ -83,7 +89,7 @@ class ParsonsUI {
       this.updateRequireDragging()
     })
     const distractorsTa: Cash = this.container.find('#distractors')
-    bindEventToEditor(distractorsTa, 'change', () => {
+    bindChangeEventToEditor(distractorsTa, () => {
       this.updateRequireDragging()
     })
     this.container.on('click', '#require-dragging', (event: Event) => {

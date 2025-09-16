@@ -5,7 +5,7 @@ import {
   ParsonsOptions,
   ParsonsSettings,
   VariableTest,
-  UnitTest
+  UnitTest,
 } from '../@types/types'
 import { getValueFromEditor } from './editor'
 
@@ -48,6 +48,13 @@ const escapeHtml = (unsafe: string): string => unsafe
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#039;')
 
+export const unescapeHTML = (str: string): string => str
+  .replace(/&lt;/g, '<')
+  .replace(/&gt;/g, '>')
+  .replace(/&amp;/g, '&')
+  .replace(/&quot;/g, '"')
+  .replace(/&#039;/g, "'")
+
 const collectCommonSettings = (container: Cash): CommonSettings => {
   const codeBlocks: string = getValueFromEditor(container.find('#initial'))
   const distractors: string = getValueFromEditor(container.find('#distractors'))
@@ -55,7 +62,7 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
 
   const codeArr: string[] = codeBlocks.split('\n')
   const disrtactorsArr: string[] = distractors.split('\n')
-    .map((line: string) => (line ? `${line} #distractor` : ''))
+    .map((line: string) => (line ? `${line}#distractor` : ''))
   const initialWithDistractors: string = codeArr.concat(disrtactorsArr)
     .filter((line: string) => !!line)
     .join('\n')
@@ -80,10 +87,10 @@ const collectCommonSettings = (container: Cash): CommonSettings => {
 export const collectVariableTest = (container: Cash): VariableTest => {
   const $this: Cash = $(container)
   const variables: Dictionary<number | string> = {}
-  const variablesStr: string = getValueFromEditor($this.find('[name="variables"]'))
-  const description: string = getValueFromEditor($this.find('[name="description"]'))
-  const preCode: string = getValueFromEditor($this.find('[name="pre-code"]'))
-  const postCode: string = getValueFromEditor($this.find('[name="post-code"]'))
+  const variablesStr: string = getValueFromEditor($this.find('.js-variables'))
+  const description: string = getValueFromEditor($this.find('.js-description'))
+  const preCode: string = getValueFromEditor($this.find('.js-pre-code'))
+  const postCode: string = getValueFromEditor($this.find('.js-post-code'))
 
   variablesStr.split('\n').forEach((line: string) => {
     const params: RegExpExecArray | null = /^\s*"(.*)":\s*(.*)\s*$/.exec(line)
@@ -99,7 +106,7 @@ export const collectVariableTest = (container: Cash): VariableTest => {
     message: description,
     initcode: preCode,
     code: postCode,
-    variables
+    variables,
   }
 }
 
@@ -115,18 +122,18 @@ const collectVariableTests = (container: Cash): VariableTest[] => {
 
 const collectVariableCheckGraderOptions = (container: Cash): VariableCheckGraderOptions => {
   return {
-    vartests: collectVariableTests(container)
+    vartests: collectVariableTests(container),
   }
 }
 
 export const collectUnitTest = (container: Cash): UnitTest => {
-  const methodCall: string = getValueFromEditor(container.find('[name="method-call"]'))
-  const errorMessage: string = getValueFromEditor(container.find('[name="error-message"]'))
-  const expectedOutput: string = getValueFromEditor(container.find('[name="expected-output"]'))
+  const methodCall: string = getValueFromEditor(container.find('.js-method-call'))
+  const errorMessage: string = getValueFromEditor(container.find('.js-error-message'))
+  const expectedOutput: string = getValueFromEditor(container.find('.js-expected-output'))
 
   return {
-    name: container.data('test-name'),
-    assertEquals: { methodCall, errorMessage, expectedOutput }
+    name: container.data('test-name') as string,
+    assertEquals: { methodCall, errorMessage, expectedOutput },
   }
 }
 
@@ -137,7 +144,7 @@ const getMethodCalls = (unitTest: UnitTest): string => {
   const errorMessage = test.errorMessage && test.errorMessage.length !== 0
     ? test.errorMessage.trim().split('\n') : ''
   const methods = callMethods.map((method: string, i: number) => {
-    const obj: {[k: string]: string} = {}
+    const obj: { [k: string]: string } = {}
     obj.methodCall = callMethods[i]
     obj.expectedOutput = expectedOutputValues[i]
     obj.errorMessage = errorMessage[i] || ''
@@ -150,7 +157,7 @@ const getMethodCalls = (unitTest: UnitTest): string => {
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
   const unitTests: UnitTest[] = []
 
-  const codePrepend: string = getValueFromEditor(container.find('[name="code-prepend"]'))
+  const codePrepend: string = getValueFromEditor(container.find('.js-code-prepend'))
 
   container.find('.test-container').each((index: number, el: HTMLElement) => {
     const $this: Cash = $(el)
@@ -162,14 +169,14 @@ const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions =>
     'class myTests(unittestparson.unittest):',
     ...unitTests.map((test: UnitTest, index: number): string => [
       `  def ${test.name || `test_${index}`}(self):`,
-      `${getMethodCalls(test)}`
+      `${getMethodCalls(test)}`,
     ].join('\n')),
-    '_test_result = myTests().main()'
+    '_test_result = myTests().main()',
   ]
 
   return {
     unittestCodePrepend: codePrepend,
-    unitTests: unitTestsArr.join('\n')
+    unitTests: unitTestsArr.join('\n'),
   }
 }
 
@@ -177,7 +184,7 @@ const collectLanguageTranslationGraderOptions = (container: Cash): LanguageTrans
   return {
     programmingLang: container.find('#programming-lang').val() as string,
     executableCode: getValueFromEditor(container.find('#executable-code')),
-    vartests: collectVariableTests(container)
+    vartests: collectVariableTests(container),
   }
 }
 
@@ -185,7 +192,7 @@ const collectTurtleGraderOptions = (container: Cash): TurtleGraderOptions => {
   return {
     programmingLang: container.find('#programming-lang').val() as string,
     executableCode: getValueFromEditor(container.find('#executable-code')),
-    turtleModelCode: getValueFromEditor(container.find('#turtle-model-code'))
+    turtleModelCode: getValueFromEditor(container.find('#turtle-model-code')),
   }
 }
 
@@ -245,10 +252,10 @@ export const collectData = (container: Cash, initialOptions: ParsonsOptions): Pa
   const codeContainHtml = container.find('#code-contain-html').is(':checked')
   return {
     initial: codeContainHtml ? common.initial : escapeHtml(common.initial),
-    options
+    options,
   }
 }
 
 export default {
-  collectData
+  collectData,
 }

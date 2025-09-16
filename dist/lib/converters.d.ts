@@ -3,7 +3,7 @@ export declare const convertParsonsGraderFuncToEnum: (grader?: (() => void) | st
 export declare const convertTestVariablesToString: (variables: object) => string;
 export declare const convertUnitTestsFromString: (unitTestsStr: string | undefined) => UnitTest[];
 declare const _default: {
-    convertParsonsGraderFuncToEnum: (grader?: string | (() => void) | undefined) => ParsonsGrader;
+    convertParsonsGraderFuncToEnum: (grader?: (() => void) | string | undefined) => ParsonsGrader;
     convertTestVariablesToString: (variables: object) => string;
 };
 export default _default;

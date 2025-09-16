@@ -3,11 +3,11 @@ export interface Dictionary<T> {
 }
 
 export const enum ParsonsGrader {
-  LineBased= 'ParsonsWidget._graders.LineBasedGrader',
+  LineBased = 'ParsonsWidget._graders.LineBasedGrader',
   VariableCheck = 'ParsonsWidget._graders.VariableCheckGrader',
   UnitTest = 'ParsonsWidget._graders.UnitTestGrader',
   LanguageTranslation = 'ParsonsWidget._graders.LanguageTranslationGrader',
-  Turtle = 'ParsonsWidget._graders.TurtleGrader'
+  Turtle = 'ParsonsWidget._graders.TurtleGrader',
 }
 
 export interface VariableTest {
@@ -41,7 +41,7 @@ export interface ParsonsOptions {
   unittests?: string;
   toggleTypeHandlers? : ToggleTypeHandler[];
   turtleModelCode?: string;
-  feedback_cb?: boolean | (() => void); // eslint-disable-line  @typescript-eslint/camelcase
+  feedback_cb?: boolean | (() => void);
   lang?: string;
   x_indent?: number;
   exec_limit?: number;

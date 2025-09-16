@@ -1,10 +1,13 @@
+// eslint-disable-next-line
+/// <reference path="../@custom-types/monaco.d.ts" />
 import $, { Cash } from 'cash-dom'
 
 import { convertParsonsGraderFuncToEnum, convertTestVariablesToString, convertUnitTestsFromString } from './converters'
 import {
-  ParsonsGrader, ParsonsOptions, ParsonsSettings, VariableTest, UnitTest
+  ParsonsGrader, ParsonsOptions, ParsonsSettings, VariableTest, UnitTest,
 } from '../@types/types'
-import { tryToCreateEditorFromTextarea } from './editor'
+import { unescapeHTML } from './data-helper'
+import { createEditor } from './editor'
 
 interface CodeBlocks {
   codeBlocks: string;
@@ -29,7 +32,7 @@ const getCodeBlocks = (code: string): CodeBlocks => {
   })
   return {
     codeBlocks: codeBlocks.join('\n'),
-    distractorBlocks: distractorsBlocks.join('\n')
+    distractorBlocks: distractorsBlocks.join('\n'),
   }
 }
 
@@ -38,7 +41,7 @@ const renderCodeContainHtmlCheckbox = (): Cash => {
 
   containHtmlContainer.append('<input id="code-contain-html" type="checkbox" />')
   containHtmlContainer.append(
-    '<label for="code-contain-html" class="code-contain-html-label">Code blocks contain HTML?</label>'
+    '<label for="code-contain-html" class="code-contain-html-label">Code blocks contain HTML?</label>',
   )
 
   return containHtmlContainer
@@ -47,14 +50,19 @@ const renderCodeContainHtmlCheckbox = (): Cash => {
 const renderInitialCodeBlock = (codeBlocks: string): Cash => {
   const codeBlocksContainer: Cash = $('<div class="code-blocks-container"></div>')
 
-  const taContainer: Cash = $('<div class="code-blocks-ta-container fieldset"></div>')
-  taContainer.append('<label for="initial">Code to Become Blocks</label>')
-  const taCode: Cash = $(`<textarea id="initial" rows="7">${codeBlocks}</textarea>`)
-  taCode.attr('placeholder', 'Type solution with expected indentation here')
-  taContainer.append(taCode)
-  codeBlocksContainer.append(taContainer)
+  const editorControlsContainer: Cash = $('<div class="code-blocks-controls-container fieldset"></div>')
+  editorControlsContainer.append('<label for="initial">Code to Become Blocks</label>')
+  const editorContainer: Cash = $('<div class="code-blocks-editor code-editor-container" id="initial" />')
 
-  tryToCreateEditorFromTextarea(taCode)
+  const editorId = createEditor(
+    editorContainer,
+    { value: unescapeHTML(codeBlocks) },
+    'Type solution with expected indentation here',
+  )
+  editorContainer.data('editor-id', editorId)
+
+  editorControlsContainer.append(editorContainer)
+  codeBlocksContainer.append(editorControlsContainer)
 
   codeBlocksContainer.append(renderCodeContainHtmlCheckbox())
 
@@ -67,15 +75,19 @@ const renderInitialCodeBlock = (codeBlocks: string): Cash => {
 
 const renderDistractorBlocks = (distractors: string, maxWrongLines?: number): Cash => {
   const distractorBlockContainer: Cash = $('<div class="distractor-blocks-container"></div>')
-  const taContainer: Cash = $('<div class="distractor-blocks-ta-container fieldset"></div>')
+  const distractorBlockControlsContainer: Cash = $('<div class="distractor-blocks-controls-container fieldset"></div>')
 
-  taContainer.append('<label for="distractors">Code to Become Distractor Blocks</label>')
-  const taDistractors: Cash = $(`<textarea id="distractors" rows="6">${distractors}</textarea>`)
-  taDistractors.attr('placeholder', 'Code blocks that serve as distractions (incorrect options)')
-  taContainer.append(taDistractors)
-  distractorBlockContainer.append(taContainer)
+  distractorBlockControlsContainer.append('<label for="distractors">Code to Become Distractor Blocks</label>')
+  const editorContainer: Cash = $('<div class="distractor-blocks-editor code-editor-container" id="distractors" />')
+  const editorId = createEditor(
+    editorContainer,
+    { value: unescapeHTML(distractors) },
+    'Code blocks that serve as distractions (incorrect options)',
+  )
+  editorContainer.data('editor-id', editorId)
 
-  tryToCreateEditorFromTextarea(taDistractors)
+  distractorBlockControlsContainer.append(editorContainer)
+  distractorBlockContainer.append(distractorBlockControlsContainer)
 
   const maxDistractorsTitle = 'The maximum number of distractor blocks added to the solution blocks when a student sees'
       + 'the problem. Use this if you, for example, have 4 distractor options but want only 2 to randomly display.'
@@ -84,7 +96,7 @@ const renderDistractorBlocks = (distractors: string, maxWrongLines?: number): Ca
   const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container fieldset"></div>')
   maxDistractorsContainer.append('<label for="max-distractors">Max Distractors</label>')
   maxDistractorsContainer.append(
-    `<input id="max-distractors" type="number" title="${maxDistractorsTitle}" value="${maxDistractors}" />`
+    `<input id="max-distractors" type="number" title="${maxDistractorsTitle}" value="${maxDistractors}" />`,
   )
   distractorBlockContainer.append(maxDistractorsContainer)
 
@@ -131,7 +143,7 @@ const renderIndenting = (canIndent?: boolean): Cash => {
 
   indentingContainer.append('<label for="disable-indent">Disable indentation?</label>')
   indentingContainer.append(
-    `<input id="disable-indent" type="checkbox" ${canIndent === false ? 'checked' : ''} />`
+    `<input id="disable-indent" type="checkbox" ${canIndent === false ? 'checked' : ''} />`,
   )
 
   return indentingContainer
@@ -144,7 +156,7 @@ const renderIndentSize = (canIndent?: boolean, xIndent?: number): Cash => {
   indentSizeContainer.append(
     `<input id="indent-size" type="text" value="${
       xIndent !== undefined ? xIndent : 50
-    }" ${canIndent === false ? 'disabled' : ''} />`
+    }" ${canIndent === false ? 'disabled' : ''} />`,
   )
 
   return indentSizeContainer
@@ -155,7 +167,7 @@ const renderExecLimit = (execLimit?: number): Cash => {
 
   draggingContainer.append('<label for="exec-limit">Exec Limit(ms)</label>')
   draggingContainer.append(
-    `<input id="exec-limit" type="text" value="${execLimit !== undefined ? execLimit : 2500}" />`
+    `<input id="exec-limit" type="text" value="${execLimit !== undefined ? execLimit : 2500}" />`,
   )
 
   return draggingContainer
@@ -187,45 +199,61 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
   const testInfoContainer = $('<div class="test-info-container"></div>')
   const column1 = $('<div class="column"></div>')
 
-  const variablesContainer = $('<div class="fieldset"></div>')
-  variablesContainer.append('<label>Expected variable values*</label>')
-  const taVariables = $(
-    `<textarea rows="2" name="variables">${test ? convertTestVariablesToString(test.variables) : ''}</textarea>`
+  const variablesControlsContainer = $('<div class="fieldset"></div>')
+  variablesControlsContainer.append('<label>Expected variable values*</label>')
+
+  const varEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-variables"/>')
+  const varEditorId = createEditor(varEditorContainer,
+    { value: test ? convertTestVariablesToString(test.variables) : '' },
+    '"var_Name_1": value\n"var_Name_2": value')
+  varEditorContainer.data('editor-id', varEditorId)
+
+  variablesControlsContainer.append(varEditorContainer)
+  column1.append(variablesControlsContainer)
+
+  const descriptionControlsContainer = $('<div class="fieldset"></div>')
+  descriptionControlsContainer.append('<label>Test Description*</label>')
+
+  const descEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-description"/>')
+  const descEditorId = createEditor(
+    descEditorContainer,
+    { value: test ? test.message : '' },
+    'Description of test that is shown to learner',
   )
-  taVariables.attr('placeholder', '"var_Name_1": value\n"var_Name_2": value')
-  variablesContainer.append(taVariables)
-  column1.append(variablesContainer)
+  descEditorContainer.data('editor-id', descEditorId)
 
-  tryToCreateEditorFromTextarea(taVariables)
-
-  const descriptionContainer = $('<div class="fieldset"></div>')
-  descriptionContainer.append('<label>Test Description*</label>')
-  const taDescription = $(`<textarea rows="2" name="description">${test ? test.message : ''}</textarea>`)
-  taDescription.attr('placeholder', 'Description of test that is shown to learner')
-  descriptionContainer.append(taDescription)
-  column1.append(descriptionContainer)
-
-  tryToCreateEditorFromTextarea(taDescription)
+  descriptionControlsContainer.append(descEditorContainer)
+  column1.append(descriptionControlsContainer)
 
   const column2 = $('<div class="column"></div>')
 
-  const preCodeContainer = $('<div class="fieldset"></div>')
-  preCodeContainer.append('<label>Pre Code</label>')
-  const taPreCode = $(`<textarea rows="2" name="pre-code">${test ? test.initcode : ''}</textarea>`)
-  taPreCode.attr('placeholder', 'Code prepended before student code')
-  preCodeContainer.append(taPreCode)
-  column2.append(preCodeContainer)
+  const preCodeControlsContainer = $('<div class="fieldset"></div>')
+  preCodeControlsContainer.append('<label>Pre Code</label>')
 
-  tryToCreateEditorFromTextarea(taPreCode)
+  const preEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-pre-code"/>')
+  const preEditorId = createEditor(
+    preEditorContainer,
+    { value: test && test.initcode ? test.initcode : '' },
+    'Code prepended before student code',
+  )
+  preEditorContainer.data('editor-id', preEditorId)
 
-  const postCodeContainer = $('<div class="fieldset"></div>')
-  postCodeContainer.append('<label>Post Code</label>')
-  const taPostCode = $(`<textarea rows="2" name="post-code">${test ? test.code : ''}</textarea>`)
-  taPostCode.attr('placeholder', 'Code appended after student code')
-  postCodeContainer.append(taPostCode)
-  column2.append(postCodeContainer)
+  preCodeControlsContainer.append(preEditorContainer)
+  column2.append(preCodeControlsContainer)
 
-  tryToCreateEditorFromTextarea(taPostCode)
+  const postCodeControlsContainer = $('<div class="fieldset"></div>')
+  postCodeControlsContainer.append('<label>Post Code</label>')
+
+  const postEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-post-code"/>')
+  const postEditorId = createEditor(
+    postEditorContainer,
+    { value: test && test.code ? test.code : '' },
+    'Code appended after student code',
+  )
+  postEditorContainer.data('editor-id', postEditorId)
+
+  postCodeControlsContainer.append(postEditorContainer)
+  column2.append(postCodeControlsContainer)
 
   testInfoContainer.append(column1)
   testInfoContainer.append(column2)
@@ -236,19 +264,19 @@ export const renderVarTest = (test?: VariableTest | undefined): Cash => {
 const renderVariableCheckGrader = (
   showHint: boolean,
   options?: ParsonsOptions,
-  additionalGraderClass?: string
+  additionalGraderClass?: string,
 ): Cash => {
   const classes: string[] = [
     'grader-form-container',
     'variable-check-grader-container',
-    additionalGraderClass || ''
+    additionalGraderClass || '',
   ]
   const graderFormContainer = $(`<div class="${classes.join(' ')}"></div>`)
 
   const hint: string = showHint ? '<span class="grader-hint">This Grader only supports Python. For other languages, '
       + 'try the Language Translation Grader.</span>' : ''
   graderFormContainer.append(
-    `<div class="add-test-container"><a id="add-test" class="btn btn--primary">New Test</a>${hint}</div>`
+    `<div class="add-test-container"><a id="add-test" class="btn btn--primary">New Test</a>${hint}</div>`,
   )
   const testsContainer: Cash = $('<div class="tests-container"></div>')
   const testsList: Cash = $('<ul class="tests-list"></ul>')
@@ -267,14 +295,19 @@ const renderVariableCheckGrader = (
 const renderUnitTestCodePrepend = (code?: string): Cash => {
   const codePrependContainer: Cash = $('<div class="code-prepend-container"></div>')
 
-  const taContainer: Cash = $('<div class="code-prepend-ta-container fieldset"></div>')
-  taContainer.append('<label for="code-prepend">Code prepended before student code</label>')
-  const taCode: Cash = $(`<textarea id="code-prepend" rows="4">${code || ''}</textarea>`)
-  taCode.attr('placeholder', 'Code prepended before student code')
-  taContainer.append(taCode)
-  codePrependContainer.append(taContainer)
+  const codePrependControlsContainer: Cash = $('<div class="code-prepend-controls-container fieldset"></div>')
+  codePrependControlsContainer.append('<label for="code-prepend">Code prepended before student code</label>')
 
-  tryToCreateEditorFromTextarea(taCode)
+  const editorContainer: Cash = $('<div class="additional-code-editor code-editor-container" id="code-prepend" />')
+  const editorId = createEditor(
+    editorContainer,
+    { value: code || '' },
+    'Code prepended before student code',
+  )
+  editorContainer.data('editor-id', editorId)
+
+  codePrependControlsContainer.append(editorContainer)
+  codePrependContainer.append(codePrependControlsContainer)
 
   return codePrependContainer
 }
@@ -293,37 +326,51 @@ export const renderUnitTest = (test?: UnitTest | undefined): Cash => {
 
   const methodsContainer = $('<div class="fieldset"></div>')
   methodsContainer.append('<label>Method Call(s)*</label>')
-  const methodCall = test ? test.assertEquals.methodCall : ''
-  const taMethods = $(
-    `<textarea rows="2" name="method-call">${methodCall}</textarea>`
-  )
-  taMethods.attr('placeholder', 'Write method call with arguments')
-  methodsContainer.append(taMethods)
-  column1.append(methodsContainer)
 
-  tryToCreateEditorFromTextarea(taMethods)
+  const methodCall = test ? test.assertEquals.methodCall : ''
+
+  const methodCallEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-method-call"/>')
+  const methodCallEditorId = createEditor(
+    methodCallEditorContainer,
+    { value: methodCall },
+    'Write method call with arguments',
+  )
+  methodCallEditorContainer.data('editor-id', methodCallEditorId)
+
+  methodsContainer.append(methodCallEditorContainer)
+  column1.append(methodsContainer)
 
   const messageContainer = $('<div class="fieldset"></div>')
   messageContainer.append('<label>Error Message (optional)</label>')
-  const errorMessage = test ? test.assertEquals.errorMessage : ''
-  const taMessage = $(`<textarea rows="2" name="error-message">${errorMessage}</textarea>`)
-  taMessage.attr('placeholder', 'What student sees if this test fails')
-  messageContainer.append(taMessage)
-  column1.append(messageContainer)
+  const errorMessage = test && test.assertEquals.errorMessage ? test.assertEquals.errorMessage : ''
 
-  tryToCreateEditorFromTextarea(taMessage)
+  const messageEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-error-message"/>')
+  const messageCallEditorId = createEditor(
+    messageEditorContainer,
+    { value: errorMessage },
+    'What student sees if this test fails',
+  )
+  messageEditorContainer.data('editor-id', messageCallEditorId)
+
+  messageContainer.append(messageEditorContainer)
+  column1.append(messageContainer)
 
   const column2 = $('<div class="column"></div>')
 
   const expectedOutputContainer = $('<div class="fieldset"></div>')
   expectedOutputContainer.append('<label>Expected Output(s)*</label>')
   const expectedOutput = test ? test.assertEquals.expectedOutput : ''
-  const taExpectedOutput = $(`<textarea rows="2" name="expected-output">${expectedOutput}</textarea>`)
-  taExpectedOutput.attr('placeholder', 'Expected output of method call')
-  expectedOutputContainer.append(taExpectedOutput)
-  column2.append(expectedOutputContainer)
 
-  tryToCreateEditorFromTextarea(taExpectedOutput)
+  const expectedEditorContainer: Cash = $('<div class="test-param-editor code-editor-container js-expected-output"/>')
+  const expectedEditorId = createEditor(
+    expectedEditorContainer,
+    { value: expectedOutput },
+    'Expected output of method call',
+  )
+  expectedEditorContainer.data('editor-id', expectedEditorId)
+
+  expectedOutputContainer.append(expectedEditorContainer)
+  column2.append(expectedOutputContainer)
 
   testInfoContainer.append(column1)
   testInfoContainer.append(column2)
@@ -342,7 +389,7 @@ const renderUnitTestGrader = (options?: ParsonsOptions): Cash => {
     '<div class="add-test-container">'
     + '<a id="add-test" class="btn btn--primary">New Test</a>'
     + '<span class="grader-hint">This Grader only supports Python.</span>'
-    + '</div>'
+    + '</div>',
   )
   const testsContainer: Cash = $('<div class="tests-container"></div>')
   const testsList: Cash = $('<ul class="tests-list"></ul>')
@@ -378,17 +425,22 @@ const renderProgrammingLang = (grader: ParsonsGrader, lang?: string): Cash => {
 const renderExecutableCode = (grader: ParsonsGrader, code?: string): Cash => {
   const executableCodeContainer: Cash = $('<div class="executable-code-container"></div>')
 
-  const taContainer: Cash = $('<div class="executable-code-ta-container fieldset"></div>')
+  const executableCodeControlsContainer: Cash = $('<div class="executable-code-controls-container fieldset"></div>')
   const labelSuffix = grader === ParsonsGrader.Turtle ? '(if solution code above is not python)' : ''
-  taContainer.append(`<label for="executable-code">Executable code ${labelSuffix}</label>`)
-  const taCode: Cash = $(`<textarea id="executable-code" rows="4">${code || ''}</textarea>`)
+  executableCodeControlsContainer.append(`<label for="executable-code">Executable code ${labelSuffix}</label>`)
+
+  const editorContainer: Cash = $('<div class="additional-code-editor code-editor-container" id="executable-code" />')
   const placeholderSuffix = grader === ParsonsGrader.Turtle ? '\nimport turtle\n'
     + 'myTurtle = turtle.Turtle() -- are done for you' : ''
-  taCode.attr('placeholder', `Executable Python code to map to solution blocks${placeholderSuffix}`)
-  taContainer.append(taCode)
-  executableCodeContainer.append(taContainer)
+  const editorId = createEditor(
+    editorContainer,
+    { value: code || '' },
+    `Executable Python code to map to solution blocks${placeholderSuffix}`,
+  )
+  editorContainer.data('editor-id', editorId)
 
-  tryToCreateEditorFromTextarea(taCode)
+  executableCodeControlsContainer.append(editorContainer)
+  executableCodeContainer.append(executableCodeControlsContainer)
 
   return executableCodeContainer
 }
@@ -396,18 +448,25 @@ const renderExecutableCode = (grader: ParsonsGrader, code?: string): Cash => {
 const renderTurtleModelCode = (code?: string): Cash => {
   const turtleModelCodeContainer: Cash = $('<div class="turtle-model-code-container"></div>')
 
-  const taContainer: Cash = $('<div class="turtle-model-code-ta-container fieldset"></div>')
-  taContainer.append(
+  const turtleModelCodeControlsContainer: Cash = $('<div class="turtle-model-code-controls-container fieldset"></div>')
+  turtleModelCodeControlsContainer.append(
     '<label for="turtle-model-code">Turtle Model Code ('
     + 'Uses <a href="https://docs.python.org/3.3/library/turtle.html" target="_blank">Python turtle library</a>'
-    + ')</label>'
+    + ')</label>',
   )
-  const taCode: Cash = $(`<textarea id="turtle-model-code" rows="4">${code || ''}</textarea>`)
-  taCode.attr('placeholder', 'import turtle\nmodelTurtle = turtle.Turtle() -- are done for you')
-  taContainer.append(taCode)
-  turtleModelCodeContainer.append(taContainer)
 
-  tryToCreateEditorFromTextarea(taCode)
+  const editorContainer: Cash = $('<div class="additional-code-editor code-editor-container" id="turtle-model-code" />')
+  const editorId = createEditor(
+    editorContainer,
+    { value: code || '' },
+    'import turtle\nmodelTurtle = turtle.Turtle() -- are done for you',
+  )
+  editorContainer.data('editor-id', editorId)
+
+  turtleModelCodeControlsContainer.append(editorContainer)
+  turtleModelCodeContainer.append(turtleModelCodeControlsContainer)
+
+  // createEditor(taCode)
 
   return turtleModelCodeContainer
 }
@@ -427,10 +486,10 @@ const renderTurtleGrader = (options?: ParsonsOptions): Cash => {
   const generateBtnContainer: Cash = $('<div class="generate-btn-container"></div>')
   generateBtnContainer.append(
     '<div class="generate-btn-hint">'
-    + 'Use executable code (or if not specified, solution code) to generate modelTurtle code</div>'
+    + 'Use executable code (or if not specified, solution code) to generate modelTurtle code</div>',
   )
   generateBtnContainer.append(
-    '<a id="generate-model-turtle" class="btn btn--primary">Generate<br/>modelTurtle Code</a>'
+    '<a id="generate-model-turtle" class="btn btn--primary">Generate<br/>modelTurtle Code</a>',
   )
   executableOptionsContainer.append(generateBtnContainer)
 
@@ -491,5 +550,5 @@ export const render = (container: Cash, settings: ParsonsSettings): void => {
 }
 
 export default {
-  render
+  render,
 }
