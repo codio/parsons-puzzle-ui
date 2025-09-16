@@ -1,4 +1,3 @@
-/// <reference path="../../../src/@custom-types/monaco.d.ts" />
 declare class MonacoPlaceholder {
     private editor;
     private text;

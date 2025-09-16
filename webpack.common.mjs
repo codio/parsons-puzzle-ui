@@ -1,7 +1,7 @@
-const CopyPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import CopyPlugin from 'copy-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-module.exports = {
+export default {
   entry: './src/index.ts',
   module: {
     rules: [
@@ -16,9 +16,11 @@ module.exports = {
     extensions: [ '.tsx', '.ts', '.js' ],
   },
   plugins: [
-    new CopyPlugin({patterns: [
-      { from: 'src/parsons', to: 'parsons' }
-    ]}),
+    new CopyPlugin({
+      patterns: [
+        { from: "src/parsons", to: "parsons" }
+      ]
+    }),
     new HtmlWebpackPlugin({
       template: './src/index.html'
     }),
@@ -26,7 +28,6 @@ module.exports = {
   ],
   output: {
     library: 'ParsonsUI',
-    clean: true,
     libraryTarget: 'umd',
     filename: 'parsonsUI.js',
     auxiliaryComment: 'ParsonsUI'
