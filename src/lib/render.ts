@@ -96,7 +96,7 @@ const renderDistractorBlocks = (distractors: string, maxWrongLines?: number): Ca
   const maxDistractorsContainer: Cash = $('<div class="distractor-blocks-max-container fieldset"></div>')
   maxDistractorsContainer.append('<label for="max-distractors">Max Distractors</label>')
   maxDistractorsContainer.append(
-    `<input id="max-distractors" type="number" title="${maxDistractorsTitle}" value="${maxDistractors}" />`,
+    `<input id="max-distractors" type="number" min="0" title="${maxDistractorsTitle}" value="${maxDistractors}" />`,
   )
   distractorBlockContainer.append(maxDistractorsContainer)
 
