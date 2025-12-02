@@ -39,7 +39,6 @@ const parseUnitTestArguments = (str: string): AssertEqualParams => {
 
   unitTestChecks.forEach((check: string) => {
     // use any type because return type for esprima.parseScript is wrong
-    // eslint-disable-next-line
     const jsonObj: any = parseScript(check, { range: true })
     const expArgumentsArr = jsonObj.body[0].expression.arguments
     methodCall.push(check.slice(...expArgumentsArr[0].range))
