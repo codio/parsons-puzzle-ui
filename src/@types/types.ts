@@ -14,10 +14,8 @@ export interface VariableTest {
   initcode?: string;
   code?: string;
   message: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables: Dictionary<any>;
   variable?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expected?: any;
 }
 
