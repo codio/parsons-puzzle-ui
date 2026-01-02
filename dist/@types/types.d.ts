@@ -41,6 +41,7 @@ export interface ParsonsOptions {
     exec_limit?: number;
     unittest_code_prepend?: string;
     show_feedback?: boolean;
+    python3?: boolean;
 }
 export interface ParsonsSettings {
     initial: string;
