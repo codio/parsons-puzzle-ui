@@ -157,7 +157,7 @@ const getMethodCalls = (unitTest: UnitTest): string => {
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
   const unitTests: UnitTest[] = []
 
-  const codePrepend: string = getValueFromEditor(container.find('.js-code-prepend'))
+  const codePrepend: string = getValueFromEditor(container.find('#code-prepend'))
 
   container.find('.test-container').each((index: number, el: HTMLElement) => {
     const $this: Cash = $(el)
