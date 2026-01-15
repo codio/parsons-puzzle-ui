@@ -97,8 +97,8 @@ export const collectVariableTest = (container: Cash): VariableTest => {
     if (params && params.length !== 0) {
       const [, key, value] = params
       const trimmedValue: string = value.trim()
-      const isNumber: boolean = /^[0-9]*$/.test(trimmedValue)
-      variables[key] = isNumber ? parseInt(value, 10) : value.replace(/^"(.*)"$/, '$1')
+      const isNumber: boolean = /^[+-]?([0-9]*[.])?[0-9]+$/.test(trimmedValue)
+      variables[key] = isNumber ? parseFloat(value) : value.replace(/^"(.*)"$/, '$1')
     }
   })
 
@@ -157,7 +157,7 @@ const getMethodCalls = (unitTest: UnitTest): string => {
 const collectUnitTestGraderOptions = (container: Cash): UnitTestGraderOptions => {
   const unitTests: UnitTest[] = []
 
-  const codePrepend: string = getValueFromEditor(container.find('.js-code-prepend'))
+  const codePrepend: string = getValueFromEditor(container.find('#code-prepend'))
 
   container.find('.test-container').each((index: number, el: HTMLElement) => {
     const $this: Cash = $(el)
@@ -212,7 +212,8 @@ export const collectData = (container: Cash, initialOptions: ParsonsOptions): Pa
     lang: initialOptions.lang || 'en',
     toggleTypeHandlers: initialOptions.toggleTypeHandlers,
     feedback_cb: initialOptions.feedback_cb,
-    show_feedback: common.showFeedback
+    show_feedback: common.showFeedback,
+    python3: true
   }
 
   if (common.requireDragging) {

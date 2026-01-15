@@ -39,11 +39,17 @@ const parseUnitTestArguments = (str: string): AssertEqualParams => {
 
   unitTestChecks.forEach((check: string) => {
     // use any type because return type for esprima.parseScript is wrong
-    const jsonObj: any = parseScript(check, { range: true })
-    const expArgumentsArr = jsonObj.body[0].expression.arguments
-    methodCall.push(check.slice(...expArgumentsArr[0].range))
-    expectedOutput.push(check.slice(...expArgumentsArr[1].range))
-    errorMessage.push(expArgumentsArr[2] ? check.slice(...expArgumentsArr[2].range) : '')
+    try {
+      const jsonObj: any = parseScript(check, { range: true })
+      const expArgumentsArr = jsonObj.body[0].expression.arguments
+      methodCall.push(check.slice(...expArgumentsArr[0].range))
+      expectedOutput.push(check.slice(...expArgumentsArr[1].range))
+      errorMessage.push(expArgumentsArr[2] ? check.slice(...expArgumentsArr[2].range) : '')
+    } catch {
+      methodCall.push('')
+      expectedOutput.push('')
+      errorMessage.push('')
+    }
   })
   return {
     methodCall: methodCall.join('\n'),
